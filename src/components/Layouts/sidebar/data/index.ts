@@ -15,17 +15,35 @@ export const NAV_DATA = [
         ],
       },
       {
-        title: "Calendar",
-        url: "/calendar",
-        icon: Icons.Calendar,
-        items: [],
-      },
-      {
-        title: "Profile",
-        url: "/profile",
+        title: "Client Management",
+        url: "/client-management",
         icon: Icons.User,
         items: [],
       },
+      {
+        title: "Post Management",
+        url: "/post-management",
+        icon: Icons.Table,
+        items: [],
+      },
+      {
+        title: "Statement Management",
+        url: "/statement-management",
+        icon: Icons.FourCircle,
+        items: [],
+      },
+      // {
+      //   title: "Calendar",
+      //   url: "/calendar",
+      //   icon: Icons.Calendar,
+      //   items: [],
+      // },
+      // {
+      //   title: "Profile",
+      //   url: "/profile",
+      //   icon: Icons.User,
+      //   items: [],
+      // },
       {
         title: "Forms",
         icon: Icons.Alphabet,
@@ -63,43 +81,43 @@ export const NAV_DATA = [
       },
     ],
   },
-  {
-    label: "OTHERS",
-    items: [
-      {
-        title: "Charts",
-        icon: Icons.PieChart,
-        items: [
-          {
-            title: "Basic Chart",
-            url: "/charts/basic-chart",
-          },
-        ],
-      },
-      {
-        title: "UI Elements",
-        icon: Icons.FourCircle,
-        items: [
-          {
-            title: "Alerts",
-            url: "/ui-elements/alerts",
-          },
-          {
-            title: "Buttons",
-            url: "/ui-elements/buttons",
-          },
-        ],
-      },
-      {
-        title: "Authentication",
-        icon: Icons.Authentication,
-        items: [
-          {
-            title: "Sign In",
-            url: "/auth/sign-in",
-          },
-        ],
-      },
-    ],
-  },
+  // {
+  //   label: "OTHERS",
+  //   items: [
+  //     {
+  //       title: "Charts",
+  //       icon: Icons.PieChart,
+  //       items: [
+  //         {
+  //           title: "Basic Chart",
+  //           url: "/charts/basic-chart",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       title: "UI Elements",
+  //       icon: Icons.FourCircle,
+  //       items: [
+  //         {
+  //           title: "Alerts",
+  //           url: "/ui-elements/alerts",
+  //         },
+  //         {
+  //           title: "Buttons",
+  //           url: "/ui-elements/buttons",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       title: "Authentication",
+  //       icon: Icons.Authentication,
+  //       items: [
+  //         {
+  //           title: "Sign In",
+  //           url: "/auth/sign-in",
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];
