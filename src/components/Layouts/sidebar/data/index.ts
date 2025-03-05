@@ -7,12 +7,19 @@ export const NAV_DATA = [
       {
         title: "Dashboard",
         icon: Icons.HomeIcon,
+        url: "/",
         items: [
-          {
-            title: "eCommerce",
-            url: "/",
-          },
+          // {
+          //   title: "eCommerce",
+          //   url: "/",
+          // },
         ],
+      },
+      {
+        title: "Invoice Management",
+        url: "/invoice-management",
+        icon: Icons.FourCircle,
+        items: [],
       },
       {
         title: "Client Management",
@@ -26,12 +33,7 @@ export const NAV_DATA = [
         icon: Icons.Table,
         items: [],
       },
-      {
-        title: "Statement Management",
-        url: "/statement-management",
-        icon: Icons.FourCircle,
-        items: [],
-      },
+
       // {
       //   title: "Calendar",
       //   url: "/calendar",
@@ -44,41 +46,41 @@ export const NAV_DATA = [
       //   icon: Icons.User,
       //   items: [],
       // },
-      {
-        title: "Forms",
-        icon: Icons.Alphabet,
-        items: [
-          {
-            title: "Form Elements",
-            url: "/forms/form-elements",
-          },
-          {
-            title: "Form Layout",
-            url: "/forms/form-layout",
-          },
-        ],
-      },
-      {
-        title: "Tables",
-        url: "/tables",
-        icon: Icons.Table,
-        items: [
-          {
-            title: "Tables",
-            url: "/tables",
-          },
-        ],
-      },
-      {
-        title: "Pages",
-        icon: Icons.Alphabet,
-        items: [
-          {
-            title: "Settings",
-            url: "/pages/settings",
-          },
-        ],
-      },
+      // {
+      //   title: "Forms",
+      //   icon: Icons.Alphabet,
+      //   items: [
+      //     {
+      //       title: "Form Elements",
+      //       url: "/forms/form-elements",
+      //     },
+      //     {
+      //       title: "Form Layout",
+      //       url: "/forms/form-layout",
+      //     },
+      //   ],
+      // },
+      // {
+      //   title: "Tables",
+      //   url: "/tables",
+      //   icon: Icons.Table,
+      //   items: [
+      //     {
+      //       title: "Tables",
+      //       url: "/tables",
+      //     },
+      //   ],
+      // },
+      // {
+      //   title: "Pages",
+      //   icon: Icons.Alphabet,
+      //   items: [
+      //     {
+      //       title: "Settings",
+      //       url: "/pages/settings",
+      //     },
+      //   ],
+      // },
     ],
   },
   // {
