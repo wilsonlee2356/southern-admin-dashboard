@@ -22,7 +22,7 @@ export const NAV_DATA = [
         items: [],
       },
       {
-        title: "Client Management",
+        title: "Invoice Input",
         url: "/client-management",
         icon: Icons.User,
         items: [],

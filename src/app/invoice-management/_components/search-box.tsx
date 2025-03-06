@@ -8,7 +8,7 @@ import { Button } from "@/components/ui-elements/button";
 
 export function SearchBox() {
   return (
-    <ShowcaseSection title="Contact Form" className="!p-6.5">
+    <ShowcaseSection title="Invoice Search Form" className="!p-6.5">
       <form action="#">
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
           <InputGroup
@@ -19,17 +19,17 @@ export function SearchBox() {
           />
 
           <InputGroup
-            label="Order"
-            type="number"
-            placeholder="Enter order"
-            className="w-full xl:w-2/12" // 20% width on extra-large screens
+            label="Client"
+            type="text"
+            placeholder="Enter client"
+            className="w-full xl:w-4/12" // 20% width on extra-large screens
           />
 
           <InputGroup
             label="Amount"
             type="number"
             placeholder="Enter amount"
-            className="w-full xl:w-5/12" // 40% width on extra-large screens
+            className="w-full xl:w-3/12" // 40% width on extra-large screens
           />
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">

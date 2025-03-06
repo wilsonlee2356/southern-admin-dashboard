@@ -1,8 +1,8 @@
 import { CheckIcon, TrashIcon } from "@/assets/icons";
 import { getInvoiceTableData } from "@/components/Tables/fetch";
 import { PreviewIcon, DownloadIcon } from "@/components/Tables/icons";
-import { Checkbox } from "@/components/FormElements/checkbox";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
+import { Checkbox } from "@/components/FormElements/checkbox";
 import { Button } from "@/components/ui-elements/button";
 
 import {
@@ -17,22 +17,22 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React from "react";
 
-async function ResultTable() {
+async function NewInputTable() {
   const data = await getInvoiceTableData();
 
   return (
+    
     <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
       <div>
-          <ShowcaseSection title="Total: $9999999999" className="!p-6.5">
+        <ShowcaseSection title="Total: $9999999999" className="!p-6.5">
             <div></div>
-          </ShowcaseSection>
+        </ShowcaseSection>
       </div>
       <Table>
         <TableHeader>
-          {/*<h5 className="text-dark dark:text-white">Total: </h5>*/}
           <TableRow className="border-none bg-[#F7F9FC] dark:bg-dark-2 [&>th]:py-4 [&>th]:text-base [&>th]:text-dark [&>th]:dark:text-white">
             <TableHead className="min-w-[155px] xl:pl-7.5">
-              <Checkbox label={""} withIcon={"check"}/>
+                <Checkbox label={""} withIcon={"check"}/>
             </TableHead>
             <TableHead className="min-w-[155px] xl:pl-7.5">
               Invoice No.
@@ -45,12 +45,10 @@ async function ResultTable() {
 
         <TableBody>
           {data.map((item, index) => (
-
             <TableRow key={index} className="border-[#eee] dark:border-dark-3">
-
-              <TableCell className="min-w-[155px] xl:pl-7.5">
-                <Checkbox label={""} withIcon={"check"} />
-              </TableCell>
+              <TableHead className="min-w-[155px] xl:pl-7.5">
+                 <Checkbox label={""} withIcon={"check"}/>
+              </TableHead>
               <TableCell className="min-w-[155px] xl:pl-7.5">
                 <h5 className="text-dark dark:text-white">{item.name}</h5>
                 {/* <p className="mt-[3px] text-body-sm font-medium">
@@ -105,14 +103,14 @@ async function ResultTable() {
         </TableBody>
       </Table>
       <Button
-            label="Set paid"
-            variant="green"
-            shape="full"
-            size="default"
-            icon={<CheckIcon />}
-          />
+                  label="Set paid"
+                  variant="green"
+                  shape="full"
+                  size="default"
+                  icon={<CheckIcon />}
+                />
     </div>
   );
 }
 
-export default ResultTable;
+export default NewInputTable;

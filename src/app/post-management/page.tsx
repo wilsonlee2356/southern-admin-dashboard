@@ -1,7 +1,10 @@
 import React from "react";
 
+
 function PostManagementPage() {
-  return <div>PostManagementPage</div>;
+  return (
+    <br></br>
+  );
 }
 
 export default PostManagementPage;
