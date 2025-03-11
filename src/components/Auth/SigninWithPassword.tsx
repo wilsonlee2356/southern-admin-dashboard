@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import InputGroup from "../FormElements/InputGroup";
 import { Checkbox } from "../FormElements/checkbox";
 
-export default function SigninWithPassword() {
+export default function SigninWithPassword({ handleSubmit }: any) {
   const [data, setData] = useState({
     email: process.env.NEXT_PUBLIC_DEMO_USER_MAIL || "",
     password: process.env.NEXT_PUBLIC_DEMO_USER_PASS || "",
@@ -19,17 +19,6 @@ export default function SigninWithPassword() {
       ...data,
       [e.target.name]: e.target.value,
     });
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // You can remove this code block
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
   };
 
   return (
