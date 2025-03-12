@@ -19,7 +19,6 @@ type PropsType = {
 export default async function Home({ searchParams }: PropsType) {
   const { selected_time_frame } = await searchParams;
   const extractTimeFrame = createTimeFrameExtractor(selected_time_frame);
-
   return (
     <>
       <Suspense fallback={<OverviewCardsSkeleton />}>
