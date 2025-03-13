@@ -3,13 +3,15 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import { Button } from "@/components/ui-elements/button";
 import { CloseIcon, MessageOutlineIcon, UploadIcon } from "@/assets/icons";
+import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteOne";
 
 export function InputBox() {
   return (
     <ShowcaseSection title="Invoice Input Form" className="!p-6.5">
       <form action="#">
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <InputGroup
+          <AutoCompleteOne label="Invoice No. " />
+          {/* <InputGroup
             label="Invoice No. "
             type="text"
             placeholder="Enter invoice number"
@@ -28,7 +30,7 @@ export function InputBox() {
             type="number"
             placeholder="Enter amount"
             className="w-full xl:w-5/12" // 40% width on extra-large screens
-          />
+          /> */}
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
           <div className="w-full xl:w-4/12">
