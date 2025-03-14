@@ -10,7 +10,9 @@ export function InputBox() {
     <ShowcaseSection title="Invoice Input Form" className="!p-6.5">
       <form action="#">
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <AutoCompleteOne label="Invoice No. " />
+          <AutoCompleteOne labels={['Invoice Number','Enter Invoice Number']}/>
+          <AutoCompleteOne labels={['Client Name','Enter Client Name']}/>
+          
           {/* <InputGroup
             label="Invoice No. "
             type="text"
@@ -33,15 +35,20 @@ export function InputBox() {
           /> */}
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
+          <AutoCompleteOne labels={['Invoice Number','Enter Invoice Number']}/>
+          <AutoCompleteOne labels={['Postcode','Enter Postcode']}/>
+          <AutoCompleteOne labels={['Amount','Enter Amount']}/>
+        </div>
+        <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
           <div className="w-full xl:w-4/12">
             <DatePickerOne label="Invoice Date" />
           </div>
-          <InputGroup
+          {/* <InputGroup
             label="Client"
             type="text"
             placeholder="Enter client"
             className="w-full xl:w-4/12" // 40% width on extra-large screens
-          />
+          /> */}
           <div className="w-full xl:w-4/12">
             <DatePickerOne label="Settlement Date" />
           </div>

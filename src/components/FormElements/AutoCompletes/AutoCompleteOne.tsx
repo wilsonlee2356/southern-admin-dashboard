@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { JSX } from "react";
 import { useEffect } from "react";
 import {
   Autocomplete,
@@ -10,23 +10,24 @@ import {
 const test = [
   {
     key: 1,
-    label: "Cat",
+    label: "Test1",
   },
   {
     key: 2,
-    label: "Dog",
+    label: "Test2",
   },
   {
     key: 3,
-    label: "Bobr",
+    label: "Test3",
   },
 ];
 
-const AutoCompleteOne = ({ label }: { label?: string }) => {
+const AutoCompleteOne = ({labels}:{labels:string[]}) => {
+
   return (
-    <div>
+    <div className="w-full">
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
-        {label}
+        {labels[0]}
       </label>
       <div className="relative">
         <Autocomplete
@@ -63,7 +64,7 @@ const AutoCompleteOne = ({ label }: { label?: string }) => {
             },
           }}
           defaultItems={test}
-          placeholder="Search an animal"
+          placeholder={labels[1]}
         >
           {(item) => (
             <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
