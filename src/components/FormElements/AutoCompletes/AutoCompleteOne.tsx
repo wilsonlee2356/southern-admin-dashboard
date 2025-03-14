@@ -37,7 +37,6 @@ const AutoCompleteOne = ({ label }: { label?: string }) => {
               input:
                 "w-full focus:border-none focus:outline-none border-transparent focus:border-transparent focus:ring-0",
               inputWrapper: "h-[50px] focus:border-none",
-              innerWrapper: "h-[50px] border-color-red",
             },
           }}
           listboxProps={{
