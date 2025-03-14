@@ -5,9 +5,9 @@ import ResultTable from "./_components/new-input-table";
 function ClientManagementPage() {
   return (
     <>
-    <InputBox />
-    <br/>
-    <ResultTable />
+      <InputBox />
+      <br />
+      <ResultTable />
     </>
   );
 }
