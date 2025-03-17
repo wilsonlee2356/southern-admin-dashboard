@@ -7,27 +7,25 @@ import {
   AutocompleteItem,
 } from "@heroui/autocomplete";
 
-const test = [
-  {
-    key: 1,
-    label: "Test1",
-  },
-  {
-    key: 2,
-    label: "Test2",
-  },
-  {
-    key: 3,
-    label: "Test3",
-  },
-];
+type ArrayType = {
+  key: number;
+  name: string;
+}
 
-const AutoCompleteOne = ({labels}:{labels:string[]}) => {
+type PropsType = {
+  title: string;
+  placeholder: string
+  dataArr: ArrayType[];
+}
+
+
+
+const AutoCompleteOne = ({ title, placeholder, dataArr } : PropsType) => {
 
   return (
     <div className="w-full">
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
-        {labels[0]}
+        {title}
       </label>
       <div className="relative">
         <Autocomplete
@@ -63,11 +61,11 @@ const AutoCompleteOne = ({labels}:{labels:string[]}) => {
               content: "bg-white",
             },
           }}
-          defaultItems={test}
-          placeholder={labels[1]}
+          defaultItems={dataArr}
+          placeholder={placeholder}
         >
           {(item) => (
-            <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+            <AutocompleteItem key={item.key}>{item.name}</AutocompleteItem>
           )}
         </Autocomplete>
       </div>
