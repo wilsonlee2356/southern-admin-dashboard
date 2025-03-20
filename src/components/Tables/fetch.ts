@@ -46,26 +46,30 @@ export async function getInvoiceTableData() {
 
   return [
     {
-      name: "CZ001",
-      price: 0.0,
+      id: "CZ001",
+      amount: 0.0,
+      postcode: "C001",
       date: "2023-01-13T18:00:00.000Z",
       status: "Paid",
     },
     {
-      name: "CZ002",
-      price: 59.0,
+      id: "CZ002",
+      amount: 59.0,
+      postcode: "C002",
       date: "2023-01-13T18:00:00.000Z",
       status: "Paid",
     },
     {
-      name: "CZ003",
-      price: 99.0,
+      id: "CZ003",
+      amount: 99.0,
+      postcode: "C003",
       date: "2023-01-13T18:00:00.000Z",
       status: "Unpaid",
     },
     {
-      name: "CZ004",
-      price: 59.0,
+      id: "CZ004",
+      amount: 59.0,
+      postcode: "C004",
       date: "2023-01-13T18:00:00.000Z",
       status: "Pending",
     },

@@ -21,8 +21,9 @@ import React, { ChangeEvent, useState } from "react";
 
 
 type invoice = {
-  name: string;
-  price: number;
+  id: string;
+  amount: number;
+  postcode: string;
   date: string;
   status: string;
 }
