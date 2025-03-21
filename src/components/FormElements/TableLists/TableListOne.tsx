@@ -81,27 +81,27 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
 
   const columns: GridColDef<(typeof dataArray)[number]>[] = [
     { field: 'id', 
-      //headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
+      headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
       headerName: 'Invoice Number', 
       flex: 2,
     },
     {
       field: 'amount',
-      //headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
+      headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
       headerName: 'Amount',
       flex: 2,
       editable: true,
     },
     {
       field: 'postcode',
-      //headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
+      headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
       headerName: 'Postcode',
       flex: 2,
       editable: true,
     },
     {
       field: 'date',
-      //headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
+      headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
       headerName: 'Date',
       flex: 2,
       editable: true,
@@ -109,6 +109,7 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
     {
       field: 'status',
       align: 'center',
+      headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
       cellClassName: 'flex items-center justify-center',
       headerName: 'Status',
       flex: 2,
@@ -134,7 +135,7 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
     },
     {
       field: 'action',
-      //headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
+      headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
       cellClassName: 'flex items-center justify-center',
       headerName: 'Action',
       flex: 1,
@@ -180,8 +181,8 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
               '.custom-datagrid & .MuiDataGrid-root[theme="dark"]': {
                 backgroundColor: 'black',
               },
-              '& .MuiDataGrid-columnHeader': {
-                backgroundColor: 'transparent',
+              '& .MuiDataGrid-columnHeaderTitleContainer': {
+                backgroundColor: 'transparent dark:bg-dark-2',
               },
               
               '& .MuiDataGrid-cell': {
