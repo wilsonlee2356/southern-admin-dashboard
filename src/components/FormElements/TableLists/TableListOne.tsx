@@ -21,38 +21,46 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import type {} from '@mui/x-data-grid/themeAugmentation';
+import { invoice, invoiceArray } from "@/types/ObjectTypes/InvoiceType";
 
 
-type invoice = {
-    id: string;
-    amount: number;
-    postcode: string;
-    date: string;
-    status: string;
-}
+// type invoice = {
+//     id: string;
+//     amount: number;
+//     postcode: string;
+//     date: string;
+//     status: string;
+// }
 
-type invoiceArray = {
-    dataArray: invoice[];
-}
+// type invoiceArray = {
+//     dataArray: invoice[];
+// }
 
 const TableListOne = ({ dataArray } : invoiceArray) => {
 
   const [rows, setRows] = useState(dataArray);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [totalSum, setTotalSum] = useState(0);
+  const [totalSum, setTotalSum] = useState(dataArray.reduce((sum, item) => sum + item.amount, 0));
 
   useEffect(() => {
     const sum = dataArray.reduce((sum, item) => sum + item.amount, 0);
   }, [rows]);
 
   const handleSelectionChange = (rowSelectionModel: GridRowSelectionModel) => {
+      if(rowSelectionModel.length > 0) {
       const selectedIds = rowSelectionModel as string[];
       const selectedData = rows.filter((row) => selectedIds.includes(row.id));
       const selectedSum = selectedData.reduce((sum, item) => sum + item.amount, 0);
       setSelectedRows(selectedIds);
       setTotalSum(selectedSum);
+      }
+      else {
+        const selectedSum = dataArray.reduce((sum, item) => sum + item.amount, 0);
+        setSelectedRows([]);
+        setTotalSum(selectedSum);
+      }
   }
-
+ 
   const theme = createTheme({
     components: {
       // Name of the component

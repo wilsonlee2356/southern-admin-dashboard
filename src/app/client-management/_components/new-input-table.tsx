@@ -30,11 +30,6 @@ type invoice = {
 
 async function NewInputTable() {
   const data = await getInvoiceTableData();
-
-  
-
-
-
   return (
     <>
       <TableListOne dataArray={data} />
