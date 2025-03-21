@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import React, { ChangeEvent, useState } from "react";
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import type {} from '@mui/x-data-grid/themeAugmentation';
 
@@ -36,6 +36,22 @@ type invoiceArray = {
 }
 
 const TableListOne = ({ dataArray } : invoiceArray) => {
+
+  const [rows, setRows] = useState(dataArray);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [totalSum, setTotalSum] = useState(0);
+
+  useEffect(() => {
+    const sum = dataArray.reduce((sum, item) => sum + item.amount, 0);
+  }, [rows]);
+
+  const handleSelectionChange = (rowSelectionModel: GridRowSelectionModel) => {
+      const selectedIds = rowSelectionModel as string[];
+      const selectedData = rows.filter((row) => selectedIds.includes(row.id));
+      const selectedSum = selectedData.reduce((sum, item) => sum + item.amount, 0);
+      setSelectedRows(selectedIds);
+      setTotalSum(selectedSum);
+  }
 
   const theme = createTheme({
     components: {
@@ -133,32 +149,13 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
     },
   ];
 
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
-
-    const [isAllSelected, setIsAllSelected] = useState(false);
-
-    const handleSelectAll = () => {
-        if (!isAllSelected) {
-            // Select all items
-            setSelectedItems(dataArray.map((item) => item.id));
-          } else {
-            // Deselect all items
-            setSelectedItems([]);
-          }
-        setIsAllSelected(!isAllSelected);
-    };
-
-    const handleCheckboxChange = (values: string[]) => {
-        setSelectedItems(values);
-        setIsAllSelected(values.length === dataArray.length);
-    };
     
 
     return (
       
         <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
         <div className="flex-row">
-          <ShowcaseSection title="Total: $9999999999" className="!p-6.5">
+          <ShowcaseSection title={"Total: $"+totalSum} className="!p-6.5">
               <div></div>
           </ShowcaseSection>
         </div>
@@ -194,8 +191,8 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
               },
             }}
             pageSizeOptions={[5]}
+            onRowSelectionModelChange={handleSelectionChange}
             checkboxSelection
-            disableRowSelectionOnClick
             disableColumnMenu
         />
         </ThemeProvider>
