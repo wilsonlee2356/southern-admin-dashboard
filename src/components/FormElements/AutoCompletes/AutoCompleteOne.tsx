@@ -20,7 +20,7 @@ type PropsType = {
 
 
 
-const AutoCompleteOne = ({ title, placeholder, dataArr } : PropsType) => {
+const AutoCompleteOne = ({ title, placeholder, dataArr, ...params } : PropsType) => {
 
   return (
     <div className="w-full">
@@ -30,6 +30,7 @@ const AutoCompleteOne = ({ title, placeholder, dataArr } : PropsType) => {
       <div className="relative">
         <Autocomplete
           allowsCustomValue
+          
           className="w-full rounded-[7px] bg-gray font-normal outline-none transition dark:border-dark-3 dark:bg-dark-2"
           inputProps={{
             classNames: {
@@ -63,6 +64,7 @@ const AutoCompleteOne = ({ title, placeholder, dataArr } : PropsType) => {
           }}
           defaultItems={dataArr}
           placeholder={placeholder}
+          {...params}
         >
           {(item) => (
             <AutocompleteItem key={item.key}>{(!item.name) ? item.key : item.name}</AutocompleteItem>

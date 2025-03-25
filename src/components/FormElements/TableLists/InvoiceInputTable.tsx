@@ -23,20 +23,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import type {} from '@mui/x-data-grid/themeAugmentation';
 import { invoice, invoiceArray } from "@/types/ObjectTypes/InvoiceType";
 
-
-// type invoice = {
-//     id: string;
-//     amount: number;
-//     postcode: string;
-//     date: string;
-//     status: string;
-// }
-
-// type invoiceArray = {
-//     dataArray: invoice[];
-// }
-
-const TableListOne = ({ dataArray } : invoiceArray) => {
+const InvoiceInputTable = ({ dataArray } : invoiceArray) => {
 
   const [rows, setRows] = useState(dataArray);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -60,27 +47,10 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
         setTotalSum(selectedSum);
       }
   }
- 
-  const theme = createTheme({
-    components: {
-      // Name of the component
-      MuiDataGrid: {
-        styleOverrides: {
-          // Name of the slot
-          root: {
-            style: {
-              borderWidth: '3px',
-            },
-            
-          },
-          
-        },
-      },
-    },
-  });
 
   const columns: GridColDef<(typeof dataArray)[number]>[] = [
-    { field: 'id', 
+    { 
+      field: 'id', 
       headerClassName: 'border-none bg-[#F7F9FC] dark:bg-dark-2',
       headerName: 'Invoice Number', 
       flex: 2,
@@ -168,7 +138,6 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
               <div></div>
           </ShowcaseSection>
         </div>
-        <ThemeProvider theme={theme}>
         <DataGrid
             className="border-none bg-[#F7F9FC] dark:bg-dark-2 py-4 text-base text-dark dark:text-white"
             rows={dataArray}
@@ -204,7 +173,6 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
             checkboxSelection
             disableColumnMenu
         />
-        </ThemeProvider>
         {/* <CheckboxGroup
                className="w-full"
                value={selectedItems}
@@ -225,4 +193,4 @@ const TableListOne = ({ dataArray } : invoiceArray) => {
     );
   };
   
-  export default TableListOne;
+  export default InvoiceInputTable;

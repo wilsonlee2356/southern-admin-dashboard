@@ -5,13 +5,23 @@ import { TextAreaGroup } from "@/components/FormElements/InputGroup/text-area";
 import { Select } from "@/components/FormElements/select";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
+import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteOne";
+import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
+import { invoice, invoiceArray } from "@/types/ObjectTypes/InvoiceType";
 
-export function SearchBox() {
+export function SearchBox({ dataArray } : invoiceArray) {
+
+  const invoiceNumArr = dataArray.map((item) => ({key: item.id}));
+  const clientNameArr = dataArray.map((item) => ({key: item.id, name: item.name}));
+  const postcodeArr = dataArray.map((item) => ({key: item.id, name: item.postcode}));
+
   return (
     <ShowcaseSection title="Invoice Search Form" className="!p-6.5">
       <form action="#">
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <InputGroup
+            <AutoCompleteOne title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceNumArr}/>
+            <AutoCompleteOne title="Client Name" placeholder="Enter Client Name" dataArr={clientNameArr}/>
+          {/* <InputGroup
             label="Invoice No. "
             type="text"
             placeholder="Enter invoice number"
@@ -30,15 +40,27 @@ export function SearchBox() {
             type="number"
             placeholder="Enter amount"
             className="w-full xl:w-3/12" // 40% width on extra-large screens
-          />
+          /> */}
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <div className="w-full xl:w-6/12">
+          <AutoCompleteOne title="Postcode" placeholder="Enter Postcode" dataArr={postcodeArr}/>
+          <AutoCompleteOne title="Amount" placeholder="Enter Amount" dataArr={[]}/>
+          {/* <div className="w-full xl:w-6/12">
             <DatePickerOne label="Invoice Date" />
           </div>
           <div className="w-full xl:w-6/12">
             <DatePickerOne label="Settlement Date" />
+          </div> */}
+        </div>
+        <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
+          {/* <AutoCompleteOne title="Period" placeholder="Select Period" dataArr={postcodeArr}/> */}
+          <DropdownList title="Period" placeholder="Select Period" isListOfTime={true}/>
+          {/* <div className="w-full xl:w-6/12">
+            <DatePickerOne label="Invoice Date" />
           </div>
+          <div className="w-full xl:w-6/12">
+            <DatePickerOne label="Settlement Date" />
+          </div> */}
         </div>
         {/* 
         <InputGroup

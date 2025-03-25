@@ -1,6 +1,6 @@
 import { CheckIcon, TrashIcon, PencilSquareIcon } from "@/assets/icons";
 import { getInvoiceTableData } from "@/components/Tables/fetch";
-import  TableListOne  from "@/components/FormElements/TableLists/TableListOne";
+import  TableListOne  from "@/components/FormElements/TableLists/InvoiceInputTable";
 import { PreviewIcon, DownloadIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 // import { Checkbox } from "@/components/FormElements/checkbox";

@@ -1,11 +1,13 @@
 import React from "react";
 import { SearchBox } from "./_components/search-box";
 import ResultTable from "./_components/result-table";
+import { getInvoiceTableData } from "@/components/Tables/fetch";
 
-function InvoiceManagementPage() {
+async function InvoiceManagementPage() {
+  const data = await getInvoiceTableData();
   return (
     <>
-      <SearchBox />
+      <SearchBox dataArray={data} />
       <br/>
       <ResultTable />
     </>

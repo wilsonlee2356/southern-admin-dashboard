@@ -2,7 +2,7 @@ import React from "react";
 import { InputBox } from "../client-management/_components/input-box";
 import ResultTable from "./_components/new-input-table";
 import { getInvoiceTableData } from "@/components/Tables/fetch";
-import  TableListOne  from "@/components/FormElements/TableLists/TableListOne";
+import  InvoiceInputTable  from "@/components/FormElements/TableLists/InvoiceInputTable";
 
 async function ClientManagementPage() {
   const data = await getInvoiceTableData();
@@ -10,7 +10,7 @@ async function ClientManagementPage() {
     <>
       <InputBox dataArray={data}/>
       <br />
-      <TableListOne dataArray={data}/>
+      <InvoiceInputTable dataArray={data}/>
     </>
   );
 }
