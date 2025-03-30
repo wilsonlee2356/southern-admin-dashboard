@@ -15,6 +15,7 @@ type PropsType = {
     title: string;
     placeholder: string
     isListOfTime: boolean
+    stateSetter: any;
 }
 
 let timeList: ArrayType[] = [
@@ -24,7 +25,7 @@ let timeList: ArrayType[] = [
   ];
   
 
- const DropdownList = ({ title, placeholder, isListOfTime } : PropsType) => {
+ const DropdownList = ({ title, placeholder, isListOfTime, stateSetter } : PropsType) => {
   const [age, setAge] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {

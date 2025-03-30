@@ -9,18 +9,28 @@ import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoComplet
 import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
 import { invoice, invoiceArray } from "@/types/ObjectTypes/InvoiceType";
 
-export function SearchBox({ dataArray } : invoiceArray) {
+type invoiceArraySearch = {
+  dataArray: invoice[];
+  updateInvoiceNumber: any;
+  updateClientName: any;
+  updatePostcode: any;
+  updateAmount: any;
+  updatePeriod: any;
+}
+
+export function SearchBox({ dataArray, updateInvoiceNumber, updateClientName, updatePostcode, updateAmount, updatePeriod } : invoiceArraySearch) {
 
   const invoiceNumArr = dataArray.map((item) => ({key: item.id}));
   const clientNameArr = dataArray.map((item) => ({key: item.id, name: item.name}));
   const postcodeArr = dataArray.map((item) => ({key: item.id, name: item.postcode}));
 
+  // console.log("hihih"+updateInvoiceNumber);
   return (
     <ShowcaseSection title="Invoice Search Form" className="!p-6.5">
       <form action="#">
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-            <AutoCompleteOne title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceNumArr}/>
-            <AutoCompleteOne title="Client Name" placeholder="Enter Client Name" dataArr={clientNameArr}/>
+            <AutoCompleteOne title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceNumArr} stateSetter={updateInvoiceNumber}/>
+            <AutoCompleteOne title="Client Name" placeholder="Enter Client Name" dataArr={clientNameArr} stateSetter={updateClientName}/>
           {/* <InputGroup
             label="Invoice No. "
             type="text"
@@ -43,8 +53,8 @@ export function SearchBox({ dataArray } : invoiceArray) {
           /> */}
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <AutoCompleteOne title="Postcode" placeholder="Enter Postcode" dataArr={postcodeArr}/>
-          <AutoCompleteOne title="Amount" placeholder="Enter Amount" dataArr={[]}/>
+          <AutoCompleteOne title="Postcode" placeholder="Enter Postcode" dataArr={postcodeArr} stateSetter={updatePostcode}/>
+          <AutoCompleteOne title="Amount" placeholder="Enter Amount" dataArr={[]} stateSetter={updateAmount}/>
           {/* <div className="w-full xl:w-6/12">
             <DatePickerOne label="Invoice Date" />
           </div>
@@ -54,7 +64,7 @@ export function SearchBox({ dataArray } : invoiceArray) {
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
           {/* <AutoCompleteOne title="Period" placeholder="Select Period" dataArr={postcodeArr}/> */}
-          <DropdownList title="Period" placeholder="Select Period" isListOfTime={true}/>
+          <DropdownList title="Period" placeholder="Select Period" isListOfTime={true} stateSetter={updatePeriod}/>
           {/* <div className="w-full xl:w-6/12">
             <DatePickerOne label="Invoice Date" />
           </div>

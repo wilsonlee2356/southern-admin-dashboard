@@ -16,11 +16,12 @@ type PropsType = {
   title: string;
   placeholder: string
   dataArr: ArrayType[];
+  stateSetter: any;
 }
 
 
 
-const AutoCompleteOne = ({ title, placeholder, dataArr, ...params } : PropsType) => {
+const AutoCompleteOne = ({ title, placeholder, dataArr, stateSetter, ...params } : PropsType) => {
 
   return (
     <div className="w-full">
@@ -64,6 +65,7 @@ const AutoCompleteOne = ({ title, placeholder, dataArr, ...params } : PropsType)
           }}
           defaultItems={dataArr}
           placeholder={placeholder}
+          onInputChange={(value) => {stateSetter(value)}}
           {...params}
         >
           {(item) => (
