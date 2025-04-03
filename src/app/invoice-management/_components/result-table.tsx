@@ -1,116 +1,180 @@
+"use client";
 import { CheckIcon, TrashIcon } from "@/assets/icons";
-import { getInvoiceTableData } from "@/components/Tables/fetch";
 import { PreviewIcon, DownloadIcon } from "@/components/Tables/icons";
-import { Checkbox } from "@/components/FormElements/checkbox";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
-
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useState } from "react";
+import { Checkbox } from "@mui/material";
 
-async function ResultTable() {
-  const data = await getInvoiceTableData();
+type Invoice = {
+  id: string;
+  name: string;
+  amount: number;
+  postcode: string;
+  date: string;
+  status: "Paid" | "Unpaid" | "Pending";
+};
+
+function ResultTable({ dataArray }: { dataArray: any }) {
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  console.log("ResultTable dataArray:", dataArray);
+
+  if (!dataArray || dataArray.length === 0) {
+    return (
+      <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
+        <ShowcaseSection title="No Data Available" className="!p-6.5">
+          <p>No invoices found to display.</p>
+        </ShowcaseSection>
+      </div>
+    );
+  }
+
+  const totalAmount = dataArray.reduce(
+    (sum: any, item: any) => sum + item.amount,
+    0,
+  );
+
+  const handleSelectAll = (isChecked: boolean) => {
+    if (isChecked) {
+      setSelectedRows(dataArray.map((row: Invoice) => row.id));
+    } else {
+      setSelectedRows([]);
+    }
+  };
+
+  const columns: GridColDef[] = [
+    {
+      field: "checkbox",
+      headerName: "",
+      width: 155,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Checkbox
+          checked={selectedRows.includes(params.row.id)}
+          onChange={(e) =>
+            setSelectedRows(
+              e.target.checked
+                ? [...selectedRows, params.row.id]
+                : selectedRows.filter((id) => id !== params.row.id),
+            )
+          }
+          className="text-white"
+        />
+      ),
+      renderHeader: () => (
+        <Checkbox
+          checked={selectedRows.length === dataArray.length}
+          onChange={(e) => handleSelectAll(e.target.checked)}
+          className="text-white"
+        />
+      ),
+    },
+    {
+      field: "name",
+      headerName: "Invoice No.",
+      width: 155,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => <h5 className="text-white">{params.value}</h5>,
+    },
+    {
+      field: "date",
+      headerName: "Invoice Date",
+      width: 150,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <p className="text-white">
+          {dayjs(params.value).format("MMM DD, YYYY")}
+        </p>
+      ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 120,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <div
+          className={cn(
+            "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-white",
+            {
+              "bg-[#219653]/[0.08]": params.value === "Paid",
+              "bg-[#D34053]/[0.08]": params.value === "Unpaid",
+              "bg-[#FFA70B]/[0.08]": params.value === "Pending",
+            },
+          )}
+        >
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      align: "center",
+      headerAlign: "center",
+      renderCell: () => (
+        <div className="flex items-center justify-center gap-x-3.5">
+          <button className="text-white hover:text-white">
+            <span className="sr-only">View Invoice</span>
+            <PreviewIcon className="fill-white" />
+          </button>
+          <button className="text-white hover:text-white">
+            <span className="sr-only">Delete Invoice</span>
+            <TrashIcon className="fill-white" />
+          </button>
+          <button className="text-white hover:text-white">
+            <span className="sr-only">Download Invoice</span>
+            <DownloadIcon className="fill-white" />
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
-      <div>
-          <ShowcaseSection title="Total: $9999999999" className="!p-6.5">
-            <div></div>
-          </ShowcaseSection>
+      <ShowcaseSection
+        title={`Total: $${totalAmount.toLocaleString()}`}
+        className="!p-6.5"
+      >
+        <div></div>
+      </ShowcaseSection>
+      <div style={{ height: "auto", width: "100%" }}>
+        <DataGrid
+          rows={dataArray}
+          columns={columns}
+          disableColumnMenu
+          disableRowSelectionOnClick
+          sx={{
+            "& .MuiDataGrid-cell": {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            "& .MuiDataGrid-columnHeader": {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          }}
+        />
       </div>
-      <Table>
-        <TableHeader>
-          {/*<h5 className="text-dark dark:text-white">Total: </h5>*/}
-          <TableRow className="border-none bg-[#F7F9FC] dark:bg-dark-2 [&>th]:py-4 [&>th]:text-base [&>th]:text-dark [&>th]:dark:text-white">
-            <TableHead className="min-w-[155px] xl:pl-7.5">
-              <Checkbox label={""} withIcon={"check"}/>
-            </TableHead>
-            <TableHead className="min-w-[155px] xl:pl-7.5">
-              Invoice No.
-            </TableHead>
-            <TableHead>Invoice Date</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right xl:pr-7.5">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {data.map((item, index) => (
-
-            <TableRow key={index} className="border-[#eee] dark:border-dark-3">
-
-              <TableCell className="min-w-[155px] xl:pl-7.5">
-                <Checkbox label={""} withIcon={"check"} />
-              </TableCell>
-              <TableCell className="min-w-[155px] xl:pl-7.5">
-                <h5 className="text-dark dark:text-white">{item.name}</h5>
-                {/* <p className="mt-[3px] text-body-sm font-medium">
-                  ${item.price}
-                </p> */}
-              </TableCell>
-
-              <TableCell>
-                <p className="text-dark dark:text-white">
-                  {dayjs(item.date).format("MMM DD, YYYY")}
-                </p>
-              </TableCell>
-
-              <TableCell>
-                <div
-                  className={cn(
-                    "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium",
-                    {
-                      "bg-[#219653]/[0.08] text-[#219653]":
-                        item.status === "Paid",
-                      "bg-[#D34053]/[0.08] text-[#D34053]":
-                        item.status === "Unpaid",
-                      "bg-[#FFA70B]/[0.08] text-[#FFA70B]":
-                        item.status === "Pending",
-                    },
-                  )}
-                >
-                  {item.status}
-                </div>
-              </TableCell>
-
-              <TableCell className="xl:pr-7.5">
-                <div className="flex items-center justify-end gap-x-3.5">
-                  <button className="hover:text-primary">
-                    <span className="sr-only">View Invoice</span>
-                    <PreviewIcon />
-                  </button>
-
-                  <button className="hover:text-primary">
-                    <span className="sr-only">Delete Invoice</span>
-                    <TrashIcon />
-                  </button>
-
-                  <button className="hover:text-primary">
-                    <span className="sr-only">Download Invoice</span>
-                    <DownloadIcon />
-                  </button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
       <Button
-            label="Set paid"
-            variant="green"
-            shape="full"
-            size="default"
-            icon={<CheckIcon />}
-          />
+        label="Set paid"
+        variant="green"
+        shape="full"
+        size="default"
+        icon={<CheckIcon className="fill-white" />}
+      />
     </div>
   );
 }

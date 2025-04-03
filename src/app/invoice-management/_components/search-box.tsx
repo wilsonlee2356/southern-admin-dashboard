@@ -1,105 +1,81 @@
-import { CloseIcon, MessageOutlineIcon, SearchIcon } from "@/assets/icons";
-import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
-import InputGroup from "@/components/FormElements/InputGroup";
-import { TextAreaGroup } from "@/components/FormElements/InputGroup/text-area";
-import { Select } from "@/components/FormElements/select";
+// SearchBox.tsx
+"use client";
+
+import { useState } from "react";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
 import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteOne";
 import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
-import { invoice, invoiceArray } from "@/types/ObjectTypes/InvoiceType";
+import { invoice } from "@/types/ObjectTypes/InvoiceType";
+import { CloseIcon, SearchIcon } from "@/assets/icons";
 
-type invoiceArraySearch = {
-  dataArray: invoice[];
-  updateInvoiceNumber: any;
-  updateClientName: any;
-  updatePostcode: any;
-  updateAmount: any;
-  updatePeriod: any;
-}
+type SearchBoxProps = {
+  dataArray: invoice[]; // Pass data as a prop instead of fetching here
+};
 
-export function SearchBox({ dataArray, updateInvoiceNumber, updateClientName, updatePostcode, updateAmount, updatePeriod } : invoiceArraySearch) {
+export function SearchBox({ dataArray }: SearchBoxProps) {
+  // Manage state locally
+  const [invoiceNumber, setInvoiceNumber] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [postcode, setPostcode] = useState("");
+  const [amount, setAmount] = useState("");
+  const [period, setPeriod] = useState("");
 
-  const invoiceNumArr = dataArray.map((item) => ({key: item.id}));
-  const clientNameArr = dataArray.map((item) => ({key: item.id, name: item.name}));
-  const postcodeArr = dataArray.map((item) => ({key: item.id, name: item.postcode}));
+  const invoiceNumArr = dataArray.map((item) => ({ key: item.id }));
+  const clientNameArr = dataArray.map((item) => ({
+    key: item.id,
+    name: item.name,
+  }));
+  const postcodeArr = dataArray.map((item) => ({
+    key: item.id,
+    name: item.postcode,
+  }));
 
-  // console.log("hihih"+updateInvoiceNumber);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log({ invoiceNumber, clientName, postcode, amount, period });
+    // Add your search logic here
+  };
+
   return (
     <ShowcaseSection title="Invoice Search Form" className="!p-6.5">
-      <form action="#">
+      <form onSubmit={handleSubmit}>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-            <AutoCompleteOne title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceNumArr} stateSetter={updateInvoiceNumber}/>
-            <AutoCompleteOne title="Client Name" placeholder="Enter Client Name" dataArr={clientNameArr} stateSetter={updateClientName}/>
-          {/* <InputGroup
-            label="Invoice No. "
-            type="text"
-            placeholder="Enter invoice number"
-            className="w-full xl:w-5/12" // 40% width on extra-large screens
+          <AutoCompleteOne
+            title="Invoice Number"
+            placeholder="Enter Invoice Number"
+            dataArr={invoiceNumArr}
+            stateSetter={setInvoiceNumber}
           />
-
-          <InputGroup
-            label="Client"
-            type="text"
-            placeholder="Enter client"
-            className="w-full xl:w-4/12" // 20% width on extra-large screens
+          <AutoCompleteOne
+            title="Client Name"
+            placeholder="Enter Client Name"
+            dataArr={clientNameArr}
+            stateSetter={setClientName}
           />
-
-          <InputGroup
-            label="Amount"
-            type="number"
-            placeholder="Enter amount"
-            className="w-full xl:w-3/12" // 40% width on extra-large screens
-          /> */}
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <AutoCompleteOne title="Postcode" placeholder="Enter Postcode" dataArr={postcodeArr} stateSetter={updatePostcode}/>
-          <AutoCompleteOne title="Amount" placeholder="Enter Amount" dataArr={[]} stateSetter={updateAmount}/>
-          {/* <div className="w-full xl:w-6/12">
-            <DatePickerOne label="Invoice Date" />
-          </div>
-          <div className="w-full xl:w-6/12">
-            <DatePickerOne label="Settlement Date" />
-          </div> */}
+          <AutoCompleteOne
+            title="Postcode"
+            placeholder="Enter Postcode"
+            dataArr={postcodeArr}
+            stateSetter={setPostcode}
+          />
+          <AutoCompleteOne
+            title="Amount"
+            placeholder="Enter Amount"
+            dataArr={[]}
+            stateSetter={setAmount}
+          />
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          {/* <AutoCompleteOne title="Period" placeholder="Select Period" dataArr={postcodeArr}/> */}
-          <DropdownList title="Period" placeholder="Select Period" isListOfTime={true} stateSetter={updatePeriod}/>
-          {/* <div className="w-full xl:w-6/12">
-            <DatePickerOne label="Invoice Date" />
-          </div>
-          <div className="w-full xl:w-6/12">
-            <DatePickerOne label="Settlement Date" />
-          </div> */}
+          <DropdownList
+            title="Period"
+            placeholder="Select Period"
+            isListOfTime={true}
+            stateSetter={setPeriod}
+          />
         </div>
-        {/* 
-        <InputGroup
-          label="Email"
-          type="email"
-          placeholder="Enter your email address"
-          className="mb-4.5"
-          required
-        /> */}
-
-        {/* <InputGroup
-          label="Subject"
-          type="text"
-          placeholder="Enter your subject"
-          className="mb-4.5"
-        />
-
-        <Select
-          label="Subject"
-          placeholder="Select your subject"
-          className="mb-4.5"
-          items={[
-            { label: "United States", value: "USA" },
-            { label: "United Kingdom", value: "UK" },
-            { label: "Canada", value: "Canada" },
-          ]}
-        /> */}
-
-        {/* <TextAreaGroup label="Message" placeholder="Type your message" /> */}
         <div className="flex flex-col gap-4 xl:flex-row xl:justify-center">
           <Button
             label="Clear"
@@ -107,8 +83,14 @@ export function SearchBox({ dataArray, updateInvoiceNumber, updateClientName, up
             shape="full"
             size="default"
             icon={<CloseIcon />}
+            onClick={() => {
+              setInvoiceNumber("");
+              setClientName("");
+              setPostcode("");
+              setAmount("");
+              setPeriod("");
+            }}
           />
-
           <Button
             label="Search"
             variant="primary"
