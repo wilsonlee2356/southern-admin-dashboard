@@ -1,4 +1,5 @@
 import React from "react";
+import { Suspense } from "react";
 import { InputBox } from "../client-management/_components/input-box";
 import ResultTable from "./_components/new-input-table";
 import { getInvoiceTableData } from "@/components/Tables/fetch";
@@ -8,9 +9,9 @@ async function ClientManagementPage() {
   const data = await getInvoiceTableData();
   return (
     <>
-      <InputBox dataArray={data}/>
-      <br />
-      <InvoiceInputTable dataArray={data}/>
+        <InputBox dataArray={data}/>
+        <br />
+        <InvoiceInputTable dataArray={data}/>
     </>
   );
 }

@@ -25,7 +25,7 @@ let timeList: ArrayType[] = [
   ];
   
 
- const DropdownList = ({ title, placeholder, isListOfTime, stateSetter } : PropsType) => {
+ const DropdownList = ({ title, placeholder, isListOfTime, stateSetter} : PropsType) => {
   const [age, setAge] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -37,7 +37,7 @@ let timeList: ArrayType[] = [
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
         {title}
       </label>
-      <div className="relative">
+      <div className="relative rounded-[7px] bg-gray font-normal outline-none transition dark:border-dark-3 dark:bg-dark-2">
       <FormControl fullWidth>
         <Select
           displayEmpty
@@ -50,6 +50,7 @@ let timeList: ArrayType[] = [
             return selected;
           }}
           onChange={handleChange}
+          className="text-dark dark:text-white"
         >
           {(timeList).map((item, index) => (
             <MenuItem key={index} value={item.key}>{item.name}</MenuItem>

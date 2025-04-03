@@ -16,12 +16,14 @@ type PropsType = {
   title: string;
   placeholder: string
   dataArr: ArrayType[];
-  stateSetter: any;
+  stateSetter: (val: string) => void;
 }
 
 
 
-const AutoCompleteOne = ({ title, placeholder, dataArr, stateSetter, ...params } : PropsType) => {
+function AutoCompleteOne ({ title, placeholder, dataArr, stateSetter, ...params } : PropsType) {
+
+  
 
   return (
     <div className="w-full">

@@ -1,7 +1,8 @@
 // app/invoices/page.tsx
 import { Suspense } from "react";
 import { getInvoiceTableData } from "@/components/Tables/fetch";
-import { SearchBox } from "./_components/search-box";
+import PageWrapper from "./page_wrapper";
+import SearchBox from "./_components/search-box";
 import ResultTable from "./_components/result-table";
 
 export default async function InvoicesPage() {
@@ -10,8 +11,9 @@ export default async function InvoicesPage() {
   return (
     <div>
       <Suspense fallback={<div>Loading search form...</div>}>
-        <SearchBox dataArray={dataArray} />
-        <ResultTable dataArray={dataArray} />
+        <PageWrapper dataArray={dataArray}/>
+        {/* <SearchBox dataArray={dataArray} />
+        <ResultTable dataArray={dataArray} /> */}
       </Suspense>
     </div>
   );

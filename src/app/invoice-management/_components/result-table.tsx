@@ -50,9 +50,10 @@ function ResultTable({ dataArray }: { dataArray: any }) {
     {
       field: "checkbox",
       headerName: "",
-      width: 155,
+      flex: 1,
       align: "center",
       headerAlign: "center",
+      sortable: false,
       renderCell: (params) => (
         <Checkbox
           checked={selectedRows.includes(params.row.id)}
@@ -63,33 +64,57 @@ function ResultTable({ dataArray }: { dataArray: any }) {
                 : selectedRows.filter((id) => id !== params.row.id),
             )
           }
-          className="text-white"
+          className="text-dark dark:text-white"
         />
       ),
       renderHeader: () => (
         <Checkbox
           checked={selectedRows.length === dataArray.length}
           onChange={(e) => handleSelectAll(e.target.checked)}
-          className="text-white"
+          className="text-dark dark:text-white"
         />
       ),
     },
     {
-      field: "name",
+      field: "id",
       headerName: "Invoice No.",
-      width: 155,
+      flex: 2,
       align: "center",
       headerAlign: "center",
-      renderCell: (params) => <h5 className="text-white">{params.value}</h5>,
+      renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
+    },
+    {
+      field: "name",
+      headerName: "Client name",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
+    },
+    {
+      field: "postcode",
+      headerName: "Postcode",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
     },
     {
       field: "date",
       headerName: "Invoice Date",
-      width: 150,
+      flex: 2,
       align: "center",
       headerAlign: "center",
       renderCell: (params) => (
-        <p className="text-white">
+        <p className="text-dark dark:text-white">
           {dayjs(params.value).format("MMM DD, YYYY")}
         </p>
       ),
@@ -97,13 +122,13 @@ function ResultTable({ dataArray }: { dataArray: any }) {
     {
       field: "status",
       headerName: "Status",
-      width: 120,
+      flex: 2,
       align: "center",
       headerAlign: "center",
       renderCell: (params) => (
         <div
           className={cn(
-            "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-white",
+            "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
             {
               "bg-[#219653]/[0.08]": params.value === "Paid",
               "bg-[#D34053]/[0.08]": params.value === "Unpaid",
@@ -118,22 +143,22 @@ function ResultTable({ dataArray }: { dataArray: any }) {
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      flex: 2.5,
       align: "center",
       headerAlign: "center",
       renderCell: () => (
         <div className="flex items-center justify-center gap-x-3.5">
-          <button className="text-white hover:text-white">
+          <button className="text-dark dark:text-white">
             <span className="sr-only">View Invoice</span>
-            <PreviewIcon className="fill-white" />
+            <PreviewIcon className="fill-dark dark:fill-white" />
           </button>
-          <button className="text-white hover:text-white">
+          <button className="text-dark dark:text-white">
             <span className="sr-only">Delete Invoice</span>
-            <TrashIcon className="fill-white" />
+            <TrashIcon className="fill-dark dark:fill-white" />
           </button>
-          <button className="text-white hover:text-white">
+          <button className="text-dark dark:text-white">
             <span className="sr-only">Download Invoice</span>
-            <DownloadIcon className="fill-white" />
+            <DownloadIcon className="fill-dark dark:fill-white" />
           </button>
         </div>
       ),
@@ -164,7 +189,9 @@ function ResultTable({ dataArray }: { dataArray: any }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              backgroundColor: "dark: black"
             },
+            
           }}
         />
       </div>

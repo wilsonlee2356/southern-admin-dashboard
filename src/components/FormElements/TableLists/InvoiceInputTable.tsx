@@ -172,6 +172,7 @@ const InvoiceInputTable = ({ dataArray } : invoiceArray) => {
             onRowSelectionModelChange={handleSelectionChange}
             checkboxSelection
             disableColumnMenu
+            disableRowSelectionOnClick
         />
         {/* <CheckboxGroup
                className="w-full"
