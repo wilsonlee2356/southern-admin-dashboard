@@ -4,7 +4,9 @@
 import React, { useState } from "react";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
-import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteOne";
+import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
+import AutoCompleteWithoutSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithoutSelectorButton";
+import NumberInput from "@/components/FormElements/InputGroup/NumberInputs/NumberInput";
 import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
 import { invoice } from "@/types/ObjectTypes/InvoiceType";
 import { CloseIcon, SearchIcon } from "@/assets/icons";
@@ -12,21 +14,27 @@ import { CloseIcon, SearchIcon } from "@/assets/icons";
 
 type SearchBoxProps = {
   dataArray: invoice[]; // Pass data as a prop instead of fetching here
+  invoiceNumber: string;
+  clientName: string;
+  postcode: string;
+  amount: string;
+  period: string;
+  // Setters for the state variables
   setInvoiceNumber:any;
   setClientName:any;
   setPostcode:any;
   setAmount:any;
   setPeriod:any;
+  setFilteredData: any;
+  
 };
 
-const SearchBox = ({ dataArray, setInvoiceNumber, setClientName, setPostcode, setAmount, setPeriod }: SearchBoxProps) => {
-  // Manage state locally
-  //const [invoiceNumber, setInvoiceNumber] = useState("");
-  // const [clientName, setClientName] = useState("");
-  // const [postcode, setPostcode] = useState("");
-  // const [amount, setAmount] = useState("");
-  // const [period, setPeriod] = useState("");
-  
+const checkEmpty = (value: string) => {
+    return value === "" || value === undefined || value === null; 
+}
+
+const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, period, setInvoiceNumber, setClientName, setPostcode, setAmount, setPeriod, setFilteredData }: SearchBoxProps) => {
+
   const invoiceNumArr = dataArray.map((item) => ({ key: item.id }));
   const clientNameArr = dataArray.map((item) => ({
     key: item.id,
@@ -37,43 +45,71 @@ const SearchBox = ({ dataArray, setInvoiceNumber, setClientName, setPostcode, se
     name: item.postcode,
   }));
 
+  const handleClear = () => {
+    setFilteredData(dataArray); // Reset to original data
+    setInvoiceNumber("");
+    setClientName("");
+    setPostcode("");
+    setAmount("");
+    setPeriod("");
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // console.log({ 
     //   invoiceNumber, 
     //   clientName, postcode, amount, period });
     // Add your search logic here
+    console.log("UnFiltered data:", dataArray);
+    const selectedData = dataArray.filter((row: any) =>
+      (
+        !checkEmpty(invoiceNumber) && row.id.includes(invoiceNumber) || 
+        !checkEmpty(clientName) && row.name.toLowerCase().includes(clientName.toLowerCase()) || 
+        !checkEmpty(postcode) && row.postcode.toLowerCase().includes(postcode.toLowerCase()) || 
+        !checkEmpty(amount) && row.amount.toLowerCase().includes(amount.toLowerCase()) || 
+        !checkEmpty(period) && row.period.toLowerCase().includes(period.toLowerCase())
+      )
+    );
+    console.log("invoice selected:", dataArray[0].id.includes(invoiceNumber));
+    setFilteredData(selectedData);
+    console.log("Filtered data:", selectedData);
   };
 
   return (
     <ShowcaseSection title="Invoice Search Form" className="!p-6.5">
       <form onSubmit={handleSubmit}>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <AutoCompleteOne
+          <AutoCompleteWithSelectorButton
             title="Invoice Number"
             placeholder="Enter Invoice Number"
             dataArr={invoiceNumArr}
             stateSetter={setInvoiceNumber}
+            input ={invoiceNumber}
           />
-          <AutoCompleteOne
+          <AutoCompleteWithSelectorButton
             title="Client Name"
             placeholder="Enter Client Name"
             dataArr={clientNameArr}
             stateSetter={setClientName}
+            input ={clientName}
           />
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <AutoCompleteOne
+          <AutoCompleteWithSelectorButton
             title="Postcode"
             placeholder="Enter Postcode"
             dataArr={postcodeArr}
             stateSetter={setPostcode}
+            input ={postcode}
           />
-          <AutoCompleteOne
+          {/* <NumberInput/> */}
+          <AutoCompleteWithoutSelectorButton
             title="Amount"
             placeholder="Enter Amount"
             dataArr={[]}
             stateSetter={setAmount}
+            input ={amount}
+            
           />
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
@@ -82,7 +118,7 @@ const SearchBox = ({ dataArray, setInvoiceNumber, setClientName, setPostcode, se
             placeholder="Select Period"
             isListOfTime={true}
             stateSetter={setPeriod}
-            
+            input={period}
           />
         </div>
         <div className="flex flex-col gap-4 xl:flex-row xl:justify-center">
@@ -93,11 +129,7 @@ const SearchBox = ({ dataArray, setInvoiceNumber, setClientName, setPostcode, se
             size="default"
             icon={<CloseIcon />}
             onClick={() => {
-              setInvoiceNumber("");
-              setClientName("");
-              setPostcode("");
-              setAmount("");
-              setPeriod("");
+              handleClear();
             }}
           />
           <Button
@@ -106,6 +138,10 @@ const SearchBox = ({ dataArray, setInvoiceNumber, setClientName, setPostcode, se
             shape="full"
             size="default"
             icon={<SearchIcon />}
+            onClick={() => {
+              handleSubmit;
+            }
+            }
           />
         </div>
       </form>

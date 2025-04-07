@@ -3,7 +3,7 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import { Button } from "@/components/ui-elements/button";
 import { CloseIcon, MessageOutlineIcon, UploadIcon } from "@/assets/icons";
-import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteOne";
+import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import { invoice, invoiceArray } from "@/types/ObjectTypes/InvoiceType";
 
 // const test = [

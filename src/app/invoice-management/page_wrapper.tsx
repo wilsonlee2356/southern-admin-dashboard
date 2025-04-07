@@ -10,27 +10,30 @@ type PageWrapperProps = {
   };
 
 export default function PageWrapper({ dataArray }: PageWrapperProps) {
-
+    const [filteredData, setFilteredData] = useState(dataArray);
     const [invoiceNumber, setInvoiceNumber] = useState("");
     const [clientName, setClientName] = useState("");
     const [postcode, setPostcode] = useState("");
     const [amount, setAmount] = useState("");
     const [period, setPeriod] = useState("");
+    
 
-    useEffect(() => {
-        console.log({ 
-            invoiceNumber, 
-            clientName, postcode, amount, period });
-        return () => {
-        };
-      }, [invoiceNumber, clientName, postcode, amount, period]);
+    // useEffect(() => {
+    //     console.log({ 
+    //         invoiceNumber, 
+    //         clientName, postcode, amount, period });
+    //     return () => {
+    //     };
+    //   }, [invoiceNumber, clientName, postcode, amount, period]);
 
     return (
     <>
-        <SearchBox dataArray={dataArray} setInvoiceNumber={setInvoiceNumber}
+        <SearchBox dataArray={dataArray} invoiceNumber={invoiceNumber} clientName={clientName}
+                    postcode={postcode} amount={amount} period={period}
+                    setInvoiceNumber={setInvoiceNumber}
                     setClientName={setClientName} setPostcode={setPostcode}
-                    setAmount={setAmount} setPeriod={setPeriod}/>
-        <ResultTable dataArray={dataArray} />
+                    setAmount={setAmount} setPeriod={setPeriod} setFilteredData={setFilteredData}/>
+        <ResultTable dataArray={filteredData} />
     </>
     );
 }

@@ -17,14 +17,12 @@ type PropsType = {
   placeholder: string
   dataArr: ArrayType[];
   stateSetter: (val: string) => void;
+  input?: string;
 }
 
 
 
-function AutoCompleteOne ({ title, placeholder, dataArr, stateSetter, ...params } : PropsType) {
-
-  
-
+function AutoCompleteWithoutSelectorButton ({ title, placeholder, dataArr, stateSetter, input, ...params } : PropsType) {
   return (
     <div className="w-full">
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
@@ -67,7 +65,9 @@ function AutoCompleteOne ({ title, placeholder, dataArr, stateSetter, ...params 
           }}
           defaultItems={dataArr}
           placeholder={placeholder}
+          inputValue={input}
           onInputChange={(value) => {stateSetter(value)}}
+          selectorIcon={null}
           {...params}
         >
           {(item) => (
@@ -79,4 +79,4 @@ function AutoCompleteOne ({ title, placeholder, dataArr, stateSetter, ...params 
   );
 };
 
-export default AutoCompleteOne;
+export default AutoCompleteWithoutSelectorButton;

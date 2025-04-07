@@ -3,10 +3,10 @@ import { CheckIcon, TrashIcon } from "@/assets/icons";
 import { PreviewIcon, DownloadIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Checkbox } from "@mui/material";
 
 type Invoice = {
@@ -19,10 +19,15 @@ type Invoice = {
 };
 
 function ResultTable({ dataArray }: { dataArray: any }) {
+
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [totalAmount, setTotalAmount] = useState<number>(dataArray.reduce(
+    (sum: any, item: any) => sum + item.amount,
+    0,
+  ));
 
   console.log("ResultTable dataArray:", dataArray);
-
+  
   if (!dataArray || dataArray.length === 0) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
@@ -33,48 +38,88 @@ function ResultTable({ dataArray }: { dataArray: any }) {
     );
   }
 
-  const totalAmount = dataArray.reduce(
-    (sum: any, item: any) => sum + item.amount,
-    0,
-  );
+  useEffect(() => {
+    const total = dataArray.reduce(
+      (sum: number, item: any) => sum + item.amount,
+      0,
+    );
+    setTotalAmount(total);
+  }, [dataArray]);
 
-  const handleSelectAll = (isChecked: boolean) => {
-    if (isChecked) {
-      setSelectedRows(dataArray.map((row: Invoice) => row.id));
-    } else {
-      setSelectedRows([]);
-    }
+  // const totalAmount = dataArray.reduce(
+  //   (sum: any, item: any) => sum + item.amount,
+  //   0,
+  // );
+
+
+
+  const updateTotalAmount = (selectedRows : GridRowSelectionModel) => {
+      if (selectedRows.length === 0) {
+        setTotalAmount(dataArray.reduce((sum: number, item: any) => sum + item.amount, 0));
+      }else{
+        console.log("Selected rows:", selectedRows);
+        setSelectedRows(selectedRows as string[]);
+        const selectedData = dataArray.filter((row: any) =>
+          selectedRows.includes(row.id),
+        );
+        const total = selectedData.reduce(
+          (sum: number, item: any) => sum + item.amount,
+          0,
+        );
+        setTotalAmount(total);
+      }
   };
+    
+  //   const total = selectedData.reduce(
+  //     (sum: number, item: any) => sum + item.amount,
+  //     0,
+  //   );
+  //   setTotalAmount(total);
+  // };
+
+  // const handleSelectAll = (isChecked: boolean) => {
+  //   if (isChecked) {
+  //     setSelectedRows(dataArray.map((row: Invoice) => row.id));
+  //   } else {
+  //     setSelectedRows([]);
+  //   }
+  // };
 
   const columns: GridColDef[] = [
-    {
-      field: "checkbox",
-      headerName: "",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      sortable: false,
-      renderCell: (params) => (
-        <Checkbox
-          checked={selectedRows.includes(params.row.id)}
-          onChange={(e) =>
-            setSelectedRows(
-              e.target.checked
-                ? [...selectedRows, params.row.id]
-                : selectedRows.filter((id) => id !== params.row.id),
-            )
-          }
-          className="text-dark dark:text-white"
-        />
-      ),
-      renderHeader: () => (
-        <Checkbox
-          checked={selectedRows.length === dataArray.length}
-          onChange={(e) => handleSelectAll(e.target.checked)}
-          className="text-dark dark:text-white"
-        />
-      ),
-    },
+    // {
+    //   field: "checkbox",
+    //   headerName: "",
+    //   flex: 1,
+    //   align: "center",
+    //   headerAlign: "center",
+    //   sortable: false,
+    //   renderCell: (params) => (
+    //     <Checkbox
+    //       checked={selectedRows.includes(params.row.id)}
+    //       onChange={(e) => {
+    //         console.log("Checkbox clicked:", e.target.checked);
+    //         setSelectedRows(
+    //           e.target.checked
+    //             ? [...selectedRows, params.row.id]
+    //             : selectedRows.filter((id) => id !== params.row.id),
+    //         );
+    //         updateTotalAmount();
+    //       }
+          
+            
+    //       }
+    //       className="text-dark dark:text-white"
+    //     />
+    //   ),
+    //   renderHeader: () => (
+    //     <Checkbox
+    //       checked={selectedRows.length === dataArray.length}
+    //       onChange={(e) => {handleSelectAll(e.target.checked);
+    //                         updateTotalAmount();}}
+    //       className="text-dark dark:text-white"
+    //     />
+    //   ),
+    // },
     {
       field: "id",
       headerName: "Invoice No.",
@@ -97,7 +142,7 @@ function ResultTable({ dataArray }: { dataArray: any }) {
       flex: 2,
       align: "center",
       headerAlign: "center",
-      renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
+      renderCell: (params) => <h5 className="text-dark dark:text-white">{"$"+params.value.toLocaleString()}</h5>,
     },
     {
       field: "postcode",
@@ -177,6 +222,10 @@ function ResultTable({ dataArray }: { dataArray: any }) {
         <DataGrid
           rows={dataArray}
           columns={columns}
+          onRowSelectionModelChange={(selectedRows) => { 
+            updateTotalAmount(selectedRows);
+          }}
+          checkboxSelection
           disableColumnMenu
           disableRowSelectionOnClick
           sx={{
@@ -193,6 +242,8 @@ function ResultTable({ dataArray }: { dataArray: any }) {
             },
             
           }}
+
+          
         />
       </div>
       <Button

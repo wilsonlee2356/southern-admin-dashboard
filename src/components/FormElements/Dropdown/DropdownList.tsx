@@ -16,6 +16,7 @@ type PropsType = {
     placeholder: string
     isListOfTime: boolean
     stateSetter: any;
+    input?: string;
 }
 
 let timeList: ArrayType[] = [
@@ -25,11 +26,12 @@ let timeList: ArrayType[] = [
   ];
   
 
- const DropdownList = ({ title, placeholder, isListOfTime, stateSetter} : PropsType) => {
+ const DropdownList = ({ title, placeholder, isListOfTime, stateSetter, input} : PropsType) => {
   const [age, setAge] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
+    input = event.target.value as string;
+    stateSetter(event.target.value as string);
   };
 
   return (
@@ -37,20 +39,19 @@ let timeList: ArrayType[] = [
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
         {title}
       </label>
-      <div className="relative rounded-[7px] bg-gray font-normal outline-none transition dark:border-dark-3 dark:bg-dark-2">
+      <div className="">
       <FormControl fullWidth>
         <Select
           displayEmpty
-          value={age}
+          value={input}
           renderValue={(selected) => {
             if (selected.length === 0) {
               return <em>{placeholder}</em>;
             }
-
             return selected;
           }}
           onChange={handleChange}
-          className="text-dark dark:text-white"
+          className="text-dark dark:text-white relative rounded-[7px] bg-gray font-normal outline-none transition dark:border-dark-3 dark:bg-dark-2"
         >
           {(timeList).map((item, index) => (
             <MenuItem key={index} value={item.key}>{item.name}</MenuItem>

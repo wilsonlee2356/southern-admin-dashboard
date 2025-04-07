@@ -29,9 +29,9 @@ const InvoiceInputTable = ({ dataArray } : invoiceArray) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [totalSum, setTotalSum] = useState(dataArray.reduce((sum, item) => sum + item.amount, 0));
 
-  useEffect(() => {
-    const sum = dataArray.reduce((sum, item) => sum + item.amount, 0);
-  }, [rows]);
+  // useEffect(() => {
+  //   const sum = dataArray.reduce((sum, item) => sum + item.amount, 0);
+  // }, [rows]);
 
   const handleSelectionChange = (rowSelectionModel: GridRowSelectionModel) => {
       if(rowSelectionModel.length > 0) {
