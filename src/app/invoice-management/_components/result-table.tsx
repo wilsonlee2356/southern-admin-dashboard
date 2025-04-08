@@ -19,7 +19,7 @@ type ResultTableProps = {
 
 function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
 
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectedRows, setSelectedRows] = useState<invoice[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(dataArray.reduce(
     (sum: any, item: any) => sum + item.amount,
     0,
@@ -51,19 +51,21 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
 
 
 
-  const updateTotalAmount = (selectedRows : GridRowSelectionModel) => {
-      if (selectedRows.length === 0) {
+  const updateTotalAmount = (checkedRows : GridRowSelectionModel) => {
+      if (checkedRows.length === 0) {
         setTotalAmount(dataArray.reduce((sum: number, item: any) => sum + item.amount, 0));
       }else{
-        console.log("Selected rows:", selectedRows);
-        setSelectedRows(selectedRows as string[]);
-        const selectedData = dataArray.filter((row: any) =>
-          selectedRows.includes(row.id),
+        console.log("Selected rows:", checkedRows);
+        
+        const checkedData = dataArray.filter((row: any) =>
+          checkedRows.includes(row.id)
         );
-        const total = selectedData.reduce(
+        
+        const total = checkedData.reduce(
           (sum: number, item: any) => sum + item.amount,
           0,
         );
+        setSelectedRows(checkedData);
         setTotalAmount(total);
       }
   };
@@ -220,8 +222,8 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
         <DataGrid
           rows={dataArray}
           columns={columns}
-          onRowSelectionModelChange={(selectedRows) => { 
-            updateTotalAmount(selectedRows);
+          onRowSelectionModelChange={(checkedRows) => { 
+            updateTotalAmount(checkedRows);
           }}
           checkboxSelection
           disableColumnMenu
@@ -251,7 +253,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
         size="default"
         icon={<CheckIcon className="fill-white" />}
         onClick={() => {
-          setPopUpOpen(true);
+            setPopUpOpen(true);
         }}
       />
       <InvoicePopUp

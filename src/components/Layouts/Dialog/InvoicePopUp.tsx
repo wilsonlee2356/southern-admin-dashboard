@@ -8,6 +8,7 @@ type InvoicePopUpPropsType = {
     title: string;
     open: boolean;
     onClose: any;
+    
 }
 
 
