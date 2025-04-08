@@ -4,21 +4,20 @@ import { PreviewIcon, DownloadIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import InvoicePopUp from "@/components/Layouts/Dialog/InvoicePopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { Checkbox } from "@mui/material";
+import { invoice } from "@/types/ObjectTypes/InvoiceType";
 
-type Invoice = {
-  id: string;
-  name: string;
-  amount: number;
-  postcode: string;
-  date: string;
-  status: "Paid" | "Unpaid" | "Pending";
+type ResultTableProps = {
+  dataArray: invoice[];
+  popUpOpen: boolean;
+  setPopUpOpen: any;
 };
 
-function ResultTable({ dataArray }: { dataArray: any }) {
+
+function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
 
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(dataArray.reduce(
@@ -26,7 +25,14 @@ function ResultTable({ dataArray }: { dataArray: any }) {
     0,
   ));
 
-  console.log("ResultTable dataArray:", dataArray);
+  useEffect(() => {
+    const total = dataArray.reduce(
+      (sum: number, item: any) => sum + item.amount,
+      0,
+    );
+    setTotalAmount(total);
+    console.log("Data array update:", dataArray);
+  }, [dataArray]);
   
   if (!dataArray || dataArray.length === 0) {
     return (
@@ -37,14 +43,6 @@ function ResultTable({ dataArray }: { dataArray: any }) {
       </div>
     );
   }
-
-  useEffect(() => {
-    const total = dataArray.reduce(
-      (sum: number, item: any) => sum + item.amount,
-      0,
-    );
-    setTotalAmount(total);
-  }, [dataArray]);
 
   // const totalAmount = dataArray.reduce(
   //   (sum: any, item: any) => sum + item.amount,
@@ -218,7 +216,7 @@ function ResultTable({ dataArray }: { dataArray: any }) {
       >
         <div></div>
       </ShowcaseSection>
-      <div style={{ height: "auto", width: "100%" }}>
+      <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
         <DataGrid
           rows={dataArray}
           columns={columns}
@@ -252,8 +250,17 @@ function ResultTable({ dataArray }: { dataArray: any }) {
         shape="full"
         size="default"
         icon={<CheckIcon className="fill-white" />}
+        onClick={() => {
+          setPopUpOpen(true);
+        }}
       />
+      <InvoicePopUp
+      title="Upload cheque or statement"
+      open={popUpOpen}
+      onClose={setPopUpOpen} />
     </div>
+    
+
   );
 }
 

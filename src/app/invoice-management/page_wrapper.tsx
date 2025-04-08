@@ -10,21 +10,18 @@ type PageWrapperProps = {
   };
 
 export default function PageWrapper({ dataArray }: PageWrapperProps) {
-    const [filteredData, setFilteredData] = useState(dataArray);
+    const [filteredData, setFilteredData] = useState<invoice[]>(dataArray);
     const [invoiceNumber, setInvoiceNumber] = useState("");
     const [clientName, setClientName] = useState("");
     const [postcode, setPostcode] = useState("");
     const [amount, setAmount] = useState("");
     const [period, setPeriod] = useState("");
+    const [popUpOpen, setPopUpOpen] = useState(false);
     
 
-    // useEffect(() => {
-    //     console.log({ 
-    //         invoiceNumber, 
-    //         clientName, postcode, amount, period });
-    //     return () => {
-    //     };
-    //   }, [invoiceNumber, clientName, postcode, amount, period]);
+    useEffect(() => {
+        console.log({ filteredData });
+      }, [filteredData]);
 
     return (
     <>
@@ -33,7 +30,7 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
                     setInvoiceNumber={setInvoiceNumber}
                     setClientName={setClientName} setPostcode={setPostcode}
                     setAmount={setAmount} setPeriod={setPeriod} setFilteredData={setFilteredData}/>
-        <ResultTable dataArray={filteredData} />
+        <ResultTable dataArray={filteredData} popUpOpen={popUpOpen} setPopUpOpen={setPopUpOpen}/>
     </>
     );
 }

@@ -37,6 +37,7 @@ type ButtonProps = HTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants> & {
     label: string;
     icon?: React.ReactNode;
+    type?: "button" | "submit" | "reset";
   };
 
 export function Button({
@@ -46,11 +47,13 @@ export function Button({
   shape,
   size,
   className,
+  type = "button",
   ...props
 }: ButtonProps) {
   return (
     <button
       className={buttonVariants({ variant, shape, size, className })}
+      type={type}
       {...props}
     >
       {icon && <span>{icon}</span>}

@@ -46,31 +46,33 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
   }));
 
   const handleClear = () => {
+    console.log("Clearing filters...: ", dataArray);
     setFilteredData(dataArray); // Reset to original data
     setInvoiceNumber("");
     setClientName("");
     setPostcode("");
     setAmount("");
     setPeriod("");
+    
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Handle submit");
     // console.log({ 
     //   invoiceNumber, 
     //   clientName, postcode, amount, period });
     // Add your search logic here
-    console.log("UnFiltered data:", dataArray);
     const selectedData = dataArray.filter((row: any) =>
       (
         !checkEmpty(invoiceNumber) && row.id.includes(invoiceNumber) || 
         !checkEmpty(clientName) && row.name.toLowerCase().includes(clientName.toLowerCase()) || 
         !checkEmpty(postcode) && row.postcode.toLowerCase().includes(postcode.toLowerCase()) || 
-        !checkEmpty(amount) && row.amount.toLowerCase().includes(amount.toLowerCase()) || 
+        !checkEmpty(amount) && /^\d+$/.test(amount) && row.amount.includes===amount || 
         !checkEmpty(period) && row.period.toLowerCase().includes(period.toLowerCase())
       )
     );
-    console.log("invoice selected:", dataArray[0].id.includes(invoiceNumber));
+    //console.log("invoice selected:", dataArray[0].id.includes(invoiceNumber));
     setFilteredData(selectedData);
     console.log("Filtered data:", selectedData);
   };
@@ -133,15 +135,16 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
             }}
           />
           <Button
+            type="submit"
             label="Search"
             variant="primary"
             shape="full"
             size="default"
             icon={<SearchIcon />}
-            onClick={() => {
-              handleSubmit;
-            }
-            }
+            // onClick={() => {
+            //   //handleSubmit;
+            // }
+            // }
           />
         </div>
       </form>
