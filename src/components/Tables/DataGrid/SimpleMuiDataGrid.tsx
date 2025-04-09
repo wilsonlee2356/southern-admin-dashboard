@@ -10,30 +10,13 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { invoice } from "@/types/ObjectTypes/InvoiceType";
 
-type ResultTableProps = {
+type SimpleMuiDataGridProps = {
   dataArray: invoice[];
-  popUpOpen: boolean;
-  setPopUpOpen: any;
 };
 
 
-function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
+function SimpleMuiDataGrid({ dataArray }: SimpleMuiDataGridProps) {
 
-  const [selectedRows, setSelectedRows] = useState<invoice[]>([]);
-  const [totalAmount, setTotalAmount] = useState<number>(dataArray.reduce(
-    (sum: any, item: any) => sum + item.amount,
-    0,
-  ));
-
-  useEffect(() => {
-    const total = dataArray.reduce(
-      (sum: number, item: any) => sum + item.amount,
-      0,
-    );
-    setTotalAmount(total);
-    console.log("Data array update:", dataArray);
-  }, [dataArray]);
-  
   if (!dataArray || dataArray.length === 0) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
@@ -49,26 +32,6 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
   //   0,
   // );
 
-
-
-  const updateTotalAmount = (checkedRows : GridRowSelectionModel) => {
-      if (checkedRows.length === 0) {
-        setTotalAmount(dataArray.reduce((sum: number, item: any) => sum + item.amount, 0));
-      }else{
-        console.log("Selected rows:", checkedRows);
-        
-        const checkedData = dataArray.filter((row: any) =>
-          checkedRows.includes(row.id)
-        );
-        
-        const total = checkedData.reduce(
-          (sum: number, item: any) => sum + item.amount,
-          0,
-        );
-        setSelectedRows(checkedData);
-        setTotalAmount(total);
-      }
-  };
     
   //   const total = selectedData.reduce(
   //     (sum: number, item: any) => sum + item.amount,
@@ -185,49 +148,16 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
         </div>
       ),
     },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 2.5,
-      align: "center",
-      headerAlign: "center",
-      renderCell: () => (
-        <div className="flex items-center justify-center gap-x-3.5">
-          <button className="text-dark dark:text-white">
-            <span className="sr-only">View Invoice</span>
-            <PreviewIcon className="fill-dark dark:fill-white" />
-          </button>
-          <button className="text-dark dark:text-white">
-            <span className="sr-only">Delete Invoice</span>
-            <TrashIcon className="fill-dark dark:fill-white" />
-          </button>
-          <button className="text-dark dark:text-white">
-            <span className="sr-only">Download Invoice</span>
-            <DownloadIcon className="fill-dark dark:fill-white" />
-          </button>
-        </div>
-      ),
-    },
   ];
 
   return (
-    <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
-      <ShowcaseSection
-        title={`Total: $${totalAmount.toLocaleString()}`}
-        className="!p-6.5"
-      >
-        <div></div>
-      </ShowcaseSection>
-      <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
+      <div style={{ height: "auto", width: "100%" }}>
         <DataGrid
           rows={dataArray}
           columns={columns}
-          onRowSelectionModelChange={(checkedRows) => { 
-            updateTotalAmount(checkedRows);
-          }}
-          checkboxSelection
           disableColumnMenu
           disableRowSelectionOnClick
+          hideFooter
           sx={{
             "& .MuiDataGrid-cell": {
               display: "flex",
@@ -246,25 +176,9 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
           
         />
       </div>
-      <Button
-        label="Set paid"
-        variant="green"
-        shape="full"
-        size="default"
-        icon={<CheckIcon className="fill-white" />}
-        onClick={() => {
-            setPopUpOpen(true);
-        }}
-      />
-      <InvoicePopUp
-      title="Upload cheque or statement"
-      open={popUpOpen}
-      onClose={setPopUpOpen}
-      dataArray={selectedRows} />
-    </div>
     
 
   );
 }
 
-export default ResultTable;
+export default SimpleMuiDataGrid;
