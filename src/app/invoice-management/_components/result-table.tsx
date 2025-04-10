@@ -1,10 +1,11 @@
 "use client";
 import { CheckIcon, TrashIcon } from "@/assets/icons";
-import { PreviewIcon, DownloadIcon } from "@/components/Tables/icons";
+import { PreviewIcon, DownloadIcon, EditIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
-import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowId, GridRowParams, GridRowSelectionModel } from "@mui/x-data-grid";
 import InvoicePopUp from "@/components/Layouts/Dialog/InvoicePopUp";
+import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -14,16 +15,21 @@ type ResultTableProps = {
   dataArray: invoice[];
   popUpOpen: boolean;
   setPopUpOpen: any;
+  popUpOpenEdit: boolean;
+  setPopUpOpenEdit: any;
 };
 
 
-function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
+function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPopUpOpenEdit }: ResultTableProps) {
 
   const [selectedRows, setSelectedRows] = useState<invoice[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(dataArray.reduce(
     (sum: any, item: any) => sum + item.amount,
     0,
   ));
+  const [canSetPay, setCanSetPay] = useState<boolean>(false);
+
+  const [editingRow, setEditingRow] = useState<invoice | null>(null);
 
   useEffect(() => {
     const total = dataArray.reduce(
@@ -49,11 +55,17 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
   //   0,
   // );
 
-
+  const getInvoiceById = (id: GridRowId) => {
+    const idString = id.toString();
+    const invoice = dataArray.find((item) => item.id === idString);
+    return invoice || null;
+  }
 
   const updateTotalAmount = (checkedRows : GridRowSelectionModel) => {
       if (checkedRows.length === 0) {
+        setSelectedRows([]);
         setTotalAmount(dataArray.reduce((sum: number, item: any) => sum + item.amount, 0));
+        setCanSetPay(false);
       }else{
         console.log("Selected rows:", checkedRows);
         
@@ -65,6 +77,13 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
           (sum: number, item: any) => sum + item.amount,
           0,
         );
+
+        const unPaidInvoices = checkedData.filter((row: any) => row.status === "Unpaid");
+        if (unPaidInvoices.length === 0 || checkedData.length > unPaidInvoices.length) {
+          setCanSetPay(false);
+        } else {
+          setCanSetPay(true);
+        }
         setSelectedRows(checkedData);
         setTotalAmount(total);
       }
@@ -191,7 +210,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
       flex: 2.5,
       align: "center",
       headerAlign: "center",
-      renderCell: () => (
+      renderCell: (params) => (
         <div className="flex items-center justify-center gap-x-3.5">
           <button className="text-dark dark:text-white">
             <span className="sr-only">View Invoice</span>
@@ -201,9 +220,14 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
             <span className="sr-only">Delete Invoice</span>
             <TrashIcon className="fill-dark dark:fill-white" />
           </button>
-          <button className="text-dark dark:text-white">
-            <span className="sr-only">Download Invoice</span>
-            <DownloadIcon className="fill-dark dark:fill-white" />
+          <button className="text-dark dark:text-white" onClick={() => 
+                                                { const invoice = getInvoiceById(params.id);
+                                                  setEditingRow(invoice);
+                                                  setPopUpOpenEdit(true);
+
+                                                }}>
+            <span className="sr-only">Edit Invoice</span>
+            <EditIcon className="fill-dark dark:fill-white" />
           </button>
         </div>
       ),
@@ -222,6 +246,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
         <DataGrid
           rows={dataArray}
           columns={columns}
+          // isRowSelectable={(params: GridRowParams) => params.row.status === "Unpaid"}
           onRowSelectionModelChange={(checkedRows) => { 
             updateTotalAmount(checkedRows);
           }}
@@ -252,15 +277,22 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen }: ResultTableProps) {
         shape="full"
         size="default"
         icon={<CheckIcon className="fill-white" />}
+        disabled={!canSetPay}
         onClick={() => {
             setPopUpOpen(true);
         }}
       />
       <InvoicePopUp
-      title="Upload cheque or statement"
-      open={popUpOpen}
-      onClose={setPopUpOpen}
-      dataArray={selectedRows} />
+        title="Upload cheque or statement"
+        open={popUpOpen}
+        onClose={setPopUpOpen}
+        dataArray={selectedRows} />
+        
+      <InvoiceEditPopUp
+        title="Edit invoice"
+        open={popUpOpenEdit}
+        onClose={setPopUpOpenEdit}
+        invoiceInfo={editingRow} />
     </div>
     
 

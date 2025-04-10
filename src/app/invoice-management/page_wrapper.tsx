@@ -17,6 +17,7 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
     const [amount, setAmount] = useState("");
     const [period, setPeriod] = useState("");
     const [popUpOpen, setPopUpOpen] = useState(false);
+    const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
     
 
     useEffect(() => {
@@ -30,7 +31,8 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
                     setInvoiceNumber={setInvoiceNumber}
                     setClientName={setClientName} setPostcode={setPostcode}
                     setAmount={setAmount} setPeriod={setPeriod} setFilteredData={setFilteredData}/>
-        <ResultTable dataArray={filteredData} popUpOpen={popUpOpen} setPopUpOpen={setPopUpOpen}/>
+        <ResultTable dataArray={filteredData} popUpOpen={popUpOpen} setPopUpOpen={setPopUpOpen}
+                     popUpOpenEdit={popUpOpenEdit} setPopUpOpenEdit={setPopUpOpenEdit}/>
     </>
     );
 }

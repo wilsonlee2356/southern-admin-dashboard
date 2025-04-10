@@ -7,6 +7,8 @@ import { Dialog, DialogContent, DialogContentText, DialogProps, DialogTitle, Ico
 import CloseIcon from "@mui/icons-material/Close";
 import UploadButton from "@/components/ui-elements/upload-button";
 import SimpleMuiDataGrid from "@/components/Tables/DataGrid/SimpleMuiDataGrid";
+import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
+import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 
 type InvoicePopUpPropsType = {
     title: string;
@@ -20,6 +22,10 @@ type InvoicePopUpPropsType = {
 
 function InvoicePopUp ({ title, open, onClose, dataArray }: InvoicePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+    const [chequeFile, setChequeFile] = React.useState<File | null>(null);
+
+    const [statementFile, setStatementFile] = React.useState<File | null>(null);
+
 
     const closePopUp = ()=> {
         onClose(false);
@@ -43,25 +49,27 @@ function InvoicePopUp ({ title, open, onClose, dataArray }: InvoicePopUpPropsTyp
             scroll={scroll}>
             <DialogTitle>{title} <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
-                <div style={{height:'500px', width:'500px'}}>
+                <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-center content-stretch">
+                    <DatePickerOne label="Settlement Date" />
                     <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                         <DialogContentText id="alert-dialog-description">
-                            <h1>Cheque Upload</h1>
+                            <span>Cheque Upload</span>
                         </DialogContentText>
-                        <UploadButton/>
-                        
+                        <UploadButton width={300} setFile={setChequeFile}/>
+                        <FilePreviewWindow source={undefined} width={300} height={300}/>
                     </div>
                     <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                         <DialogContentText id="alert-dialog-description">
-                            <h1>Statement Upload</h1>
+                            <span>Statement Upload</span>
                         </DialogContentText>
-                        <UploadButton/>
+                        <UploadButton width={300} setFile={setStatementFile}/>
+                        <FilePreviewWindow source={undefined} width={300} height={300}/>
                     </div>
                 </div>
             </DialogContent>
             <DialogContent dividers={scroll === 'paper'}>
                 <DialogContentText id="alert-dialog-description">
-                    <h1 className="text-dark">Selected invoices</h1>
+                    <span className="text-dark">Selected invoices</span>
                 </DialogContentText>
                 <DialogContent style={{width: '100%'}} ref={descriptionElementRef} tabIndex={-1}>
                     <SimpleMuiDataGrid dataArray={dataArray} />

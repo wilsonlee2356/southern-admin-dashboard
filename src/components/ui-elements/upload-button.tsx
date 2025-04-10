@@ -4,7 +4,8 @@ import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 type UploadButtonProps = {
-    
+    width?: number;
+    setFile: any;
 };
 
 const VisuallyHiddenInput = styled('input')({
@@ -19,19 +20,25 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-export default function InputFileUpload() {
+export default function InputFileUpload({ width, setFile }: UploadButtonProps) {
   return (
     <Button
       component="label"
       role={undefined}
       variant="contained"
       tabIndex={-1}
+      sx={{
+        width: width ? `${width}px` : 'auto',
+        height: '40px',
+      }}
       startIcon={<CloudUploadIcon />}
     >
       Upload files
       <VisuallyHiddenInput
         type="file"
-        onChange={(event) => console.log(event.target.files)}
+        // onChange={(event) => {
+        //       setFile(event.target.files); 
+        //       console.log(event.target.files);}}
         multiple
       />
     </Button>
