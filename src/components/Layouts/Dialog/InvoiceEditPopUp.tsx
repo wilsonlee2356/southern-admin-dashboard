@@ -105,7 +105,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                             <div className="w-full xl:w-6/12">
-                                <DatePickerOne label="Invoice Date" />
+                                <DatePickerOne label="Invoice Date" value={invoiceInfo?.date}/>
                             </div>
                             <div className="w-full xl:w-6/12">
                                 <DatePickerOne label="Settlement Date" />
