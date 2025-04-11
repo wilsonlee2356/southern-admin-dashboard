@@ -17,6 +17,7 @@
     "@mui/styled-engine-sc": "^6.4.6",
     "@mui/x-data-grid": "^7.28.0",
     "apexcharts": "^3.45.2",
+    "axios": "^1.8.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",

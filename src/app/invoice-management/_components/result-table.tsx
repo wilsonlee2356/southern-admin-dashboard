@@ -9,10 +9,10 @@ import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { invoice } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 
 type ResultTableProps = {
-  dataArray: invoice[];
+  dataArray: invoiceData[];
   popUpOpen: boolean;
   setPopUpOpen: any;
   popUpOpenEdit: boolean;
@@ -22,14 +22,14 @@ type ResultTableProps = {
 
 function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPopUpOpenEdit }: ResultTableProps) {
 
-  const [selectedRows, setSelectedRows] = useState<invoice[]>([]);
+  const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(dataArray.reduce(
     (sum: any, item: any) => sum + item.amount,
     0,
   ));
   const [canSetPay, setCanSetPay] = useState<boolean>(false);
 
-  const [editingRow, setEditingRow] = useState<invoice | null>(null);
+  const [editingRow, setEditingRow] = useState<invoiceData | null>(null);
 
   useEffect(() => {
     const total = dataArray.reduce(
@@ -57,7 +57,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
 
   const getInvoiceById = (id: GridRowId) => {
     const idString = id.toString();
-    const invoice = dataArray.find((item) => item.id === idString);
+    const invoice = dataArray.find((item) => item.invoiceNum === idString);
     return invoice || null;
   }
 

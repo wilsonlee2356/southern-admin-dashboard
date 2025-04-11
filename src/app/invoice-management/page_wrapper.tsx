@@ -3,14 +3,14 @@ import { Suspense, useState, useEffect } from "react";
 import { getInvoiceTableData } from "@/components/Tables/fetch";
 import SearchBox from "./_components/search-box";
 import ResultTable from "./_components/result-table";
-import { invoice } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 
 type PageWrapperProps = {
-    dataArray: invoice[]; // Pass data as a prop instead of fetching here
+    dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
   };
 
 export default function PageWrapper({ dataArray }: PageWrapperProps) {
-    const [filteredData, setFilteredData] = useState<invoice[]>(dataArray);
+    const [filteredData, setFilteredData] = useState<invoiceData[]>(dataArray);
     const [invoiceNumber, setInvoiceNumber] = useState("");
     const [clientName, setClientName] = useState("");
     const [postcode, setPostcode] = useState("");

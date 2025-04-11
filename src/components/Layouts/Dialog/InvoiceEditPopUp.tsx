@@ -10,7 +10,7 @@ import UploadButton from "@/components/ui-elements/upload-button";
 import InputGroup from "@/components/FormElements/InputGroup";
 import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
-import { invoice } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -26,7 +26,7 @@ type InvoiceEditPopUpPropsType = {
     title: string;
     open: boolean;
     onClose: any;
-    invoiceInfo: invoice | null;
+    invoiceInfo: invoiceData | null;
 }
 
 
@@ -64,7 +64,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     label="Invoice No. "
                                     type="text"
                                     placeholder="Enter invoice number"
-                                    value={invoiceInfo?.id}
+                                    value={invoiceInfo?.invoiceNum}
                                     handleChange={() => {
                                     }}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
@@ -74,7 +74,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     label="Postcode"
                                     type="text"
                                     placeholder="Enter postcode"
-                                    value={invoiceInfo?.postcode}
+                                    value={invoiceInfo?.post.postcode}
                                     handleChange={() => {
                                     }}
                                     className="w-full xl:w-2/12" // 20% width on extra-large screens
@@ -87,7 +87,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     label="Client Name"
                                     type="text"
                                     placeholder="Enter invoice number"
-                                    value={invoiceInfo?.name}
+                                    value={invoiceInfo?.post.clientId.toString()}
                                     handleChange={() => {
                                     }}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
@@ -105,7 +105,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                             <div className="w-full xl:w-6/12">
-                                <DatePickerOne label="Invoice Date" value={invoiceInfo?.date}/>
+                                <DatePickerOne label="Invoice Date" value={invoiceInfo?.invoiceDate}/>
                             </div>
                             <div className="w-full xl:w-6/12">
                                 <DatePickerOne label="Settlement Date" />

@@ -8,12 +8,13 @@ import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoComple
 import AutoCompleteWithoutSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithoutSelectorButton";
 import NumberInput from "@/components/FormElements/InputGroup/NumberInputs/NumberInput";
 import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
-import { invoice } from "@/types/ObjectTypes/InvoiceType";
+import { invoice, invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CloseIcon, SearchIcon } from "@/assets/icons";
+import { GET_INVOICE_BY_ID } from "@/app/api/invoice";
 
 
 type SearchBoxProps = {
-  dataArray: invoice[]; // Pass data as a prop instead of fetching here
+  dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
   invoiceNumber: string;
   clientName: string;
   postcode: string;
@@ -35,14 +36,14 @@ const checkEmpty = (value: string) => {
 
 const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, period, setInvoiceNumber, setClientName, setPostcode, setAmount, setPeriod, setFilteredData }: SearchBoxProps) => {
 
-  const invoiceNumArr = dataArray.map((item) => ({ key: item.id }));
+  const invoiceNumArr = dataArray.map((item) => ({ key: item.invoiceId.toString() }));
   const clientNameArr = dataArray.map((item) => ({
-    key: item.id,
-    name: item.name,
+    key: item.invoiceId.toString(),
+    name: item.post.client.clientName,
   }));
   const postcodeArr = dataArray.map((item) => ({
-    key: item.id,
-    name: item.postcode,
+    key: item.invoiceId.toString(),
+    name: item.post.postcode,
   }));
 
   const handleClear = () => {
@@ -63,6 +64,15 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
     //   invoiceNumber, 
     //   clientName, postcode, amount, period });
     // Add your search logic here
+
+    const searchResult = GET_INVOICE_BY_ID(invoiceNumber);
+    searchResult.then((result) => {
+      console.log("Search result:", result);
+    }).catch((error) => {
+      console.error("Error fetching invoice:", error);
+    });
+    //console.log("Search result:", searchResult);
+
     const selectedData = dataArray.filter((row: any) =>
       (
         !checkEmpty(invoiceNumber) && row.id.includes(invoiceNumber) || 
@@ -104,7 +114,7 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
             stateSetter={setPostcode}
             input ={postcode}
           />
-          {/* <NumberInput/> */}
+          {/* <NumberInput/>
           <AutoCompleteWithoutSelectorButton
             title="Amount"
             placeholder="Enter Amount"
@@ -112,9 +122,7 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
             stateSetter={setAmount}
             input ={amount}
             
-          />
-        </div>
-        <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
+          /> */}
           <DropdownList
             title="Period"
             placeholder="Select Period"
@@ -123,6 +131,9 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
             input={period}
           />
         </div>
+        {/* <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
+          
+        </div> */}
         <div className="flex flex-col gap-4 xl:flex-row xl:justify-center">
           <Button
             label="Clear"
