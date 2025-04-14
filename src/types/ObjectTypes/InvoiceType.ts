@@ -36,7 +36,6 @@ export type invoiceData = {
   post: post;
   invoiceDate: string;
   amount: number;
-  order: number;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
   chequeId: number | null | undefined;
