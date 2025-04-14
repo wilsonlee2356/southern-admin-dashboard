@@ -9,7 +9,7 @@ import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import UploadButton from "@/components/ui-elements/upload-button";
 import InputGroup from "@/components/FormElements/InputGroup";
 import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
-import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
+import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 
 // type InvoiceInfoType = {
@@ -33,9 +33,11 @@ type InvoiceEditPopUpPropsType = {
 
 function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
-    const [chequeFile, setChequeFile] = React.useState<File | null>(null);
-
-    const [statementFile, setStatementFile] = React.useState<File | null>(null);
+    const [invoiceNum, setInvoiceNum] = React.useState<string | undefined | null>(invoiceInfo?.invoiceNum);
+    const [postcode, setPostcode] = React.useState<string | undefined | null>(invoiceInfo?.post.postcode);
+    const [amount, setAmount] = React.useState<number | undefined | null>(invoiceInfo?.amount);
+    const [clientName, setClientName] = React.useState<string | undefined | null>(invoiceInfo?.post.client.clientName);
+    const [invoiceDate, setInvoiceDate] = React.useState<string | undefined | null>(invoiceInfo?.invoiceDate);
 
 
     const closePopUp = ()=> {
@@ -46,7 +48,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
         e.preventDefault();
         console.log("Handle submit");
         
-      };
+    };
     return (
     <>
         <Dialog 
@@ -87,7 +89,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     label="Client Name"
                                     type="text"
                                     placeholder="Enter invoice number"
-                                    value={invoiceInfo?.post.clientId.toString()}
+                                    value={invoiceInfo?.post.client.clientId.toString()}
                                     handleChange={() => {
                                     }}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
@@ -105,27 +107,34 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                             <div className="w-full xl:w-6/12">
-                                <DatePickerOne label="Invoice Date" value={invoiceInfo?.invoiceDate}/>
+                                <DatePickerThree label="Invoice Date" value={invoiceInfo?.invoiceDate}/>
                             </div>
-                            <div className="w-full xl:w-6/12">
-                                <DatePickerOne label="Settlement Date" />
+                            {
+                                invoiceInfo?.settlementDate ? (
+                                    <div className="w-full xl:w-6/12">
+                                        <DatePickerThree label="Settlement Date" value={invoiceInfo?.settlementDate}/>
+                                    </div>
+                                ) : null
+                            }
+                            
                             </div>
-                            </div>
+                            <Button
+                                label="Change"
+                                variant="green"
+                                shape="full"
+                                size="default"
+                                type="submit"
+                                icon={<CheckIcon className="fill-white" />}
+                                onClick={() => {
+                                    
+                                }}
+                            />
                         </form>
                     </ShowcaseSection>
                 </div>
             </DialogContent>
             <DialogContent>
-                <Button
-                    label="Change"
-                    variant="green"
-                    shape="full"
-                    size="default"
-                    icon={<CheckIcon className="fill-white" />}
-                    onClick={() => {
-                        
-                    }}
-                />
+                
             </DialogContent>
         </Dialog>
     </>

@@ -56,8 +56,8 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
   // );
 
   const getInvoiceById = (id: GridRowId) => {
-    const idString = id.toString();
-    const invoice = dataArray.find((item) => item.invoiceNum === idString);
+    //const idString = id.toString();
+    const invoice = dataArray.find((item) => item.invoiceId === id);
     return invoice || null;
   }
 
@@ -70,7 +70,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
         console.log("Selected rows:", checkedRows);
         
         const checkedData = dataArray.filter((row: any) =>
-          checkedRows.includes(row.id)
+          checkedRows.includes(row.invoiceId),
         );
         
         const total = checkedData.reduce(
@@ -140,7 +140,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
     //   ),
     // },
     {
-      field: "id",
+      field: "invoiceNum",
       headerName: "Invoice No.",
       flex: 2,
       align: "center",
@@ -148,11 +148,12 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
       renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
     },
     {
-      field: "name",
+      field: "clienName",
       headerName: "Client name",
       flex: 2,
       align: "center",
       headerAlign: "center",
+      valueGetter: (value, row) => row.post.client.clientName,
       renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
     },
     {
@@ -164,15 +165,16 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
       renderCell: (params) => <h5 className="text-dark dark:text-white">{"$"+params.value.toLocaleString()}</h5>,
     },
     {
-      field: "postcode",
+      field: "postCode",
       headerName: "Postcode",
       flex: 2,
       align: "center",
       headerAlign: "center",
+      valueGetter: (value, row) => row.post.postcode,
       renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
     },
     {
-      field: "date",
+      field: "createDate",
       headerName: "Invoice Date",
       flex: 2,
       align: "center",
@@ -184,7 +186,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
       ),
     },
     {
-      field: "status",
+      field: "settlementDate",
       headerName: "Status",
       flex: 2,
       align: "center",
@@ -194,13 +196,13 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
           className={cn(
             "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
             {
-              "bg-[#219653]/[0.08]": params.value === "Paid",
-              "bg-[#D34053]/[0.08]": params.value === "Unpaid",
-              "bg-[#FFA70B]/[0.08]": params.value === "Pending",
+              "bg-[#219653]/[0.08]": params.value !== null,
+              "bg-[#D34053]/[0.08]": params.value === null,
+              //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
             },
           )}
         >
-          {params.value}
+          {params.value!== null ? "Paid" : "Unpaid"}
         </div>
       ),
     },
@@ -246,6 +248,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
         <DataGrid
           rows={dataArray}
           columns={columns}
+          getRowId={(row) => row.invoiceId}
           // isRowSelectable={(params: GridRowParams) => params.row.status === "Unpaid"}
           onRowSelectionModelChange={(checkedRows) => { 
             updateTotalAmount(checkedRows);
