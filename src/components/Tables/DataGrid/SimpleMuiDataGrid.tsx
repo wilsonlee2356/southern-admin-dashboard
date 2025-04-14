@@ -84,70 +84,72 @@ function SimpleMuiDataGrid({ dataArray }: SimpleMuiDataGridProps) {
     //   ),
     // },
     {
-      field: "id",
-      headerName: "Invoice No.",
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
-    },
-    {
-      field: "name",
-      headerName: "Client name",
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
-    },
-    {
-      field: "amount",
-      headerName: "Amount",
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => <h5 className="text-dark dark:text-white">{"$"+params.value.toLocaleString()}</h5>,
-    },
-    {
-      field: "postcode",
-      headerName: "Postcode",
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
-    },
-    {
-      field: "date",
-      headerName: "Invoice Date",
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <p className="text-dark dark:text-white">
-          {dayjs(params.value).format("MMM DD, YYYY")}
-        </p>
-      ),
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <div
-          className={cn(
-            "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
-            {
-              "bg-[#219653]/[0.08]": params.value === "Paid",
-              "bg-[#D34053]/[0.08]": params.value === "Unpaid",
-              "bg-[#FFA70B]/[0.08]": params.value === "Pending",
-            },
-          )}
-        >
-          {params.value}
-        </div>
-      ),
-    },
+          field: "invoiceNum",
+          headerName: "Invoice No.",
+          flex: 2,
+          align: "center",
+          headerAlign: "center",
+          renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
+        },
+        {
+          field: "clienName",
+          headerName: "Client name",
+          flex: 2,
+          align: "center",
+          headerAlign: "center",
+          valueGetter: (value, row) => row.post.client.clientName,
+          renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
+        },
+        {
+          field: "amount",
+          headerName: "Amount",
+          flex: 2,
+          align: "center",
+          headerAlign: "center",
+          renderCell: (params) => <h5 className="text-dark dark:text-white">{"$"+params.value.toLocaleString()}</h5>,
+        },
+        {
+          field: "postCode",
+          headerName: "Postcode",
+          flex: 2,
+          align: "center",
+          headerAlign: "center",
+          valueGetter: (value, row) => row.post.postcode,
+          renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
+        },
+        {
+          field: "createDate",
+          headerName: "Invoice Date",
+          flex: 2,
+          align: "center",
+          headerAlign: "center",
+          renderCell: (params) => (
+            <p className="text-dark dark:text-white">
+              {dayjs(params.value).format("MMM DD, YYYY")}
+            </p>
+          ),
+        },
+        {
+          field: "settlementDate",
+          headerName: "Status",
+          flex: 2,
+          align: "center",
+          headerAlign: "center",
+          renderCell: (params) => (
+            <div
+              className={cn(
+                "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
+                {
+                  "bg-[#219653]/[0.08]": params.value !== null,
+                  "bg-[#D34053]/[0.08]": params.value === null,
+                  //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
+                },
+              )}
+            >
+              {params.value!== null ? "Paid" : "Unpaid"}
+            </div>
+          ),
+        },
   ];
 
   return (
@@ -155,6 +157,7 @@ function SimpleMuiDataGrid({ dataArray }: SimpleMuiDataGridProps) {
         <DataGrid
           rows={dataArray}
           columns={columns}
+          getRowId={(row) => row.invoiceId}
           disableColumnMenu
           disableRowSelectionOnClick
           hideFooter

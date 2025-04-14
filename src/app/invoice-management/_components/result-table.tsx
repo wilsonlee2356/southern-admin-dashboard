@@ -78,7 +78,7 @@ function ResultTable({ dataArray, popUpOpen, setPopUpOpen, popUpOpenEdit, setPop
           0,
         );
 
-        const unPaidInvoices = checkedData.filter((row: any) => row.status === "Unpaid");
+        const unPaidInvoices = checkedData.filter((row: any) => row.settlementDate === null);
         if (unPaidInvoices.length === 0 || checkedData.length > unPaidInvoices.length) {
           setCanSetPay(false);
         } else {
