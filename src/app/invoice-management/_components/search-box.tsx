@@ -30,13 +30,13 @@ type SearchBoxProps = {
   
 };
 
-const checkEmpty = (value: string) => {
-    return value === "" || value === undefined || value === null; 
-}
+
 
 const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, period, setInvoiceNumber, setClientName, setPostcode, setAmount, setPeriod, setFilteredData }: SearchBoxProps) => {
 
-  const invoiceNumArr = dataArray.map((item) => ({ key: item.invoiceId.toString() }));
+  const invoiceNumArr = dataArray.map((item) => ({ 
+    key: item.invoiceId.toString(),
+    name: item.invoiceNum.toString(), }));
   const clientNameArr = dataArray.map((item) => ({
     key: item.invoiceId.toString(),
     name: item.post.client.clientName,
@@ -57,6 +57,13 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
     
   };
 
+  const checkDateWithinMonths = (date: Date, months: number) => {
+    const currentDate = new Date();
+    const targetDate = new Date(date);
+    targetDate.setMonth(targetDate.getMonth() + months);
+    return currentDate <= targetDate;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Handle submit");
@@ -65,27 +72,36 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
     //   clientName, postcode, amount, period });
     // Add your search logic here
 
-    const searchResult = GET_INVOICE_BY_ID(invoiceNumber);
-    searchResult.then((result) => {
-      console.log("Search result:", result);
-    }).catch((error) => {
-      console.error("Error fetching invoice:", error);
-    });
+    // const searchResult = GET_INVOICE_BY_ID(invoiceNumber);
+    // searchResult.then((result) => {
+    //   console.log("Search result:", result);
+    // }).catch((error) => {
+    //   console.error("Error fetching invoice:", error);
+    // });
     //console.log("Search result:", searchResult);
+    const currentDate = new Date();
+    //console.log("Date compare:", );
+
+    const checkEmpty = (value: string) => {
+      return value === "" || value === undefined || value === null; 
+    };
 
     const selectedData = dataArray.filter((row: any) =>
       (
-        !checkEmpty(invoiceNumber) && row.id.includes(invoiceNumber) || 
-        !checkEmpty(clientName) && row.name.toLowerCase().includes(clientName.toLowerCase()) || 
-        !checkEmpty(postcode) && row.postcode.toLowerCase().includes(postcode.toLowerCase()) || 
+        !checkEmpty(invoiceNumber) && row.invoiceNum.includes(invoiceNumber) || 
+        !checkEmpty(clientName) && row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) || 
+        !checkEmpty(postcode) && row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) || 
         !checkEmpty(amount) && /^\d+$/.test(amount) && row.amount.includes===amount || 
-        !checkEmpty(period) && row.period.toLowerCase().includes(period.toLowerCase())
+        !checkEmpty(period) && checkDateWithinMonths(row.invoiceDate, parseInt(period))
       )
     );
     //console.log("invoice selected:", dataArray[0].id.includes(invoiceNumber));
     setFilteredData(selectedData);
     console.log("Filtered data:", selectedData);
   };
+
+  
+
 
   return (
     <ShowcaseSection title="Invoice Search Form" className="!p-6.5">

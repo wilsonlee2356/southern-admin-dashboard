@@ -34,13 +34,13 @@ export type invoiceData = {
   invoiceId: number;
   invoiceNum: string;
   post: post;
-  invoiceDate: string;
+  invoiceDate: Date;
   amount: number;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
   chequeId: number | null | undefined;
-  createDate: string;
-  updateDate: string;
+  createDate: Date;
+  updateDate: Date;
 }
 
 
