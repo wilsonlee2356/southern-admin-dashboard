@@ -26,20 +26,21 @@ type InvoiceEditPopUpPropsType = {
     title: string;
     open: boolean;
     onClose: any;
-    invoiceInfo: invoiceData | null;
+    invoiceInfo: invoiceData;
 }
 
 
 
 function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
-    const [invoiceNum, setInvoiceNum] = React.useState<string | undefined | null>(invoiceInfo?.invoiceNum);
-    const [postcode, setPostcode] = React.useState<string | undefined | null>(invoiceInfo?.post.postcode);
-    const [amount, setAmount] = React.useState<number | undefined | null>(invoiceInfo?.amount);
-    const [clientName, setClientName] = React.useState<string | undefined | null>(invoiceInfo?.post.client.clientName);
-    const [invoiceDate, setInvoiceDate] = React.useState<string | undefined | null>(invoiceInfo?.invoiceDate);
+    const [invoiceNum, setInvoiceNum] = React.useState<string>(invoiceInfo?.invoiceNum);
+    const [postcode, setPostcode] = React.useState<string>(invoiceInfo?.post.postcode);
+    const [amount, setAmount] = React.useState<number>(invoiceInfo?.amount);
+    const [clientName, setClientName] = React.useState<string>(invoiceInfo?.post.client.clientName);
+    const [invoiceDate, setInvoiceDate] = React.useState<string>(invoiceInfo?.invoiceDate.toString());
 
 
+    //console.log("Pop up opened: ", postcode);
     const closePopUp = ()=> {
         onClose(false);
     }
@@ -47,6 +48,13 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log("Handle submit");
+
+        console.log("Invoice Number: ", invoiceNum);
+        console.log("Postcode: ", postcode);
+        console.log("Client Name: ", clientName);
+        console.log("Amount: ", amount);
+        console.log("Invoice Date: ", invoiceDate);
+
         
     };
     return (
@@ -66,8 +74,10 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     label="Invoice No. "
                                     type="text"
                                     placeholder="Enter invoice number"
-                                    value={invoiceInfo?.invoiceNum}
-                                    handleChange={() => {
+                                    value={invoiceNum}
+                                    handleChange={(e) => {
+                                        
+                                        setInvoiceNum(e.target.value);
                                     }}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
@@ -76,8 +86,9 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     label="Postcode"
                                     type="text"
                                     placeholder="Enter postcode"
-                                    value={invoiceInfo?.post.postcode}
-                                    handleChange={() => {
+                                    value={postcode}
+                                    handleChange={(e) => {
+                                        setPostcode(e.target.value);
                                     }}
                                     className="w-full xl:w-2/12" // 20% width on extra-large screens
                                 />
@@ -88,9 +99,10 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                 <InputGroup
                                     label="Client Name"
                                     type="text"
-                                    placeholder="Enter invoice number"
-                                    value={invoiceInfo?.post.client.clientId.toString()}
-                                    handleChange={() => {
+                                    placeholder="Enter client number"
+                                    value={clientName}
+                                    handleChange={(e) => {
+                                        setClientName(e.target.value);
                                     }}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
@@ -99,20 +111,32 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     label="Amount"
                                     type="number"
                                     placeholder="Enter amount"
-                                    value={invoiceInfo?.amount.toString()}
-                                    handleChange={() => {
+                                    value={amount.toString()}
+                                    handleChange={(e) => {
+                                        setAmount(+e.target.value);
                                     }}
                                     className="w-full xl:w-2/12" // 20% width on extra-large screens
                                 />
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                             <div className="w-full xl:w-6/12">
-                                <DatePickerThree label="Invoice Date" value={invoiceInfo?.invoiceDate}/>
+                                <DatePickerThree 
+                                    label="Invoice Date" 
+                                    value={invoiceDate.toString()}
+                                    handleChange={(e) => {
+                                        setInvoiceDate(e.target.value);
+                                    }}/>
                             </div>
                             {
                                 invoiceInfo?.settlementDate ? (
                                     <div className="w-full xl:w-6/12">
-                                        <DatePickerThree label="Settlement Date" value={invoiceInfo?.settlementDate}/>
+                                        <DatePickerThree 
+                                            label="Settlement Date" 
+                                            value={invoiceInfo?.settlementDate}
+                                            // handleChange={(param) => {
+                                            //     setInvoiceNum(param.target.value);
+                                            // }}
+                                            />
                                     </div>
                                 ) : null
                             }

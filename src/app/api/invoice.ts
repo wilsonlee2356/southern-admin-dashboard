@@ -13,3 +13,14 @@ export async function GET_INVOICE_BY_ID(id: string): Promise<invoiceData> {
   return data;
 }
 
+export async function UPDATE_INVOICE_BY_ID(id: string, updateData: invoiceData): Promise<invoiceData> {
+  const response = await fetch(`http://localhost:8080/api/invoices/num=${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updateData),
+  });
+  const data = await response.json();
+  return data;
+}

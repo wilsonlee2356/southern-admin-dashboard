@@ -37,7 +37,7 @@ function ResultTable({
   );
   const [canSetPay, setCanSetPay] = useState<boolean>(false);
 
-  const [editingRow, setEditingRow] = useState<invoiceData | null>(null);
+  const [editingRow, setEditingRow] = useState<invoiceData>({} as invoiceData);
 
   useEffect(() => {
     const total = dataArray.reduce(
@@ -45,7 +45,7 @@ function ResultTable({
       0,
     );
     setTotalAmount(total);
-    console.log("Data array update:", dataArray);
+    //console.log("Data array update:", dataArray);
   }, [dataArray]);
 
   if (!dataArray || dataArray.length === 0) {
@@ -66,7 +66,8 @@ function ResultTable({
   const getInvoiceById = (id: GridRowId) => {
     //const idString = id.toString();
     const invoice = dataArray.find((item) => item.invoiceId === id);
-    return invoice || null;
+    //console.log("Invoice found:", invoice?.post.postcode);
+    return invoice;
   };
 
   const updateTotalAmount = (checkedRows: GridRowSelectionModel) => {
@@ -77,7 +78,7 @@ function ResultTable({
       );
       setCanSetPay(false);
     } else {
-      console.log("Selected rows:", checkedRows);
+      //console.log("Selected rows:", checkedRows);
 
       const checkedData = dataArray.filter((row: any) =>
         checkedRows.includes(row.invoiceId),
@@ -250,6 +251,7 @@ function ResultTable({
             className="text-dark dark:text-white"
             onClick={() => {
               const invoice = getInvoiceById(params.id);
+              if (!invoice) return;
               setEditingRow(invoice);
               setPopUpOpenEdit(true);
             }}
