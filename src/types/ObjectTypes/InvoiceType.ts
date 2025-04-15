@@ -25,7 +25,6 @@ export type post = {
   postId: number;
   client: client;
   postcode: string;
-  orders: number;
   createDate: string;
   updateDate: string;
 }

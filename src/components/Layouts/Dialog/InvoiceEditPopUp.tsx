@@ -11,6 +11,7 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { UPDATE_INVOICE_BY_ID } from "@/app/api/invoice";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -32,13 +33,16 @@ type InvoiceEditPopUpPropsType = {
 
 
 function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPopUpPropsType){
+
+    if(Object.keys(invoiceInfo).length === 0) return(<><div>No invoice selected</div></>);
+
+    //console.log("Invoice Info: ", invoiceInfo);
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceNum, setInvoiceNum] = React.useState<string>(invoiceInfo?.invoiceNum);
     const [postcode, setPostcode] = React.useState<string>(invoiceInfo?.post.postcode);
     const [amount, setAmount] = React.useState<number>(invoiceInfo?.amount);
     const [clientName, setClientName] = React.useState<string>(invoiceInfo?.post.client.clientName);
     const [invoiceDate, setInvoiceDate] = React.useState<string>(invoiceInfo?.invoiceDate.toString());
-
 
     //console.log("Pop up opened: ", postcode);
     const closePopUp = ()=> {
@@ -54,8 +58,38 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
         console.log("Client Name: ", clientName);
         console.log("Amount: ", amount);
         console.log("Invoice Date: ", invoiceDate);
-
-        
+        const updateInvoice : invoiceData = {
+            invoiceId: invoiceInfo.invoiceId,
+            invoiceNum: invoiceNum,
+            post: {
+                postId: invoiceInfo.post.postId,
+                client: {
+                    clientId: invoiceInfo.post.client.clientId,
+                    clientName: clientName,
+                    fullName: invoiceInfo.post.client.fullName,
+                    createDate: invoiceInfo.post.client.createDate,
+                    updateDate: invoiceInfo.post.client.updateDate,
+                    postlist: null
+                },
+                postcode: postcode,
+                createDate: invoiceInfo.post.createDate,
+                updateDate: invoiceInfo.post.updateDate
+            },
+            invoiceDate: new Date(invoiceDate),
+            amount: amount,
+            settlementDate: null,
+            statementId: null,
+            chequeId: null,
+            createDate: invoiceInfo.createDate,
+            updateDate: new Date()
+        };
+        UPDATE_INVOICE_BY_ID(invoiceInfo.invoiceId, updateInvoice).then((res) => {
+            console.log("Updated invoice: ", res);
+        }
+        ).catch((err) => {
+            console.log("Error updating invoice: ", err);
+        }
+        );
     };
     return (
     <>

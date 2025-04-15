@@ -44,6 +44,7 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
         setPopUpOpen={setPopUpOpen}
         popUpOpenEdit={popUpOpenEdit}
         setPopUpOpenEdit={setPopUpOpenEdit}
+        setFilteredData={setFilteredData}
       />
     </>
   );

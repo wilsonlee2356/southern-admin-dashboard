@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { DELETE_INVOICE_BY_ID } from "@/app/api/invoice";
 
 type ResultTableProps = {
   dataArray: invoiceData[];
@@ -22,6 +23,7 @@ type ResultTableProps = {
   setPopUpOpen: any;
   popUpOpenEdit: boolean;
   setPopUpOpenEdit: any;
+  setFilteredData: any;
 };
 
 function ResultTable({
@@ -30,6 +32,7 @@ function ResultTable({
   setPopUpOpen,
   popUpOpenEdit,
   setPopUpOpenEdit,
+  setFilteredData,
 }: ResultTableProps) {
   const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(
@@ -243,7 +246,18 @@ function ResultTable({
             <span className="sr-only">View Invoice</span>
             <PreviewIcon className="fill-dark dark:fill-white" />
           </button>
-          <button className="text-dark dark:text-white">
+          <button className="text-dark dark:text-white"
+            onClick={() => {
+              const invoice = getInvoiceById(params.id);
+              if (!invoice) return;
+              DELETE_INVOICE_BY_ID(invoice.invoiceId).then((res) => {
+                console.log("Deleted invoice: ", res);
+              }
+              ).catch((err) => {
+                console.log("Error deleting invoice: ", err);
+              });
+              
+            }}>
             <span className="sr-only">Delete Invoice</span>
             <TrashIcon className="fill-dark dark:fill-white" />
           </button>
