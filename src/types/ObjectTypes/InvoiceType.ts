@@ -42,4 +42,25 @@ export type invoiceData = {
   updateDate: Date;
 }
 
+export type clientOutput = {
+  clientName: string;
+  fullName: string | null | undefined;
+  postlist: post[] | null | undefined;
+}
+
+export type postOutput = {
+  client: clientOutput;
+  postcode: string;
+}
+
+export type invoiceDataOutput = {
+  invoiceNum: string;
+  post: postOutput;
+  invoiceDate: Date | null | undefined;
+  amount: number;
+  settlementDate: string | null | undefined;
+  statementId: number | null | undefined;
+  chequeId: number | null | undefined;
+}
+
 

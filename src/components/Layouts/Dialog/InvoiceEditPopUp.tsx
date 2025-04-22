@@ -12,6 +12,7 @@ import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { UPDATE_INVOICE_BY_ID } from "@/app/api/invoice";
+import { Console } from "console";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -43,6 +44,10 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
     const [amount, setAmount] = React.useState<number>(invoiceInfo?.amount);
     const [clientName, setClientName] = React.useState<string>(invoiceInfo?.post.client.clientName);
     const [invoiceDate, setInvoiceDate] = React.useState<string>(invoiceInfo?.invoiceDate.toString());
+
+//     useEffect(() => {
+//         console.log({ invoiceDate });
+//   }, [invoiceDate]);
 
     //console.log("Pop up opened: ", postcode);
     const closePopUp = ()=> {
@@ -158,6 +163,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     label="Invoice Date" 
                                     value={invoiceDate.toString()}
                                     handleChange={(e) => {
+                                        
                                         setInvoiceDate(e.target.value);
                                     }}/>
                             </div>

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import SearchBox from "./_components/search-box";
 import ResultTable from "./_components/result-table";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGridWithPopUpButton";
 
 type PageWrapperProps = {
   dataArray: any[]; // Pass data as a prop instead of fetching here
@@ -38,7 +39,7 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
         setPeriod={setPeriod}
         setFilteredData={setFilteredData}
       />
-      <ResultTable
+      <MuiDataGridWithPopUpButton
         dataArray={filteredData}
         popUpOpen={popUpOpen}
         setPopUpOpen={setPopUpOpen}
