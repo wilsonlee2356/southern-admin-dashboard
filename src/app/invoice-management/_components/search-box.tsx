@@ -39,7 +39,7 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
     name: item.invoiceNum.toString(), }));
   const clientNameArr = dataArray.map((item) => ({
     key: item.invoiceId.toString(),
-    name: item.post.client.clientName,
+    name: item.client.clientName,
   }));
   const postcodeArr = dataArray.map((item) => ({
     key: item.invoiceId.toString(),

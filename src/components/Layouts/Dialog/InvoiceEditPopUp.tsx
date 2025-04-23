@@ -12,7 +12,10 @@ import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { UPDATE_INVOICE_BY_ID } from "@/app/api/invoice";
-import { Console } from "console";
+import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -38,18 +41,21 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
     if(Object.keys(invoiceInfo).length === 0) return(<><div>No invoice selected</div></>);
 
     //console.log("Invoice Info: ", invoiceInfo);
-    const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceNum, setInvoiceNum] = React.useState<string>(invoiceInfo?.invoiceNum);
     const [postcode, setPostcode] = React.useState<string>(invoiceInfo?.post.postcode);
     const [amount, setAmount] = React.useState<number>(invoiceInfo?.amount);
-    const [clientName, setClientName] = React.useState<string>(invoiceInfo?.post.client.clientName);
-    const [invoiceDate, setInvoiceDate] = React.useState<string>(invoiceInfo?.invoiceDate.toString());
+    const [clientName, setClientName] = React.useState<string>(invoiceInfo?.client.clientName);
+    const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(invoiceInfo?.invoiceDate));
 
-//     useEffect(() => {
-//         console.log({ invoiceDate });
-//   }, [invoiceDate]);
+    useEffect(() => {
+        setInvoiceNum(invoiceInfo?.invoiceNum);
+        setPostcode(invoiceInfo?.post.postcode);
+        setAmount(invoiceInfo?.amount);
+        setClientName(invoiceInfo?.client.clientName);
+        setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
+    }, [invoiceInfo]);
 
-    //console.log("Pop up opened: ", postcode);
+    //console.log("Pop up opened: ", invoiceNum);
     const closePopUp = ()=> {
         onClose(false);
     }
@@ -63,24 +69,24 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
         console.log("Client Name: ", clientName);
         console.log("Amount: ", amount);
         console.log("Invoice Date: ", invoiceDate);
+        
         const updateInvoice : invoiceData = {
             invoiceId: invoiceInfo.invoiceId,
             invoiceNum: invoiceNum,
             post: {
                 postId: invoiceInfo.post.postId,
-                client: {
-                    clientId: invoiceInfo.post.client.clientId,
-                    clientName: clientName,
-                    fullName: invoiceInfo.post.client.fullName,
-                    createDate: invoiceInfo.post.client.createDate,
-                    updateDate: invoiceInfo.post.client.updateDate,
-                    postlist: null
-                },
                 postcode: postcode,
                 createDate: invoiceInfo.post.createDate,
                 updateDate: invoiceInfo.post.updateDate
             },
-            invoiceDate: new Date(invoiceDate),
+            client: {
+                clientId: invoiceInfo.client.clientId,
+                clientName: clientName,
+                fullName: invoiceInfo.client.fullName,
+                createDate: invoiceInfo.client.createDate,
+                updateDate: invoiceInfo.client.updateDate,
+            },
+            invoiceDate: invoiceDate?.toDate(),
             amount: amount,
             settlementDate: null,
             statementId: null,
@@ -95,14 +101,14 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
             console.log("Error updating invoice: ", err);
         }
         );
+
     };
     return (
     <>
         <Dialog 
             open={open} onClose={onClose} fullWidth={true} 
             maxWidth={"xl"} aria-labelledby="alert-dialog-title" 
-            aria-describedby="alert-dialog-description"
-            scroll={scroll}>
+            aria-describedby="alert-dialog-description">
             <DialogTitle>{title} <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
                 <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-center content-stretch">
@@ -115,7 +121,6 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                     placeholder="Enter invoice number"
                                     value={invoiceNum}
                                     handleChange={(e) => {
-                                        
                                         setInvoiceNum(e.target.value);
                                     }}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
@@ -159,15 +164,25 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                             <div className="w-full xl:w-6/12">
-                                <DatePickerThree 
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <MuiDatePicker
+                                    title="Invoice Date"
+                                    label="Invoice Date"
+                                    value={dayjs(invoiceDate)}
+                                    onChange={(e) => {
+                                        setInvoiceDate(e as Dayjs);
+                                    }}
+                                />
+                            </LocalizationProvider>
+                                {/* <DatePickerThree 
                                     label="Invoice Date" 
                                     value={invoiceDate.toString()}
                                     handleChange={(e) => {
                                         
                                         setInvoiceDate(e.target.value);
-                                    }}/>
+                                    }}/> */}
                             </div>
-                            {
+                            {/* {
                                 invoiceInfo?.settlementDate ? (
                                     <div className="w-full xl:w-6/12">
                                         <DatePickerThree 
@@ -179,7 +194,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                                             />
                                     </div>
                                 ) : null
-                            }
+                            } */}
                             
                             </div>
                             <Button

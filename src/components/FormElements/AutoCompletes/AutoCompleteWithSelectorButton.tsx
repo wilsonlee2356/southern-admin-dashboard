@@ -31,7 +31,7 @@ function AutoCompleteWithSelectorButton ({ title, placeholder, dataArr, stateSet
       <div className="relative">
         <Autocomplete
           allowsCustomValue
-          
+          aria-label="Text Input"
           className="w-full rounded-[7px] bg-gray font-normal outline-none transition dark:border-dark-3 dark:bg-dark-2"
           inputProps={{
             classNames: {

@@ -18,12 +18,10 @@ export type client = {
   fullName: string;
   createDate: string;
   updateDate: string;
-  postlist: post[] | null | undefined;
 }
 
 export type post = {
   postId: number;
-  client: client;
   postcode: string;
   createDate: string;
   updateDate: string;
@@ -33,6 +31,7 @@ export type invoiceData = {
   invoiceId: number;
   invoiceNum: string;
   post: post;
+  client: client;
   invoiceDate: Date;
   amount: number;
   settlementDate: string | null | undefined;
@@ -45,17 +44,16 @@ export type invoiceData = {
 export type clientOutput = {
   clientName: string;
   fullName: string | null | undefined;
-  postlist: post[] | null | undefined;
 }
 
 export type postOutput = {
-  client: clientOutput;
   postcode: string;
 }
 
 export type invoiceDataOutput = {
   invoiceNum: string;
   post: postOutput;
+  client: clientOutput;
   invoiceDate: Date | null | undefined;
   amount: number;
   settlementDate: string | null | undefined;

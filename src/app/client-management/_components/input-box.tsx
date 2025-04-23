@@ -1,17 +1,15 @@
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
-import InputGroup from "@/components/FormElements/InputGroup";
-import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
 import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Button } from "@/components/ui-elements/button";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { CloseIcon, MessageOutlineIcon, UploadIcon } from "@/assets/icons";
+import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import { invoiceData, invoiceDataOutput } from "@/types/ObjectTypes/InvoiceType";
 import { CREATE_INVOICE } from "@/app/api/invoice";
 import { useEffect, useState } from "react";
-import { DateValue } from "@heroui/react";
 
 type InputBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -28,16 +26,16 @@ export function InputBox({ dataArray, setDataToShow } : InputBoxProps) {
   const [amount, setAmount] = useState("");
   const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(dayjs());
 
-  useEffect(() => {
-        console.log({ invoiceDate });
-  }, [invoiceDate]);
+  // useEffect(() => {
+  //       console.log({ amount });
+  // }, [amount]);
 
   const invoiceNumArr = dataArray.map((item) => ({ 
     key: item.invoiceId.toString(),
     name: item.invoiceNum.toString(), }));
   const clientNameArr = dataArray.map((item) => ({
     key: item.invoiceId.toString(),
-    name: item.post.client.clientName,
+    name: item.client.clientName,
   }));
   const postcodeArr = dataArray.map((item) => ({
     key: item.invoiceId.toString(),
@@ -53,32 +51,15 @@ export function InputBox({ dataArray, setDataToShow } : InputBoxProps) {
   };
 
   const handleAdd = () => {
-      //console.log("Handle submit");
-      // const newInvoice: invoiceOutput = {
-      //   invoiceNum: invoiceNumber,
-      //   post: {
-      //     client: {
-      //       clientName: clientName,
-      //     },
-      //     postcode: postcode,
-      //   },
-      //   invoiceDate: new Date(invoiceDate),
-      //   amount: parseFloat(amount),
-      //   settlementDate: null,
-      //   statementId: null,
-      //   chequeId: null,
-      // };
-
       const updateInvoice : invoiceDataOutput = {
         invoiceNum: invoiceNumber,
         post: {
-          client: {
-            clientName: clientName,
-            fullName: null,
-            postlist: null,
-          },
           postcode: postcode,
         },
+        client: {
+            clientName: clientName,
+            fullName: null,
+          },
         invoiceDate: invoiceDate?.toDate(),
         amount: parseFloat(amount),
         settlementDate: null,
@@ -110,11 +91,8 @@ export function InputBox({ dataArray, setDataToShow } : InputBoxProps) {
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
           <div className="w-full xl:w-4/12">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                sx={{ 
-                  width: '100%'
-
-                }}
+              <MuiDatePicker
+                title="Invoice Date"
                 label="Invoice Date"
                 value={invoiceDate}
                 onChange={(newValue) => setInvoiceDate(newValue)}

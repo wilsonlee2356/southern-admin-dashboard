@@ -51,6 +51,10 @@ function MuiDataGridWithPopUpButton({
     //console.log("Data array update:", dataArray);
   }, [dataArray]);
 
+  // useEffect(() => {
+  //   console.log("Row selected:", editingRow);
+  // }, [editingRow]);
+
   if (!dataArray || dataArray.length === 0) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
@@ -170,10 +174,10 @@ function MuiDataGridWithPopUpButton({
     {
       field: "clienName",
       headerName: "Client name",
-      flex: 2,
+      flex: 4,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.post.client.clientName,
+      valueGetter: (value, row) => row.client.clientName,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -298,6 +302,7 @@ function MuiDataGridWithPopUpButton({
           checkboxSelection
           disableColumnMenu
           disableRowSelectionOnClick
+          hideFooter
           sx={{
             "& .MuiDataGrid-cell": {
               display: "flex",
@@ -311,6 +316,7 @@ function MuiDataGridWithPopUpButton({
               backgroundColor: "dark: black",
             },
           }}
+          
         />
       </div>
       <Button

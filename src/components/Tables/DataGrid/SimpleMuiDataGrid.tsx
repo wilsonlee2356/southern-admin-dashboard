@@ -97,7 +97,7 @@ function SimpleMuiDataGrid({ dataArray }: SimpleMuiDataGridProps) {
           flex: 2,
           align: "center",
           headerAlign: "center",
-          valueGetter: (value, row) => row.post.client.clientName,
+          valueGetter: (value, row) => row.client.clientName,
           renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
         },
         {
