@@ -20,8 +20,32 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
   const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
 
   useEffect(() => {
+    const selectedData = dataArray.filter((row: any) =>
+      (
+        (!checkEmpty(invoiceNumber) ? row.invoiceNum.includes(invoiceNumber) : true) && 
+        (!checkEmpty(clientName) ? row.client.clientName.toLowerCase().includes(clientName.toLowerCase()) : true) && 
+        (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) && 
+        (!checkEmpty(amount) ? /^\d+$/.test(amount) && row.amount.includes===amount : true) && 
+        (!checkEmpty(period) ? checkDateWithinMonths(row.invoiceDate, parseInt(period)) : true)
+      )
+    );
+    setFilteredData(selectedData);
+  }, [invoiceNumber, clientName, postcode, amount, period]);
+
+  useEffect(() => {
     console.log({ filteredData });
   }, [filteredData]);
+
+  const checkEmpty = (value: string) => {
+    return value === "" || value === undefined || value === null; 
+  };
+
+  const checkDateWithinMonths = (date: Date, months: number) => {
+    const currentDate = new Date();
+    const targetDate = new Date(date);
+    targetDate.setMonth(targetDate.getMonth() + months);
+    return currentDate <= targetDate;
+  };
 
   return (
     <>

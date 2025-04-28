@@ -57,55 +57,56 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
     
   };
 
-  const checkDateWithinMonths = (date: Date, months: number) => {
-    const currentDate = new Date();
-    const targetDate = new Date(date);
-    targetDate.setMonth(targetDate.getMonth() + months);
-    return currentDate <= targetDate;
-  };
+  // const checkDateWithinMonths = (date: Date, months: number) => {
+  //   const currentDate = new Date();
+  //   const targetDate = new Date(date);
+  //   targetDate.setMonth(targetDate.getMonth() + months);
+  //   return currentDate <= targetDate;
+  // };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Handle submit");
-    // console.log({ 
-    //   invoiceNumber, 
-    //   clientName, postcode, amount, period });
-    // Add your search logic here
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   console.log("Handle submit");
+  //   // console.log({ 
+  //   //   invoiceNumber, 
+  //   //   clientName, postcode, amount, period });
+  //   // Add your search logic here
 
-    // const searchResult = GET_INVOICE_BY_ID(invoiceNumber);
-    // searchResult.then((result) => {
-    //   console.log("Search result:", result);
-    // }).catch((error) => {
-    //   console.error("Error fetching invoice:", error);
-    // });
-    //console.log("Search result:", searchResult);
-    const currentDate = new Date();
-    //console.log("Date compare:", );
+  //   // const searchResult = GET_INVOICE_BY_ID(invoiceNumber);
+  //   // searchResult.then((result) => {
+  //   //   console.log("Search result:", result);
+  //   // }).catch((error) => {
+  //   //   console.error("Error fetching invoice:", error);
+  //   // });
+  //   //console.log("Search result:", searchResult);
+  //   const currentDate = new Date();
+  //   //console.log("Date compare:", );
 
-    const checkEmpty = (value: string) => {
-      return value === "" || value === undefined || value === null; 
-    };
+  //   const checkEmpty = (value: string) => {
+  //     return value === "" || value === undefined || value === null; 
+  //   };
 
-    const selectedData = dataArray.filter((row: any) =>
-      (
-        !checkEmpty(invoiceNumber) && row.invoiceNum.includes(invoiceNumber) || 
-        !checkEmpty(clientName) && row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) || 
-        !checkEmpty(postcode) && row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) || 
-        !checkEmpty(amount) && /^\d+$/.test(amount) && row.amount.includes===amount || 
-        !checkEmpty(period) && checkDateWithinMonths(row.invoiceDate, parseInt(period))
-      )
-    );
-    //console.log("invoice selected:", dataArray[0].id.includes(invoiceNumber));
-    setFilteredData(selectedData);
-    console.log("Filtered data:", selectedData);
-  };
+  //   const selectedData = dataArray.filter((row: any) =>
+  //     (
+  //       !checkEmpty(invoiceNumber) && row.invoiceNum.includes(invoiceNumber) || 
+  //       !checkEmpty(clientName) && row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) || 
+  //       !checkEmpty(postcode) && row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) || 
+  //       !checkEmpty(amount) && /^\d+$/.test(amount) && row.amount.includes===amount || 
+  //       !checkEmpty(period) && checkDateWithinMonths(row.invoiceDate, parseInt(period))
+  //     )
+  //   );
+  //   //console.log("invoice selected:", dataArray[0].id.includes(invoiceNumber));
+  //   setFilteredData(selectedData);
+  //   console.log("Filtered data:", selectedData);
+  // };
 
   
 
 
   return (
     <ShowcaseSection title="Invoice Search Form" className="!p-6.5">
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}> */}
+      <form>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
           <AutoCompleteWithSelectorButton
             title="Invoice Number"
@@ -161,7 +162,7 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
               handleClear();
             }}
           />
-          <Button
+          {/* <Button
             type="submit"
             label="Search"
             variant="primary"
@@ -172,7 +173,7 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
             //   //handleSubmit;
             // }
             // }
-          />
+          /> */}
         </div>
       </form>
     </ShowcaseSection>

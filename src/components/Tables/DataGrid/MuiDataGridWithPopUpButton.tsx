@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
-import { DELETE_INVOICE_BY_ID } from "@/app/api/invoice";
+import { CombinedService } from "@/app/api/invoice";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -48,7 +48,6 @@ function MuiDataGridWithPopUpButton({
       0,
     );
     setTotalAmount(total);
-    //console.log("Data array update:", dataArray);
   }, [dataArray]);
 
   // useEffect(() => {
@@ -254,7 +253,7 @@ function MuiDataGridWithPopUpButton({
             onClick={() => {
               const invoice = getInvoiceById(params.id);
               if (!invoice) return;
-              DELETE_INVOICE_BY_ID(invoice.invoiceId).then((res) => {
+              CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
                 console.log("Deleted invoice: ", res);
               }
               ).catch((err) => {
