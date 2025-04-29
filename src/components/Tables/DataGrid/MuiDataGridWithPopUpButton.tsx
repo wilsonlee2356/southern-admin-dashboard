@@ -255,6 +255,10 @@ function MuiDataGridWithPopUpButton({
               if (!invoice) return;
               CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
                 console.log("Deleted invoice: ", res);
+                  const updatedData = dataArray.filter(
+                    (item) => item.invoiceId !== invoice.invoiceId,
+                  );
+                  setFilteredData(updatedData);
               }
               ).catch((err) => {
                 console.log("Error deleting invoice: ", err);
@@ -341,6 +345,7 @@ function MuiDataGridWithPopUpButton({
         open={popUpOpenEdit}
         onClose={setPopUpOpenEdit}
         invoiceInfo={editingRow}
+        setDataArray={setFilteredData}
       />
     </div>
   );

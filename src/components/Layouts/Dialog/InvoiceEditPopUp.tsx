@@ -32,11 +32,12 @@ type InvoiceEditPopUpPropsType = {
     open: boolean;
     onClose: any;
     invoiceInfo: invoiceData;
+    setDataArray: any;
 }
 
 
 
-function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPopUpPropsType){
+function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: InvoiceEditPopUpPropsType){
 
     const [invoiceNum, setInvoiceNum] = React.useState<string>("");
     const [postcode, setPostcode] = React.useState<string>("");
@@ -77,6 +78,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
         console.log("Amount: ", amount);
         console.log("Invoice Date: ", invoiceDate);
         
+        const newDate = new Date();
+
         const updateInvoice : invoiceData = {
             invoiceId: invoiceInfo.invoiceId,
             invoiceNum: invoiceNum,
@@ -84,14 +87,14 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
                 postId: invoiceInfo.post.postId,
                 postcode: postcode,
                 createDate: invoiceInfo.post.createDate,
-                updateDate: invoiceInfo.post.updateDate
+                updateDate: newDate.toISOString(),
             },
             client: {
                 clientId: invoiceInfo.client.clientId,
                 clientName: clientName,
                 fullName: invoiceInfo.client.fullName,
                 createDate: invoiceInfo.client.createDate,
-                updateDate: invoiceInfo.client.updateDate,
+                updateDate: newDate.toISOString(),
             },
             invoiceDate: invoiceDate?.toDate(),
             amount: amount,
@@ -99,14 +102,22 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo }: InvoiceEditPop
             statementId: null,
             chequeId: null,
             createDate: invoiceInfo.createDate,
-            updateDate: new Date()
+            updateDate: newDate,
         };
         CombinedService.update_invoice_details(invoiceInfo.invoiceId, updateInvoice).then((res) => {
-            console.log("Updated invoice: ", res);
-        }
-        ).catch((err) => {
-            console.log("Error updating invoice: ", err);
+            if(res) {
+                console.log("Updated invoice: ", res);
+                setDataArray((prevData: any) => {
+                    return prevData.map((item: any) => {
+                        if (item.invoiceId === invoiceInfo.invoiceId) {
+                            return { ...item, ...updateInvoice };
+                        }
+                        return item;
+                    });
+                });
+            }
         });
+        
         // UPDATE_INVOICE_BY_ID(invoiceInfo.invoiceId, updateInvoice).then((res) => {
         // UPDATE_INVOICE_DETAILS(invoiceInfo.invoiceId, updateInvoice).then((res) => {
         //     console.log("Updated invoice: ", res);

@@ -2,19 +2,20 @@
 import { useState, useEffect } from "react";
 import SearchBox from "./_components/search-box";
 import ResultTable from "./_components/result-table";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { client, post, invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGridWithPopUpButton";
 
 type PageWrapperProps = {
   dataArray: any[]; // Pass data as a prop instead of fetching here
+    clientData: client[];
+    postData: post[];
 };
 
-export default function PageWrapper({ dataArray }: PageWrapperProps) {
+export default function PageWrapper({ dataArray, clientData, postData }: PageWrapperProps) {
   const [filteredData, setFilteredData] = useState<invoiceData[]>(dataArray);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
   const [postcode, setPostcode] = useState("");
-  const [amount, setAmount] = useState("");
   const [period, setPeriod] = useState("");
   const [popUpOpen, setPopUpOpen] = useState(false);
   const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
@@ -25,12 +26,11 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
         (!checkEmpty(invoiceNumber) ? row.invoiceNum.includes(invoiceNumber) : true) && 
         (!checkEmpty(clientName) ? row.client.clientName.toLowerCase().includes(clientName.toLowerCase()) : true) && 
         (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) && 
-        (!checkEmpty(amount) ? /^\d+$/.test(amount) && row.amount.includes===amount : true) && 
         (!checkEmpty(period) ? checkDateWithinMonths(row.invoiceDate, parseInt(period)) : true)
       )
     );
     setFilteredData(selectedData);
-  }, [invoiceNumber, clientName, postcode, amount, period]);
+  }, [invoiceNumber, clientName, postcode, period]);
 
   useEffect(() => {
     console.log({ filteredData });
@@ -51,15 +51,15 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
     <>
       <SearchBox
         dataArray={dataArray}
+        clientData={clientData} 
+        postData={postData} 
         invoiceNumber={invoiceNumber}
         clientName={clientName}
         postcode={postcode}
-        amount={amount}
         period={period}
         setInvoiceNumber={setInvoiceNumber}
         setClientName={setClientName}
         setPostcode={setPostcode}
-        setAmount={setAmount}
         setPeriod={setPeriod}
         setFilteredData={setFilteredData}
       />

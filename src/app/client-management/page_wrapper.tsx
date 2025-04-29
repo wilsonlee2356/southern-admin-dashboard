@@ -1,14 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
 import { InputBox } from "../client-management/_components/input-box";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { client, post, invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGridWithPopUpButton";
 
 type PageWrapperProps = {
   dataArray: any[]; // Pass data as a prop instead of fetching here
+  clientData: client[];
+  postData: post[];
 };
 
-export default function PageWrapper({ dataArray }: PageWrapperProps) {
+export default function PageWrapper({ dataArray, clientData, postData }: PageWrapperProps) {
   const [dataToShow, setDataToShow] = useState<invoiceData[]>([]);
 //   const [invoiceNumber, setInvoiceNumber] = useState("");
 //   const [clientName, setClientName] = useState("");
@@ -18,13 +20,13 @@ export default function PageWrapper({ dataArray }: PageWrapperProps) {
   const [popUpOpen, setPopUpOpen] = useState(false);
   const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
 
-//   useEffect(() => {
-//     console.log({ filteredData });
-//   }, [filteredData]);
+  useEffect(() => {
+    console.log({ dataToShow });
+  }, [dataToShow]);
 
   return (
     <>
-      <InputBox dataArray={dataArray} setDataToShow={setDataToShow}/>
+      <InputBox dataArray={dataArray} clientData={clientData} postData={postData} setDataToShow={setDataToShow}/>
       {/* <SearchBox
         dataArray={dataArray}
         invoiceNumber={invoiceNumber}

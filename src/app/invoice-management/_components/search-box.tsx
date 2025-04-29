@@ -8,23 +8,25 @@ import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoComple
 import AutoCompleteWithoutSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithoutSelectorButton";
 import NumberInput from "@/components/FormElements/InputGroup/NumberInputs/NumberInput";
 import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
-import { invoice, invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { client, post, invoice, invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CloseIcon, SearchIcon } from "@/assets/icons";
-import { GET_INVOICE_BY_ID } from "@/app/api/invoice";
+import { CombinedService } from "@/app/api/invoice";
 
 
 type SearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
+  clientData: client[];
+  postData: post[];
   invoiceNumber: string;
   clientName: string;
   postcode: string;
-  amount: string;
+  // amount: string;
   period: string;
   // Setters for the state variables
   setInvoiceNumber:any;
   setClientName:any;
   setPostcode:any;
-  setAmount:any;
+  // setAmount:any;
   setPeriod:any;
   setFilteredData: any;
   
@@ -32,19 +34,30 @@ type SearchBoxProps = {
 
 
 
-const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, period, setInvoiceNumber, setClientName, setPostcode, setAmount, setPeriod, setFilteredData }: SearchBoxProps) => {
+const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName, postcode, period, setInvoiceNumber, setClientName, setPostcode, setPeriod, setFilteredData }: SearchBoxProps) => {
 
   const invoiceNumArr = dataArray.map((item) => ({ 
     key: item.invoiceId.toString(),
     name: item.invoiceNum.toString(), }));
-  const clientNameArr = dataArray.map((item) => ({
-    key: item.invoiceId.toString(),
-    name: item.client.clientName,
+  const clientNameArr = clientData.map((item) => ({
+    key: item.clientId.toString(),
+    name: item.clientName,
   }));
-  const postcodeArr = dataArray.map((item) => ({
-    key: item.invoiceId.toString(),
-    name: item.post.postcode,
+  const postcodeArr = postData.map((item) => ({
+    key: item.postId.toString(),
+    name: item.postcode,
   }));
+  // const invoiceNumArr = dataArray.map((item) => ({ 
+  //   key: item.invoiceId.toString(),
+  //   name: item.invoiceNum.toString(), }));
+  // const clientNameArr = dataArray.map((item) => ({
+  //   key: item.invoiceId.toString(),
+  //   name: item.client.clientName,
+  // }));
+  // const postcodeArr = dataArray.map((item) => ({
+  //   key: item.invoiceId.toString(),
+  //   name: item.post.postcode,
+  // }));
 
   const handleClear = () => {
     console.log("Clearing filters...: ", dataArray);
@@ -52,7 +65,6 @@ const SearchBox = ({ dataArray, invoiceNumber, clientName, postcode, amount, per
     setInvoiceNumber("");
     setClientName("");
     setPostcode("");
-    setAmount("");
     setPeriod("");
     
   };

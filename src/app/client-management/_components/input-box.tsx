@@ -7,18 +7,20 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { CloseIcon, MessageOutlineIcon, UploadIcon } from "@/assets/icons";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
-import { invoiceData, invoiceDataOutput } from "@/types/ObjectTypes/InvoiceType";
-import { CREATE_INVOICE } from "@/app/api/invoice";
+import { client, post, invoiceData, invoiceDataOutput } from "@/types/ObjectTypes/InvoiceType";
+import { CombinedService } from "@/app/api/invoice";
 import { useEffect, useState } from "react";
 
 type InputBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
+  clientData: client[];
+  postData: post[];
   setDataToShow: any;
 };
 
 
 
-export function InputBox({ dataArray, setDataToShow } : InputBoxProps) {
+export function InputBox({ dataArray, clientData, postData, setDataToShow } : InputBoxProps) {
 
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
@@ -33,14 +35,26 @@ export function InputBox({ dataArray, setDataToShow } : InputBoxProps) {
   const invoiceNumArr = dataArray.map((item) => ({ 
     key: item.invoiceId.toString(),
     name: item.invoiceNum.toString(), }));
-  const clientNameArr = dataArray.map((item) => ({
-    key: item.invoiceId.toString(),
-    name: item.client.clientName,
+  const clientNameArr = clientData.map((item) => ({
+    key: item.clientId.toString(),
+    name: item.clientName,
   }));
-  const postcodeArr = dataArray.map((item) => ({
-    key: item.invoiceId.toString(),
-    name: item.post.postcode,
+  const postcodeArr = postData.map((item) => ({
+    key: item.postId.toString(),
+    name: item.postcode,
   }));
+
+  // const invoiceNumArr = dataArray.map((item) => ({ 
+  //   key: item.invoiceId.toString(),
+  //   name: item.invoiceNum.toString(), }));
+  // const clientNameArr = dataArray.map((item) => ({
+  //   key: item.invoiceId.toString(),
+  //   name: item.client.clientName,
+  // }));
+  // const postcodeArr = dataArray.map((item) => ({
+  //   key: item.invoiceId.toString(),
+  //   name: item.post.postcode,
+  // }));
 
   const handleClear = () => {
     setInvoiceNumber("");
@@ -66,15 +80,26 @@ export function InputBox({ dataArray, setDataToShow } : InputBoxProps) {
         statementId: null,
         chequeId: null,
       };
-      CREATE_INVOICE(updateInvoice).then((response) => {
+      CombinedService.create_invoice(updateInvoice).then((response) => {
         console.log("Invoice created:", response);
-        setDataToShow((prevData: invoiceData[]) => [...prevData, response]);
+        //getNewlyInsertedInvoice(response.invoiceId);
+        if(response){
+          setDataToShow((prevData: invoiceData[]) => [...prevData, response]);
+        }
+        
       }).catch((error) => {
         console.error("Error creating invoice:", error);
       });
-
-
   }
+
+  // const getNewlyInsertedInvoice = async ( invoiceId : number ) => {
+  //   try {
+  //     const response = await CombinedService.get_invoice_by_id(invoiceId.toString());
+  //     setDataToShow((prevData: invoiceData[]) => [...prevData, response]);
+  //   } catch (error) {
+  //     console.error('Error fetching all invoices:', error);
+  //   }
+  // }
 
 
   return (
