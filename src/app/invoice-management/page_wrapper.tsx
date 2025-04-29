@@ -32,9 +32,9 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
     setFilteredData(selectedData);
   }, [invoiceNumber, clientName, postcode, period]);
 
-  useEffect(() => {
-    console.log({ filteredData });
-  }, [filteredData]);
+  // useEffect(() => {
+  //   console.log({ filteredData });
+  // }, [filteredData]);
 
   const checkEmpty = (value: string) => {
     return value === "" || value === undefined || value === null; 

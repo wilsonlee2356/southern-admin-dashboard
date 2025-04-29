@@ -35,14 +35,15 @@ function MuiDataGridWithPopUpButton({
   setFilteredData,
 }: MuiDataGridWithPopUpButtonProps) {
   const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
-  const [totalAmount, setTotalAmount] = useState<number>(
-    dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
+  const [totalAmount, setTotalAmount] = useState<number>(0
+    //dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
   );
   const [canSetPay, setCanSetPay] = useState<boolean>(false);
 
   const [editingRow, setEditingRow] = useState<invoiceData>({} as invoiceData);
 
   useEffect(() => {
+    console.log("Data array updated:", dataArray);
     const total = dataArray.reduce(
       (sum: number, item: any) => sum + item.amount,
       0,
@@ -338,6 +339,7 @@ function MuiDataGridWithPopUpButton({
         open={popUpOpen}
         onClose={setPopUpOpen}
         dataArray={selectedRows}
+        setDataArray={setFilteredData}
       />
 
       <InvoiceEditPopUp

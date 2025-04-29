@@ -13,18 +13,19 @@ import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
+import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 
 type InvoicePopUpPropsType = {
     title: string;
     open: boolean;
     onClose: any;
     dataArray: any;
-    
+    setDataArray: any;
 }
 
 
 
-function InvoicePopUp ({ title, open, onClose, dataArray }: InvoicePopUpPropsType){
+function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: InvoicePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
     const [chequeFile, setChequeFile] = React.useState<File | null>(null);
@@ -94,7 +95,23 @@ function InvoicePopUp ({ title, open, onClose, dataArray }: InvoicePopUpPropsTyp
                     size="default"
                     icon={<CheckIcon className="fill-white" />}
                     onClick={() => {
-
+                        console.log("Invoice Date: ", invoiceDate);
+                        // if(invoiceDate !== null) {
+                        //     setDataArray((prevData: any) => {
+                        //     return prevData.map((item: any) => {
+                        //         dataArray.map((invoiceInfo: invoiceData) => {
+                        //             if (item.invoiceId === invoiceInfo.invoiceId) {
+                        //                 item.settlementDate = invoiceDate.toISOString();
+                        //                 //console.log(item);
+                        //             }
+                                    
+                        //             return item;
+                        //         }
+                        //         );
+                        //     });
+                        // });
+                        // }
+                        
                     }}
                 />
             </DialogContent>
