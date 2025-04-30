@@ -137,7 +137,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             <DialogTitle>{title} <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
                 <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-center content-stretch">
-                    <ShowcaseSection title="Contact Form" className="!p-6.5">
+                    <ShowcaseSection title="Contact Form" className="!p-6.5 w-full h-full">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4.5 flex flex-row gap-4.5">
                                 <InputGroup
@@ -159,7 +159,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
                                     handleChange={(e) => {
                                         setPostcode(e.target.value);
                                     }}
-                                    className="w-full xl:w-2/12" // 20% width on extra-large screens
+                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
                                 />
 
                                 
@@ -184,7 +184,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
                                     handleChange={(e) => {
                                         setAmount(+e.target.value);
                                     }}
-                                    className="w-full xl:w-2/12" // 20% width on extra-large screens
+                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
                                 />
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
