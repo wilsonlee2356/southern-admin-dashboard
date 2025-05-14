@@ -69,11 +69,12 @@ export function InputBox({ dataArray, clientData, postData, setDataToShow } : In
         invoiceNum: invoiceNumber,
         post: {
           postcode: postcode,
-        },
-        client: {
+          client: {
             clientName: clientName,
             fullName: null,
           },
+        },
+        
         invoiceDate: invoiceDate?.toDate(),
         amount: parseFloat(amount),
         settlementDate: null,

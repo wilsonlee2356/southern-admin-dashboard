@@ -162,6 +162,11 @@ function MuiDataGridWithPopUpButton({
     //   ),
     // },
     {
+      field: "id",
+      headerName: "id",
+      valueGetter: (value, row) => row.invoiceId,
+    },
+    {
       field: "invoiceNum",
       headerName: "Invoice No.",
       flex: 2,
@@ -177,7 +182,7 @@ function MuiDataGridWithPopUpButton({
       flex: 4,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.client.clientName,
+      valueGetter: (value, row) => row.post.client.clientName,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -299,6 +304,9 @@ function MuiDataGridWithPopUpButton({
           rows={dataArray}
           columns={columns}
           getRowId={(row) => row.invoiceId}
+          columnVisibilityModel={{
+            id: false,
+          }}
           // isRowSelectable={(params: GridRowParams) => params.row.status === "Unpaid"}
           onRowSelectionModelChange={(checkedRows) => {
             updateTotalAmount(checkedRows);

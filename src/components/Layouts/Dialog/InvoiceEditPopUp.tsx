@@ -52,7 +52,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             setInvoiceNum(invoiceInfo?.invoiceNum);
             setPostcode(invoiceInfo?.post.postcode);
             setAmount(invoiceInfo?.amount);
-            setClientName(invoiceInfo?.client.clientName);
+            setClientName(invoiceInfo?.post.client.clientName);
             setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
         }
         
@@ -86,16 +86,17 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             post: {
                 postId: invoiceInfo.post.postId,
                 postcode: postcode,
+                client: {
+                    clientId: invoiceInfo.post.client.clientId,
+                    clientName: clientName,
+                    fullName: invoiceInfo.post.client.fullName,
+                    createDate: invoiceInfo.post.client.createDate,
+                    updateDate: newDate.toISOString(),
+                },
                 createDate: invoiceInfo.post.createDate,
                 updateDate: newDate.toISOString(),
             },
-            client: {
-                clientId: invoiceInfo.client.clientId,
-                clientName: clientName,
-                fullName: invoiceInfo.client.fullName,
-                createDate: invoiceInfo.client.createDate,
-                updateDate: newDate.toISOString(),
-            },
+            
             invoiceDate: invoiceDate?.toDate(),
             amount: amount,
             settlementDate: null,
