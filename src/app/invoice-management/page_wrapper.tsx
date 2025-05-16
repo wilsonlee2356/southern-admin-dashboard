@@ -4,11 +4,13 @@ import SearchBox from "./_components/search-box";
 import ResultTable from "./_components/result-table";
 import { client, post, invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGridWithPopUpButton";
+import { InvoiceService } from "../api/services/invoiceService";
+import { CombinedService } from "@/app/api/invoice";
 
 type PageWrapperProps = {
   dataArray: any[]; // Pass data as a prop instead of fetching here
-    clientData: client[];
-    postData: post[];
+  clientData: client[];
+  postData: post[];
 };
 
 export default function PageWrapper({ dataArray, clientData, postData }: PageWrapperProps) {
@@ -19,6 +21,11 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   const [period, setPeriod] = useState("");
   const [popUpOpen, setPopUpOpen] = useState(false);
   const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
+  const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
+
+  let data =  dataArray;
+  let clients = clientData;
+  let posts = postData;
 
   useEffect(() => {
     const selectedData = dataArray.filter((row: any) =>
@@ -30,7 +37,31 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
       )
     );
     setFilteredData(selectedData);
-  }, [invoiceNumber, clientName, postcode, period]);
+  }, [invoiceNumber, clientName, postcode, period, dataArray]);
+
+  useEffect(() => {
+    if(updateDataNeeded){
+      let successFetchNum = 0;
+      InvoiceService.getAll().then((res) => {
+        setFilteredData(res);
+        successFetchNum++;
+      }
+      );
+      CombinedService.get_all_client().then((res) => {
+        clients = res;
+        successFetchNum++;
+      }
+      );
+      CombinedService.get_all_post().then((res) => {
+        posts = res;
+        successFetchNum++;
+      }
+      );
+      if(successFetchNum === 3){
+        setUpdateDataNeeded(false);
+      }
+    }
+  }, [updateDataNeeded]);
 
   // useEffect(() => {
   //   console.log({ filteredData });
@@ -50,9 +81,9 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   return (
     <>
       <SearchBox
-        dataArray={dataArray}
-        clientData={clientData} 
-        postData={postData} 
+        dataArray={data}
+        clientData={clients} 
+        postData={posts} 
         invoiceNumber={invoiceNumber}
         clientName={clientName}
         postcode={postcode}
@@ -62,6 +93,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         setPostcode={setPostcode}
         setPeriod={setPeriod}
         setFilteredData={setFilteredData}
+        setUpdateDataNeeded={setUpdateDataNeeded}
       />
       <MuiDataGridWithPopUpButton
         dataArray={filteredData}

@@ -9,8 +9,9 @@ import AutoCompleteWithoutSelectorButton from "@/components/FormElements/AutoCom
 import NumberInput from "@/components/FormElements/InputGroup/NumberInputs/NumberInput";
 import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
 import { client, post, invoice, invoiceData } from "@/types/ObjectTypes/InvoiceType";
-import { CloseIcon, SearchIcon } from "@/assets/icons";
+import { CloseIcon, SearchIcon, UploadIcon } from "@/assets/icons";
 import { CombinedService } from "@/app/api/invoice";
+import InvoiceCreatePopUp from "@/components/Layouts/Dialog/InvoiceCreatePopUp";
 
 
 type SearchBoxProps = {
@@ -29,12 +30,14 @@ type SearchBoxProps = {
   // setAmount:any;
   setPeriod:any;
   setFilteredData: any;
-  
+  setUpdateDataNeeded : any;
 };
 
 
 
-const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName, postcode, period, setInvoiceNumber, setClientName, setPostcode, setPeriod, setFilteredData }: SearchBoxProps) => {
+const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName, postcode, period, setInvoiceNumber, setClientName, setPostcode, setPeriod, setFilteredData, setUpdateDataNeeded }: SearchBoxProps) => {
+
+  const [popUpOpen, setPopUpOpen] = useState(false);
 
   const invoiceNumArr = dataArray.map((item) => ({ 
     key: item.invoiceId.toString(),
@@ -68,6 +71,8 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
     setPeriod("");
     
   };
+
+  
 
   // const checkDateWithinMonths = (date: Date, months: number) => {
   //   const currentDate = new Date();
@@ -174,21 +179,26 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
               handleClear();
             }}
           />
-          {/* <Button
-            type="submit"
-            label="Search"
+          <Button
+            label="Create"
             variant="primary"
             shape="full"
             size="default"
-            icon={<SearchIcon />}
-            // onClick={() => {
-            //   //handleSubmit;
-            // }
-            // }
-          /> */}
+            icon={<UploadIcon />}
+            onClick={() => {
+              //handleSubmit;
+              setPopUpOpen(true);
+            }
+            }
+          />
         </div>
       </form>
+      <InvoiceCreatePopUp
+        open={popUpOpen}
+        onClose={setPopUpOpen}
+      />
     </ShowcaseSection>
+    
   );
 };
 export default SearchBox;
