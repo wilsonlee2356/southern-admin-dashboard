@@ -196,6 +196,9 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
       <InvoiceCreatePopUp
         open={popUpOpen}
         onClose={setPopUpOpen}
+        invoiceArray={invoiceNumArr}
+        clientArray={clientNameArr}
+        postArray={postcodeArr}
       />
     </ShowcaseSection>
     

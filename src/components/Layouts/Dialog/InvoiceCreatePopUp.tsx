@@ -2,38 +2,49 @@
 import React, { JSX, useState } from "react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui-elements/button";
-import { CheckIcon } from "@/assets/icons";
+import { CheckIcon, UploadIcon } from "@/assets/icons";
 import { Dialog, DialogContent, DialogContentText, DialogProps, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import UploadButton from "@/components/ui-elements/upload-button";
 import SimpleMuiDataGrid from "@/components/Tables/DataGrid/SimpleMuiDataGrid";
 import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
+import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import dayjs, { Dayjs } from 'dayjs';
+import { client, post, invoiceData, invoiceDataOutput } from "@/types/ObjectTypes/InvoiceType";
+import { CombinedService } from "@/app/api/invoice";
+
+
+type AutoCompleteArrayType = {
+    key: string;
+    name: string;
+}
 
 type InvoiceCreatePopUpPropsType = { 
     open: boolean;
     onClose: any;
+    invoiceArray: AutoCompleteArrayType[]; // Pass data as a prop instead of fetching here
+    clientArray: AutoCompleteArrayType[];
+    postArray: AutoCompleteArrayType[];
 }
 
 
 
-function InvoiceCreatePopUp ({ open, onClose }: InvoiceCreatePopUpPropsType){
+function InvoiceCreatePopUp ({ open, onClose, invoiceArray, clientArray, postArray }: InvoiceCreatePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
-    const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
+    //const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
     const [chequeFile, setChequeFile] = React.useState<File | null>(null);
     const [statementFile, setStatementFile] = React.useState<File | null>(null);
 
+    const [invoiceNumber, setInvoiceNumber] = useState("");
+    const [clientName, setClientName] = useState("");
+    const [postcode, setPostcode] = useState("");
+    const [amount, setAmount] = useState("");
+    const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(dayjs());
 
-    const closePopUp = ()=> {
-        onClose(false);
-    }
-
-    const descriptionElementRef = React.useRef<HTMLElement>(null);
     React.useEffect(() => {
         if (open) {
         const { current: descriptionElement } = descriptionElementRef;
@@ -42,6 +53,62 @@ function InvoiceCreatePopUp ({ open, onClose }: InvoiceCreatePopUpPropsType){
         }
         }
     }, [open]);
+
+    const descriptionElementRef = React.useRef<HTMLElement>(null);
+
+    const closePopUp = ()=> {
+        onClose(false);
+    }
+
+    const handleClear = () => {
+        setInvoiceNumber("");
+        setClientName("");
+        setPostcode("");
+        setAmount("");
+        setInvoiceDate(dayjs());
+    }
+
+    const handleAdd = () => {
+          const updateInvoice : invoiceDataOutput = {
+            invoiceNum: invoiceNumber,
+            post: {
+              postcode: postcode,
+              client: {
+                clientName: clientName,
+                fullName: null,
+              },
+            },
+            
+            invoiceDate: invoiceDate?.toDate(),
+            amount: parseFloat(amount),
+            settlementDate: null,
+            statementId: null,
+            chequeId: null,
+          };
+          CombinedService.create_invoice(updateInvoice).then((response) => {
+            console.log("Invoice created:", response);
+            //getNewlyInsertedInvoice(response.invoiceId);
+            if(response){
+              //update List
+            }
+            
+          }).catch((error) => {
+            console.error("Error creating invoice:", error);
+          });
+      }
+
+
+    // const invoiceNumArr = dataArray.map((item) => ({ 
+    // key: item.invoiceId.toString(),
+    // name: item.invoiceNum.toString(), }));
+    // const clientNameArr = clientData.map((item) => ({
+    //     key: item.clientId.toString(),
+    //     name: item.clientName,
+    // }));
+    // const postcodeArr = postData.map((item) => ({
+    //     key: item.postId.toString(),
+    //     name: item.postcode,
+    // }));
     return (
     <>
         <Dialog 
@@ -51,32 +118,83 @@ function InvoiceCreatePopUp ({ open, onClose }: InvoiceCreatePopUpPropsType){
             scroll={scroll}>
             <DialogTitle> Create Invoice <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
-                <div style={{height:'500px', width:'120%'}} className="flex flex-row gap-50 justify-center content-stretch">
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <div style={{height:'600px', width:'100%'}} className="flex-col mb-10 justify-center content-stretch">
+                    <div className="flex flex-col gap-5">
+                        <AutoCompleteOne title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceArray} input={invoiceNumber} stateSetter={setInvoiceNumber}/>
+                        <AutoCompleteOne title="Client Name" placeholder="Enter Client Name" dataArr={clientArray} input={clientName} stateSetter={setClientName}/>
+                        <AutoCompleteOne title="Postcode" placeholder="Enter Postcode" dataArr={postArray} input={postcode} stateSetter={setPostcode}/>
+                        <AutoCompleteOne title="Amount" placeholder="Enter Amount" dataArr={[]} input={amount} stateSetter={setAmount}/>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <MuiDatePicker
+                                title="Invoice Date"
+                                label="Invoice Date"
+                                value={invoiceDate}
+                                onChange={(newValue) => setInvoiceDate(newValue)}
+                            />
+                        </LocalizationProvider>
+
+                    
+                    </div>
+                    <div className="flex flex-col gap-5 mt-10 xl:flex-row xl:justify-center">
+                       <Button
+                            label="Clear"
+                            variant="outlinePrimary"
+                            shape="full"
+                            size="default"
+                            icon={<CloseIcon />}
+                            onClick={() => {
+                                handleClear();
+                            }}
+                        />
+
+                        <Button
+                            label="Create"
+                            variant="green"
+                            shape="full"
+                            size="default"
+                            icon={<CheckIcon className="fill-white" />}
+                            onClick={() => {
+                                handleAdd();
+                                // console.log("Invoice Date: ", invoiceDate);
+                                // if(invoiceDate !== null) {
+                                //     setDataArray((prevData: any) => {
+                                //     return prevData.map((item: any) => {
+                                //         dataArray.map((invoiceInfo: invoiceData) => {
+                                //             if (item.invoiceId === invoiceInfo.invoiceId) {
+                                //                 item.settlementDate = invoiceDate.toISOString();
+                                //                 //console.log(item);
+                                //             }
+                                            
+                                //             return item;
+                                //         }
+                                //         );
+                                //     });
+                                // });
+                                // }
+                                
+                            }}
+                        />
+                    </div>
+                    {/* <div className="flex flex-col gap-4.5 xl:flex-row">
+                        
+                    </div> */}
+                    {/* <div className="mb-1 flex flex-col gap-4.5 xl:flex-row">
+                    <div className="w-full xl:w-4/12">
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MuiDatePicker
                             title="Invoice Date"
                             label="Invoice Date"
                             value={invoiceDate}
                             onChange={(newValue) => setInvoiceDate(newValue)}
                         />
-                    </LocalizationProvider>
-                    <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-                        <DialogContentText id="alert-dialog-description">
-                            <span>Cheque Upload</span>
-                        </DialogContentText>
-                        <UploadButton width={300} setFile={setChequeFile}/>
-                        <FilePreviewWindow source={undefined} width={300} height={300}/>
+                        </LocalizationProvider>
                     </div>
-                    <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-                        <DialogContentText id="alert-dialog-description">
-                            <span>Statement Upload</span>
-                        </DialogContentText>
-                        <UploadButton width={300} setFile={setStatementFile}/>
-                        <FilePreviewWindow source={undefined} width={300} height={300}/>
-                    </div>
+                    </div> */}
+        
+                    
                 </div>
             </DialogContent>
-            <DialogContent>
+            {/* <DialogContent>
                 <Button
                     label="Create"
                     variant="green"
@@ -103,7 +221,7 @@ function InvoiceCreatePopUp ({ open, onClose }: InvoiceCreatePopUpPropsType){
                         
                     }}
                 />
-            </DialogContent>
+            </DialogContent> */}
         </Dialog>
     </>
     );
