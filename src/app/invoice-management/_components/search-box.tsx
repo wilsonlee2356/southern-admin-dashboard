@@ -50,6 +50,11 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
     key: item.postId.toString(),
     name: item.postcode,
   }));
+
+  React.useEffect(() => {
+      console.log("client array:", clientNameArr);
+      console.log("post array:", postcodeArr);
+  }, []);
   // const invoiceNumArr = dataArray.map((item) => ({ 
   //   key: item.invoiceId.toString(),
   //   name: item.invoiceNum.toString(), }));
@@ -196,6 +201,7 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
       <InvoiceCreatePopUp
         open={popUpOpen}
         onClose={setPopUpOpen}
+        setUpdateDataNeeded={setUpdateDataNeeded}
         invoiceArray={invoiceNumArr}
         clientArray={clientNameArr}
         postArray={postcodeArr}

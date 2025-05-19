@@ -26,6 +26,7 @@ type AutoCompleteArrayType = {
 type InvoiceCreatePopUpPropsType = { 
     open: boolean;
     onClose: any;
+    setUpdateDataNeeded: any;
     invoiceArray: AutoCompleteArrayType[]; // Pass data as a prop instead of fetching here
     clientArray: AutoCompleteArrayType[];
     postArray: AutoCompleteArrayType[];
@@ -33,7 +34,7 @@ type InvoiceCreatePopUpPropsType = {
 
 
 
-function InvoiceCreatePopUp ({ open, onClose, invoiceArray, clientArray, postArray }: InvoiceCreatePopUpPropsType){
+function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray, clientArray, postArray }: InvoiceCreatePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     //const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
     const [chequeFile, setChequeFile] = React.useState<File | null>(null);
@@ -44,6 +45,8 @@ function InvoiceCreatePopUp ({ open, onClose, invoiceArray, clientArray, postArr
     const [postcode, setPostcode] = useState("");
     const [amount, setAmount] = useState("");
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(dayjs());
+
+    
 
     React.useEffect(() => {
         if (open) {
@@ -90,6 +93,7 @@ function InvoiceCreatePopUp ({ open, onClose, invoiceArray, clientArray, postArr
             //getNewlyInsertedInvoice(response.invoiceId);
             if(response){
               //update List
+              setUpdateDataNeeded(true);
             }
             
           }).catch((error) => {
