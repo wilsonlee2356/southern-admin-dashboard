@@ -12,7 +12,10 @@ import { client, post, invoice, invoiceData } from "@/types/ObjectTypes/InvoiceT
 import { CloseIcon, SearchIcon, UploadIcon } from "@/assets/icons";
 import { CombinedService } from "@/app/api/invoice";
 import InvoiceCreatePopUp from "@/components/Layouts/Dialog/InvoiceCreatePopUp";
-
+import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
+import dayjs, { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type SearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -22,20 +25,22 @@ type SearchBoxProps = {
   clientName: string;
   postcode: string;
   // amount: string;
-  period: string;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
   // Setters for the state variables
   setInvoiceNumber:any;
   setClientName:any;
   setPostcode:any;
   // setAmount:any;
-  setPeriod:any;
+  setStartDate:any;
+  setEndDate:any;
   setFilteredData: any;
   setUpdateDataNeeded : any;
 };
 
 
 
-const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName, postcode, period, setInvoiceNumber, setClientName, setPostcode, setPeriod, setFilteredData, setUpdateDataNeeded }: SearchBoxProps) => {
+const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName, postcode, startDate, endDate, setInvoiceNumber, setClientName, setPostcode, setStartDate, setEndDate, setFilteredData, setUpdateDataNeeded }: SearchBoxProps) => {
 
   const [popUpOpen, setPopUpOpen] = useState(false);
 
@@ -73,7 +78,8 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
     setInvoiceNumber("");
     setClientName("");
     setPostcode("");
-    setPeriod("");
+    setStartDate("");
+    setEndDate("");
     
   };
 
@@ -153,6 +159,25 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
             stateSetter={setPostcode}
             input ={postcode}
           />
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MuiDatePicker
+            title="Start Date"
+            value={startDate}
+            onChange={(newValue) => {
+              console.log("new date:", newValue);
+              setStartDate(newValue);
+            }}
+          />
+
+          <MuiDatePicker
+            title="End Date"
+            value={endDate}
+            onChange={(newValue) => {
+              setEndDate(newValue);
+            }}
+          />
+          </LocalizationProvider>
           {/* <NumberInput/>
           <AutoCompleteWithoutSelectorButton
             title="Amount"
@@ -162,13 +187,21 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
             input ={amount}
             
           /> */}
-          <DropdownList
-            title="Period"
-            placeholder="Select Period"
+          {/* <DropdownList
+            title="Start Date"
+            placeholder="Select start date"
             isListOfTime={true}
-            stateSetter={setPeriod}
-            input={period}
+            stateSetter={setStartDate}
+            input={startDate}
           />
+
+          <DropdownList
+            title="End Date"
+            placeholder="Select end date"
+            isListOfTime={true}
+            stateSetter={setEndDate}
+            input={endDate}
+          /> */}
         </div>
         {/* <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
           
