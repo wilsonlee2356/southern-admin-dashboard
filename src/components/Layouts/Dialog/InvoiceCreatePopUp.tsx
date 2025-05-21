@@ -9,8 +9,9 @@ import UploadButton from "@/components/ui-elements/upload-button";
 import SimpleMuiDataGrid from "@/components/Tables/DataGrid/SimpleMuiDataGrid";
 import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
-import AutoCompleteOne from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
+import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
+import { TextAreaOne } from "@/components/FormElements/InputGroup/TextAreaOne";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from 'dayjs';
@@ -43,6 +44,7 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
     const [invoiceNumber, setInvoiceNumber] = useState("");
     const [clientName, setClientName] = useState("");
     const [postcode, setPostcode] = useState("");
+    const [address, setAddress] = useState("");
     const [amount, setAmount] = useState("");
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(dayjs());
 
@@ -76,6 +78,7 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
             invoiceNum: invoiceNumber,
             post: {
               postcode: postcode,
+              address: address,
               client: {
                 clientName: clientName,
                 fullName: null,
@@ -94,6 +97,7 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
             if(response){
               //update List
               setUpdateDataNeeded(true);
+
             }
             
           }).catch((error) => {
@@ -124,10 +128,11 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
             <DialogContent>
                 <div style={{height:'600px', width:'100%'}} className="flex-col mb-10 justify-center content-stretch">
                     <div className="flex flex-col gap-5">
-                        <AutoCompleteOne title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceArray} input={invoiceNumber} stateSetter={setInvoiceNumber}/>
-                        <AutoCompleteOne title="Client Name" placeholder="Enter Client Name" dataArr={clientArray} input={clientName} stateSetter={setClientName}/>
-                        <AutoCompleteOne title="Postcode" placeholder="Enter Postcode" dataArr={postArray} input={postcode} stateSetter={setPostcode}/>
-                        <AutoCompleteOne title="Amount" placeholder="Enter Amount" dataArr={[]} input={amount} stateSetter={setAmount}/>
+                        <AutoCompleteWithSelectorButton title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceArray} input={invoiceNumber} stateSetter={setInvoiceNumber}/>
+                        <AutoCompleteWithSelectorButton title="Client Name" placeholder="Enter Client Name" dataArr={clientArray} input={clientName} stateSetter={setClientName}/>
+                        <AutoCompleteWithSelectorButton title="Postcode" placeholder="Enter Postcode" dataArr={postArray} input={postcode} stateSetter={setPostcode}/>
+                        <TextAreaOne label="Address" placeholder="Enter Address" value={address} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/>
+                        <AutoCompleteWithSelectorButton title="Amount" placeholder="Enter Amount" dataArr={[]} input={amount} stateSetter={setAmount}/>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <MuiDatePicker
                                 title="Invoice Date"

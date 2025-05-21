@@ -78,8 +78,8 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
     setInvoiceNumber("");
     setClientName("");
     setPostcode("");
-    setStartDate("");
-    setEndDate("");
+    setStartDate(null);
+    setEndDate(null);
     
   };
 

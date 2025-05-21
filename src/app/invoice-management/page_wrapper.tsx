@@ -35,8 +35,8 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
       (
         (!checkEmpty(invoiceNumber) ? row.invoiceNum.includes(invoiceNumber) : true) && 
         (!checkEmpty(clientName) ? row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) : true) && 
-        (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) 
-        && checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)
+        (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) && 
+        startDate && endDate ? (checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)) : true
         //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
       )
     );
