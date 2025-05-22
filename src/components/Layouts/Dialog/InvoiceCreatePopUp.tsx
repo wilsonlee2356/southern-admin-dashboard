@@ -69,6 +69,7 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
         setInvoiceNumber("");
         setClientName("");
         setPostcode("");
+        setAddress("");
         setAmount("");
         setInvoiceDate(dayjs());
     }
@@ -164,6 +165,8 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
                             icon={<CheckIcon className="fill-white" />}
                             onClick={() => {
                                 handleAdd();
+                                handleClear();
+                                onClose(false);
                                 // console.log("Invoice Date: ", invoiceDate);
                                 // if(invoiceDate !== null) {
                                 //     setDataArray((prevData: any) => {

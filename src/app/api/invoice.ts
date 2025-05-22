@@ -1,7 +1,7 @@
 import axios from 'axios';
 import apiClient from "@/lib/api-client";
 import { AxiosResponse } from "axios";
-import { invoiceData, client, post,invoiceDataOutput } from '@/types/ObjectTypes/InvoiceType';
+import { invoiceData, client, post, invoiceDataOutput, invoiceOutstandingSummary } from '@/types/ObjectTypes/InvoiceType';
 
 const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
 // if (!baseURL) {
@@ -45,6 +45,17 @@ export const CombinedService = {
     async get_invoice_by_id(id: string): Promise<invoiceData> {
       try{
         const response = await fetch(`http://localhost:8080/api/invoices/num=${id}`);
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching invoice by ID:', error);
+        throw error;
+      }
+    },
+
+    async get_invoice_outstanding_summary(): Promise<(string | number)[][]> {
+      try{
+        const response = await fetch(`http://localhost:8080/api/invoices/invoiceSum`);
         const data = await response.json();
         return data;
       } catch (error) {

@@ -9,7 +9,7 @@ import {
   GridRowId,
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
-import InvoicePopUp from "@/components/Layouts/Dialog/InvoicePopUp";
+import InvoiceUploadPopUp from "@/components/Layouts/Dialog/InvoicePopUp";
 import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
@@ -342,7 +342,7 @@ function MuiDataGridWithPopUpButton({
           setPopUpOpen(true);
         }}
       />
-      <InvoicePopUp
+      <InvoiceUploadPopUp
         title="Upload cheque or statement"
         open={popUpOpen}
         onClose={setPopUpOpen}

@@ -66,4 +66,8 @@ export type invoiceDataOutput = {
   chequeId: number | null | undefined;
 }
 
-
+export type invoiceOutstandingSummary = {
+  numOfInvoices: number;
+  totalOutstanding: number;
+  clientName: string;
+}

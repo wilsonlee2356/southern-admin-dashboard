@@ -9,6 +9,7 @@ import UploadButton from "@/components/ui-elements/upload-button";
 import SimpleMuiDataGrid from "@/components/Tables/DataGrid/SimpleMuiDataGrid";
 import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
+import AutoCompleteWithoutSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithoutSelectorButton";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -28,6 +29,7 @@ type InvoicePopUpPropsType = {
 function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: InvoicePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
+    const [amount, setAmount] = useState("");
     const [chequeFile, setChequeFile] = React.useState<File | null>(null);
     const [statementFile, setStatementFile] = React.useState<File | null>(null);
 
@@ -54,29 +56,43 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
             scroll={scroll}>
             <DialogTitle>{title} <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
-                <div style={{height:'500px', width:'120%'}} className="flex flex-row gap-50 justify-center content-stretch">
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <MuiDatePicker
-                            title="Invoice Date"
-                            label="Invoice Date"
-                            value={invoiceDate}
-                            onChange={(newValue) => setInvoiceDate(newValue)}
+                <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-4 content-stretch">
+                    <div className="flex flex-col gap-4.5">
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <MuiDatePicker
+                                title="Invoice Date"
+                                label="Invoice Date"
+                                value={invoiceDate}
+                                onChange={(newValue) => setInvoiceDate(newValue)}
+                            />
+                        </LocalizationProvider>
+                        <AutoCompleteWithoutSelectorButton
+                            title="Amount"
+                            placeholder="Amount"
+                            dataArr={[]}
+                            stateSetter={setAmount}
+                            input={amount}
                         />
-                    </LocalizationProvider>
-                    <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-                        <DialogContentText id="alert-dialog-description">
-                            <span>Cheque Upload</span>
-                        </DialogContentText>
-                        <UploadButton width={300} setFile={setChequeFile}/>
+                    </div>
+                    <div className="mb-1.5 flex flex-col gap-2">
+                        <div className="flex flex-row gap-2">
+                            <DialogContentText id="alert-dialog-description">
+                                <span>Cheque Upload</span>
+                            </DialogContentText>
+                            <UploadButton width={200} setFile={setChequeFile}/>
+                        </div>
                         <FilePreviewWindow source={undefined} width={300} height={300}/>
                     </div>
-                    <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-                        <DialogContentText id="alert-dialog-description">
-                            <span>Statement Upload</span>
-                        </DialogContentText>
-                        <UploadButton width={300} setFile={setStatementFile}/>
+                    <div className="mb-1.5 flex flex-col gap-2">
+                        <div className="flex flex-row gap-2 xl:flex-row">
+                            <DialogContentText id="alert-dialog-description">
+                                <span>Statement Upload</span>
+                            </DialogContentText>
+                            <UploadButton width={200} setFile={setStatementFile}/>
+                        </div>
                         <FilePreviewWindow source={undefined} width={300} height={300}/>
                     </div>
+                    
                 </div>
             </DialogContent>
             <DialogContent dividers={scroll === 'paper'}>
