@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
+import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: (string | number)[][];
@@ -42,19 +43,6 @@ function MuiDataGridForPostManagement({
 
   const [editingRow, setEditingRow] = useState<invoiceData>({} as invoiceData);
 
-  // useEffect(() => {
-  //   console.log("Data array updated:", dataArray);
-  //   const total = dataArray.reduce(
-  //     (sum: number, item: any) => sum + item.amount,
-  //     0,
-  //   );
-  //   setTotalAmount(total);
-  // }, [dataArray]);
-
-  // useEffect(() => {
-  //   console.log("Row selected:", editingRow);
-  // }, [editingRow]);
-
   if (!dataArray || dataArray.length === 0) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
@@ -64,11 +52,6 @@ function MuiDataGridForPostManagement({
       </div>
     );
   }
-
-  // const totalAmount = dataArray.reduce(
-  //   (sum: any, item: any) => sum + item.amount,
-  //   0,
-  // );
 
   const updateSelectedRow = (checkedRows: GridRowSelectionModel) => {
     if (checkedRows.length === 0) {
@@ -80,11 +63,6 @@ function MuiDataGridForPostManagement({
       const checkedData = dataArray.filter((row: (string | number)[]) =>
         checkedRows.includes(row[3]),
       );
-
-      // const total = checkedData.reduce(
-      //   (sum: number, item: any) => sum + item.amount,
-      //   0,
-      // );
 
       const finishedInvoices = checkedData.filter(
         (row: any) => row[2] <= 0,
@@ -103,90 +81,7 @@ function MuiDataGridForPostManagement({
     
   };
 
-  // const updateTotalAmount = (checkedRows: GridRowSelectionModel) => {
-  //   if (checkedRows.length === 0) {
-  //     setSelectedRows([]);
-  //     setTotalAmount(
-  //       dataArray.reduce((sum: number, item: any) => sum + item.amount, 0),
-  //     );
-  //     setCanSetPay(false);
-  //   } else {
-  //     //console.log("Selected rows:", checkedRows);
-
-  //     const checkedData = dataArray.filter((row: any) =>
-  //       checkedRows.includes(row.invoiceId),
-  //     );
-
-  //     const total = checkedData.reduce(
-  //       (sum: number, item: any) => sum + item.amount,
-  //       0,
-  //     );
-
-  //     const unPaidInvoices = checkedData.filter(
-  //       (row: any) => row.settlementDate === null,
-  //     );
-  //     if (
-  //       unPaidInvoices.length === 0 ||
-  //       checkedData.length > unPaidInvoices.length
-  //     ) {
-  //       setCanSetPay(false);
-  //     } else {
-  //       setCanSetPay(true);
-  //     }
-  //     setSelectedRows(checkedData);
-  //     setTotalAmount(total);
-  //   }
-  // };
-
-  //   const total = selectedData.reduce(
-  //     (sum: number, item: any) => sum + item.amount,
-  //     0,
-  //   );
-  //   setTotalAmount(total);
-  // };
-
-  // const handleSelectAll = (isChecked: boolean) => {
-  //   if (isChecked) {
-  //     setSelectedRows(dataArray.map((row: Invoice) => row.id));
-  //   } else {
-  //     setSelectedRows([]);
-  //   }
-  // };
-
   const columns: GridColDef[] = [
-    // {
-    //   field: "checkbox",
-    //   headerName: "",
-    //   flex: 1,
-    //   align: "center",
-    //   headerAlign: "center",
-    //   sortable: false,
-    //   renderCell: (params) => (
-    //     <Checkbox
-    //       checked={selectedRows.includes(params.row.id)}
-    //       onChange={(e) => {
-    //         console.log("Checkbox clicked:", e.target.checked);
-    //         setSelectedRows(
-    //           e.target.checked
-    //             ? [...selectedRows, params.row.id]
-    //             : selectedRows.filter((id) => id !== params.row.id),
-    //         );
-    //         updateTotalAmount();
-    //       }
-
-    //       }
-    //       className="text-dark dark:text-white"
-    //     />
-    //   ),
-    //   renderHeader: () => (
-    //     <Checkbox
-    //       checked={selectedRows.length === dataArray.length}
-    //       onChange={(e) => {handleSelectAll(e.target.checked);
-    //                         updateTotalAmount();}}
-    //       className="text-dark dark:text-white"
-    //     />
-    //   ),
-    // },
     {
       field: "id",
       headerName: "id",
@@ -348,7 +243,13 @@ function MuiDataGridForPostManagement({
           setPopUpOpen(true);
         }}
       />
-      <InvoiceUploadPopUp
+      <ComfirmPopUp
+        title="Confirm"
+        message="Are you sure you want to set the selected invoices as paid?"
+        open={popUpOpen}
+        onClose={setPopUpOpen}
+      />
+      {/* <InvoiceUploadPopUp
         title="Upload cheque or statement"
         open={popUpOpen}
         onClose={setPopUpOpen}
@@ -362,7 +263,7 @@ function MuiDataGridForPostManagement({
         onClose={setPopUpOpenEdit}
         invoiceInfo={editingRow}
         setDataArray={setFilteredData}
-      />
+      /> */}
     </div>
   );
 }

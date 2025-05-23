@@ -25,7 +25,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   useEffect(() => {
     console.log({ dataArray });
     setDataToShow(dataArray);
-  }, [dataToShow]);
+  }, []);
 
   useEffect(() => {
     const selectedData : (string | number)[][] = dataArray.filter((row: (string | number)[]) =>
@@ -56,7 +56,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         setFilteredData={setDataToShow}
       /> */}
       <PostSearchBox
-        dataArray={dataArray}
+        dataArray={dataToShow}
         clientData={clientData}
         postData={postData}
         clientName={clientName}
@@ -75,7 +75,6 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         setPopUpOpenEdit={setPopUpOpenEdit}
         setFilteredData={setDataToShow}
       />
-
 
     </>
   );

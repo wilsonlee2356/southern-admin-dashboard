@@ -69,7 +69,7 @@ const PostSearchBox = ({ dataArray, clientData, postData, clientName, postcode, 
     setClientName("");
     setPostcode("");
   };
-
+  
   
 
   // const checkDateWithinMonths = (date: Date, months: number) => {

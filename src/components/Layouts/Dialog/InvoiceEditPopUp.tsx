@@ -86,6 +86,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             post: {
                 postId: invoiceInfo.post.postId,
                 postcode: postcode,
+                address: "",
+                isEnded: false,
                 client: {
                     clientId: invoiceInfo.post.client.clientId,
                     clientName: clientName,
