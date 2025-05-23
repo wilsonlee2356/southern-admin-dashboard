@@ -18,7 +18,7 @@ import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 
 type MuiDataGridWithPopUpButtonProps = {
-  dataArray: invoiceData[];
+  dataArray: (string | number)[][];
   popUpOpen: boolean;
   setPopUpOpen: any;
   popUpOpenEdit: boolean;
@@ -26,7 +26,7 @@ type MuiDataGridWithPopUpButtonProps = {
   setFilteredData: any;
 };
 
-function MuiDataGridWithPopUpButton({
+function MuiDataGridForPostManagement({
   dataArray,
   popUpOpen,
   setPopUpOpen,
@@ -34,22 +34,22 @@ function MuiDataGridWithPopUpButton({
   setPopUpOpenEdit,
   setFilteredData,
 }: MuiDataGridWithPopUpButtonProps) {
-  const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
+  const [selectedRows, setSelectedRows] = useState<(string | number)[][]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0
     //dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
   );
-  const [canSetPay, setCanSetPay] = useState<boolean>(false);
+  const [canSetFinish, setCanSetFinish] = useState<boolean>(false);
 
   const [editingRow, setEditingRow] = useState<invoiceData>({} as invoiceData);
 
-  useEffect(() => {
-    console.log("Data array updated:", dataArray);
-    const total = dataArray.reduce(
-      (sum: number, item: any) => sum + item.amount,
-      0,
-    );
-    setTotalAmount(total);
-  }, [dataArray]);
+  // useEffect(() => {
+  //   console.log("Data array updated:", dataArray);
+  //   const total = dataArray.reduce(
+  //     (sum: number, item: any) => sum + item.amount,
+  //     0,
+  //   );
+  //   setTotalAmount(total);
+  // }, [dataArray]);
 
   // useEffect(() => {
   //   console.log("Row selected:", editingRow);
@@ -70,47 +70,73 @@ function MuiDataGridWithPopUpButton({
   //   0,
   // );
 
-  const getInvoiceById = (id: GridRowId) => {
-    //const idString = id.toString();
-    const invoice = dataArray.find((item) => item.invoiceId === id);
-    //console.log("Invoice found:", invoice?.post.postcode);
-    return invoice;
-  };
-
-  const updateTotalAmount = (checkedRows: GridRowSelectionModel) => {
+  const updateSelectedRow = (checkedRows: GridRowSelectionModel) => {
     if (checkedRows.length === 0) {
       setSelectedRows([]);
-      setTotalAmount(
-        dataArray.reduce((sum: number, item: any) => sum + item.amount, 0),
-      );
-      setCanSetPay(false);
+      //setCanSetPay(false);
     } else {
       //console.log("Selected rows:", checkedRows);
 
-      const checkedData = dataArray.filter((row: any) =>
-        checkedRows.includes(row.invoiceId),
+      const checkedData = dataArray.filter((row: (string | number)[]) =>
+        checkedRows.includes(row[3]),
       );
 
-      const total = checkedData.reduce(
-        (sum: number, item: any) => sum + item.amount,
-        0,
-      );
+      // const total = checkedData.reduce(
+      //   (sum: number, item: any) => sum + item.amount,
+      //   0,
+      // );
 
-      const unPaidInvoices = checkedData.filter(
-        (row: any) => row.settlementDate === null,
+      const finishedInvoices = checkedData.filter(
+        (row: any) => row[2] <= 0,
       );
       if (
-        unPaidInvoices.length === 0 ||
-        checkedData.length > unPaidInvoices.length
+        finishedInvoices.length === 0 ||
+        checkedData.length > finishedInvoices.length
       ) {
-        setCanSetPay(false);
+        setCanSetFinish(true);
       } else {
-        setCanSetPay(true);
+        setCanSetFinish(false);
       }
       setSelectedRows(checkedData);
-      setTotalAmount(total);
+      // setTotalAmount(total);
     }
+    
   };
+
+  // const updateTotalAmount = (checkedRows: GridRowSelectionModel) => {
+  //   if (checkedRows.length === 0) {
+  //     setSelectedRows([]);
+  //     setTotalAmount(
+  //       dataArray.reduce((sum: number, item: any) => sum + item.amount, 0),
+  //     );
+  //     setCanSetPay(false);
+  //   } else {
+  //     //console.log("Selected rows:", checkedRows);
+
+  //     const checkedData = dataArray.filter((row: any) =>
+  //       checkedRows.includes(row.invoiceId),
+  //     );
+
+  //     const total = checkedData.reduce(
+  //       (sum: number, item: any) => sum + item.amount,
+  //       0,
+  //     );
+
+  //     const unPaidInvoices = checkedData.filter(
+  //       (row: any) => row.settlementDate === null,
+  //     );
+  //     if (
+  //       unPaidInvoices.length === 0 ||
+  //       checkedData.length > unPaidInvoices.length
+  //     ) {
+  //       setCanSetPay(false);
+  //     } else {
+  //       setCanSetPay(true);
+  //     }
+  //     setSelectedRows(checkedData);
+  //     setTotalAmount(total);
+  //   }
+  // };
 
   //   const total = selectedData.reduce(
   //     (sum: number, item: any) => sum + item.amount,
@@ -164,152 +190,132 @@ function MuiDataGridWithPopUpButton({
     {
       field: "id",
       headerName: "id",
-      valueGetter: (value, row) => row.invoiceId,
+      valueGetter: (value, row) => row[3],
     },
     {
-      field: "invoiceNum",
-      headerName: "Invoice No.",
+      field: "clientName",
+      headerName: "Client Name",
       flex: 2,
       align: "center",
       headerAlign: "center",
+      valueGetter: (value, row) => row[4],
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
     },
     {
-      field: "clienName",
-      headerName: "Client name",
+      field: "Postcode",
+      headerName: "Postcode",
       flex: 4,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.post.client.clientName,
+      valueGetter: (value, row) => row[3],
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
     },
     {
-      field: "amount",
-      headerName: "Amount",
+      field: "NumberOfInvoices",
+      headerName: "Number of invoices",
       flex: 2,
       align: "center",
       headerAlign: "center",
+      valueGetter: (value, row) => row[0],
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">
-          {"$" + params.value.toLocaleString()}
+          {params.value.toLocaleString()}
         </h5>
       ),
     },
     {
-      field: "postCode",
-      headerName: "Postcode",
+      field: "TotalAmount",
+      headerName: "Total Amount",
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.post.postcode,
+      valueGetter: (value, row) => row[1],
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
     },
     {
-      field: "invoiceDate",
-      headerName: "Invoice Date",
+      field: "Total Outstanding",
+      headerName: "Total Outstanding",
       flex: 2,
       align: "center",
       headerAlign: "center",
+      valueGetter: (value, row) => row[2],
       renderCell: (params) => (
-        <p className="text-dark dark:text-white">
-          {dayjs(params.value).format("MMM DD, YYYY")}
-        </p>
+        <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
     },
-    {
-      field: "settlementDate",
-      headerName: "Status",
-      flex: 2,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <div
-          className={cn(
-            "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
-            {
-              "bg-[#219653]/[0.08]": params.value !== null,
-              "bg-[#D34053]/[0.08]": params.value === null,
-              //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
-            },
-          )}
-        >
-          {params.value !== null ? "Paid" : "Unpaid"}
-        </div>
-      ),
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 2.5,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <div className="flex items-center justify-center gap-x-3.5">
-          <button className="text-dark dark:text-white">
-            <span className="sr-only">View Invoice</span>
-            <PreviewIcon className="fill-dark dark:fill-white" />
-          </button>
-          <button className="text-dark dark:text-white"
-            onClick={() => {
-              const invoice = getInvoiceById(params.id);
-              if (!invoice) return;
-              CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
-                console.log("Deleted invoice: ", res);
-                  const updatedData = dataArray.filter(
-                    (item) => item.invoiceId !== invoice.invoiceId,
-                  );
-                  setFilteredData(updatedData);
-              }
-              ).catch((err) => {
-                console.log("Error deleting invoice: ", err);
-              });
+    // {
+    //   field: "actions",
+    //   headerName: "Actions",
+    //   flex: 2.5,
+    //   align: "center",
+    //   headerAlign: "center",
+    //   renderCell: (params) => (
+    //     <div className="flex items-center justify-center gap-x-3.5">
+    //       <button className="text-dark dark:text-white">
+    //         <span className="sr-only">View Invoice</span>
+    //         <PreviewIcon className="fill-dark dark:fill-white" />
+    //       </button>
+    //       <button className="text-dark dark:text-white"
+    //         onClick={() => {
+    //           // const invoice = getInvoiceById(params.id);
+    //           // if (!invoice) return;
+    //           // CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
+    //           //   console.log("Deleted invoice: ", res);
+    //           //     const updatedData = dataArray.filter(
+    //           //       (item) => item.invoiceId !== invoice.invoiceId,
+    //           //     );
+    //           //     setFilteredData(updatedData);
+    //           // }
+    //           // ).catch((err) => {
+    //           //   console.log("Error deleting invoice: ", err);
+    //           // });
               
-            }}>
-            <span className="sr-only">Delete Invoice</span>
-            <TrashIcon className="fill-dark dark:fill-white" />
-          </button>
-          <button
-            className="text-dark dark:text-white"
-            onClick={() => {
-              const invoice = getInvoiceById(params.id);
-              if (!invoice) return;
-              setEditingRow(invoice);
-              setPopUpOpenEdit(true);
-            }}
-          >
-            <span className="sr-only">Edit Invoice</span>
-            <EditIcon className="fill-dark dark:fill-white" />
-          </button>
-        </div>
-      ),
-    },
+    //         }}>
+    //         <span className="sr-only">Delete Invoice</span>
+    //         <TrashIcon className="fill-dark dark:fill-white" />
+    //       </button>
+    //       <button
+    //         className="text-dark dark:text-white"
+    //         onClick={() => {
+    //           // const invoice = getInvoiceById(params.id);
+    //           // if (!invoice) return;
+    //           // setEditingRow(invoice);
+    //           setPopUpOpenEdit(true);
+    //         }}
+    //       >
+    //         <span className="sr-only">Edit Invoice</span>
+    //         <EditIcon className="fill-dark dark:fill-white" />
+    //       </button>
+    //     </div>
+    //   ),
+    // },
   ];
 
   return (
     <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
-      <ShowcaseSection
+      {/* <ShowcaseSection
         title={`Total: $${totalAmount.toLocaleString()}`}
         className="!p-6.5"
       >
         <div></div>
-      </ShowcaseSection>
+      </ShowcaseSection> */}
       <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
         <DataGrid
           rows={dataArray}
           columns={columns}
-          getRowId={(row) => row.invoiceId}
+          getRowId={(row) => row[3]}
           columnVisibilityModel={{
             id: false,
           }}
           // isRowSelectable={(params: GridRowParams) => params.row.status === "Unpaid"}
           onRowSelectionModelChange={(checkedRows) => {
-            updateTotalAmount(checkedRows);
+            updateSelectedRow(checkedRows);
           }}
           checkboxSelection
           disableColumnMenu
@@ -337,7 +343,7 @@ function MuiDataGridWithPopUpButton({
         shape="full"
         size="default"
         icon={<CheckIcon className="fill-white" />}
-        disabled={!canSetPay}
+        disabled={!canSetFinish}
         onClick={() => {
           setPopUpOpen(true);
         }}
@@ -361,4 +367,4 @@ function MuiDataGridWithPopUpButton({
   );
 }
 
-export default MuiDataGridWithPopUpButton;
+export default MuiDataGridForPostManagement;

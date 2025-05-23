@@ -64,6 +64,17 @@ export const CombinedService = {
       }
     },
 
+    async get_post_client_invoice_summry(): Promise<(string | number)[][]> {
+      try{
+        const response = await fetch(`http://localhost:8080/api/posts/PostAndClientWithInvoiceSum`);
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching invoice by ID:', error);
+        throw error;
+      }
+    },
+
     async update_invoice_by_id(id: number, updateData: invoiceData): Promise<invoiceData> {
       try{
         const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {

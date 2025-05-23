@@ -69,6 +69,7 @@ export function InputBox({ dataArray, clientData, postData, setDataToShow } : In
         invoiceNum: invoiceNumber,
         post: {
           postcode: postcode,
+          address: "",
           client: {
             clientName: clientName,
             fullName: null,
