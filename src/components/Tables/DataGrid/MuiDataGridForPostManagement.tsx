@@ -93,7 +93,7 @@ function MuiDataGridForPostManagement({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row[4],
+      valueGetter: (value, row) => row[6],
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -104,7 +104,7 @@ function MuiDataGridForPostManagement({
       flex: 4,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row[3],
+      valueGetter: (value, row) => row[4],
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -144,6 +144,28 @@ function MuiDataGridForPostManagement({
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
     },
+    {
+          field: "isEnded",
+          headerName: "Finished",
+          flex: 2,
+          align: "center",
+          headerAlign: "center",
+          valueGetter: (value, row) => row[5],
+          renderCell: (params) => (
+            <div
+              className={cn(
+                "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
+                {
+                  "bg-[#219653]/[0.08]": params.value !== false,
+                  "bg-[#D34053]/[0.08]": params.value === false,
+                  //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
+                },
+              )}
+            >
+              {params.value !== false ? "Paid" : "Unpaid"}
+            </div>
+          ),
+        },
     // {
     //   field: "actions",
     //   headerName: "Actions",
@@ -248,6 +270,43 @@ function MuiDataGridForPostManagement({
         message="Are you sure you want to set the selected invoices as paid?"
         open={popUpOpen}
         onClose={setPopUpOpen}
+        functionToRun={() => {
+          let idString = "";
+          selectedRows.map((row, index, array) => {
+              //console.log("Row: ", row, " ID: ", index, "Array.len: ", array.length);
+              if (index < array.length - 1) {
+                console.log("Concat", row[3].toString(), " index: ", index);
+                idString+=row[3].toString()+",";
+                console.log("sdsdas", idString);
+              } else {
+                console.log("Concat last: ", row[3].toString(), " index: ", index);
+                idString+=row[3].toString();
+              }
+              // 
+          });
+          
+          CombinedService.set_post_to_finish(idString).then((res) => {
+            console.log("Set post to finished: ", res);
+            const updatedData = dataArray.map((item) => {
+              if (idString.includes(item[3].toString())) {
+                return [
+                  item[0],
+                  item[1],
+                  item[2],
+                  item[3],
+                  item[4],
+                  true, // Set isEnded to true
+                  item[6],
+                ];
+              }
+              return item;
+            });
+            setFilteredData(updatedData);
+          }).catch((err) => {
+            console.error("Error setting post to finished: ", err);
+          });
+          
+        }}
       />
       {/* <InvoiceUploadPopUp
         title="Upload cheque or statement"

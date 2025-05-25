@@ -92,6 +92,23 @@ export const CombinedService = {
       }
     },
 
+    async set_post_to_finish(ids: string): Promise<post[]> {
+      try{
+        const response = await fetch(`http://localhost:8080/api/posts/setEnded/${ids}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: null,
+        });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error updating invoice:', error);
+        throw error;
+      }
+    },
+
     async delete_invoice_by_id(id: number) {
       try{
         const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {

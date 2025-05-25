@@ -13,7 +13,7 @@ type PageWrapperProps = {
 };
 
 export default function PageWrapper({ dataArray, clientData, postData }: PageWrapperProps) {
-  const [dataToShow, setDataToShow] = useState<(string | number)[][]>([]);//0 = NumberOfInvoices, 1 = TotalAmount, 2 = TotalOutstandingAmount, 3 = postcode, 4 = clientName
+  const [dataToShow, setDataToShow] = useState<(string | number)[][]>([]);//0 = NumberOfInvoices, 1 = TotalAmount, 2 = TotalOutstandingAmount, 3 = post_id, 4 = postcode, 5 = is_ended, 6 = clientName
 //   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -36,7 +36,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
       )
     );
     setDataToShow(selectedData);
-    console.log("Filtered post data: ", dataToShow);
+    console.log("Filtered post data: ", selectedData);
     //console.log("Type ", selectedData = dataArray);
   }, [clientName, postcode, dataArray]);
 

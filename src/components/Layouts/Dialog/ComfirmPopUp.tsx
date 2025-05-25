@@ -32,13 +32,14 @@ type InvoiceEditPopUpPropsType = {
     message: string;
     open: boolean;
     onClose: any;
+    functionToRun: any;
     // invoiceInfo: invoiceData;
     // setDataArray: any;
 }
 
 
 
-function ComfirmPopUp ({ title, message, open, onClose}: InvoiceEditPopUpPropsType){
+function ComfirmPopUp ({ title, message, open, onClose, functionToRun}: InvoiceEditPopUpPropsType){
 
     // const [invoiceNum, setInvoiceNum] = React.useState<string>("");
     // const [postcode, setPostcode] = React.useState<string>("");
@@ -103,6 +104,7 @@ function ComfirmPopUp ({ title, message, open, onClose}: InvoiceEditPopUpPropsTy
                         icon={<CheckIcon className="fill-white" />}
                         //disabled={!canSetFinish}
                         onClick={() => {
+                            functionToRun();
                             closePopUp();
                         }}
                         />
