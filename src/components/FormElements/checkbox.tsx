@@ -35,6 +35,7 @@ export function Checkbox({
         <div className="relative">
           <input
             type="checkbox"
+            // value={value}
             onChange={onChange}
             name={name}
             id={id}

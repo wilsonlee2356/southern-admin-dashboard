@@ -14,17 +14,18 @@ import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, postClientInvoiceSummary } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 
 type MuiDataGridWithPopUpButtonProps = {
-  dataArray: (string | number)[][];
+  dataArray: postClientInvoiceSummary[];
   popUpOpen: boolean;
   setPopUpOpen: any;
   popUpOpenEdit: boolean;
   setPopUpOpenEdit: any;
   setFilteredData: any;
+  setUpdateDataNeeded: any;
 };
 
 function MuiDataGridForPostManagement({
@@ -34,8 +35,9 @@ function MuiDataGridForPostManagement({
   popUpOpenEdit,
   setPopUpOpenEdit,
   setFilteredData,
+  setUpdateDataNeeded,
 }: MuiDataGridWithPopUpButtonProps) {
-  const [selectedRows, setSelectedRows] = useState<(string | number)[][]>([]);
+  const [selectedRows, setSelectedRows] = useState<postClientInvoiceSummary[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0
     //dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
   );
@@ -60,12 +62,12 @@ function MuiDataGridForPostManagement({
     } else {
       //console.log("Selected rows:", checkedRows);
 
-      const checkedData = dataArray.filter((row: (string | number)[]) =>
-        checkedRows.includes(row[3]),
+      const checkedData = dataArray.filter((row: postClientInvoiceSummary) =>
+        checkedRows.includes(row.post_id),
       );
-
+      //console.log("Checked data:1 ", checkedData);
       const finishedInvoices = checkedData.filter(
-        (row: any) => row[2] <= 0,
+        (row: any) => row[5] === false,
       );
       if (
         finishedInvoices.length === 0 ||
@@ -85,7 +87,7 @@ function MuiDataGridForPostManagement({
     {
       field: "id",
       headerName: "id",
-      valueGetter: (value, row) => row[3],
+      valueGetter: (value, row) => row.post_id,
     },
     {
       field: "clientName",
@@ -93,7 +95,7 @@ function MuiDataGridForPostManagement({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row[6],
+      valueGetter: (value, row) => row.client_name,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -104,7 +106,7 @@ function MuiDataGridForPostManagement({
       flex: 4,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row[4],
+      valueGetter: (value, row) => row.postcode,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -115,10 +117,10 @@ function MuiDataGridForPostManagement({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row[0],
+      valueGetter: (value, row) => row.numberOfInvoice,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">
-          {params.value.toLocaleString()}
+          {params.value}
         </h5>
       ),
     },
@@ -128,7 +130,7 @@ function MuiDataGridForPostManagement({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row[1],
+      valueGetter: (value, row) => row.totalAmount === null ? 0 : row.totalAmount,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -139,7 +141,7 @@ function MuiDataGridForPostManagement({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row[2],
+      valueGetter: (value, row) => row.outstanding === null ? 0 : row.outstanding,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -150,7 +152,7 @@ function MuiDataGridForPostManagement({
           flex: 2,
           align: "center",
           headerAlign: "center",
-          valueGetter: (value, row) => row[5],
+          valueGetter: (value, row) => row.ended,
           renderCell: (params) => (
             <div
               className={cn(
@@ -166,52 +168,6 @@ function MuiDataGridForPostManagement({
             </div>
           ),
         },
-    // {
-    //   field: "actions",
-    //   headerName: "Actions",
-    //   flex: 2.5,
-    //   align: "center",
-    //   headerAlign: "center",
-    //   renderCell: (params) => (
-    //     <div className="flex items-center justify-center gap-x-3.5">
-    //       <button className="text-dark dark:text-white">
-    //         <span className="sr-only">View Invoice</span>
-    //         <PreviewIcon className="fill-dark dark:fill-white" />
-    //       </button>
-    //       <button className="text-dark dark:text-white"
-    //         onClick={() => {
-    //           // const invoice = getInvoiceById(params.id);
-    //           // if (!invoice) return;
-    //           // CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
-    //           //   console.log("Deleted invoice: ", res);
-    //           //     const updatedData = dataArray.filter(
-    //           //       (item) => item.invoiceId !== invoice.invoiceId,
-    //           //     );
-    //           //     setFilteredData(updatedData);
-    //           // }
-    //           // ).catch((err) => {
-    //           //   console.log("Error deleting invoice: ", err);
-    //           // });
-              
-    //         }}>
-    //         <span className="sr-only">Delete Invoice</span>
-    //         <TrashIcon className="fill-dark dark:fill-white" />
-    //       </button>
-    //       <button
-    //         className="text-dark dark:text-white"
-    //         onClick={() => {
-    //           // const invoice = getInvoiceById(params.id);
-    //           // if (!invoice) return;
-    //           // setEditingRow(invoice);
-    //           setPopUpOpenEdit(true);
-    //         }}
-    //       >
-    //         <span className="sr-only">Edit Invoice</span>
-    //         <EditIcon className="fill-dark dark:fill-white" />
-    //       </button>
-    //     </div>
-    //   ),
-    // },
   ];
 
   return (
@@ -226,11 +182,12 @@ function MuiDataGridForPostManagement({
         <DataGrid
           rows={dataArray}
           columns={columns}
-          getRowId={(row) => row[3]}
+          getRowId={(row) => row.post_id}
           columnVisibilityModel={{
             id: false,
           }}
           // isRowSelectable={(params: GridRowParams) => params.row.status === "Unpaid"}
+          rowSelectionModel={selectedRows.map((row) => row.post_id)}
           onRowSelectionModelChange={(checkedRows) => {
             updateSelectedRow(checkedRows);
           }}
@@ -271,58 +228,24 @@ function MuiDataGridForPostManagement({
         open={popUpOpen}
         onClose={setPopUpOpen}
         functionToRun={() => {
-          let idString = "";
+          // let idString = "";
+          let idArr : number[] = [];
+          //console.log("SelectedRow: ", selectedRows);
           selectedRows.map((row, index, array) => {
-              //console.log("Row: ", row, " ID: ", index, "Array.len: ", array.length);
-              if (index < array.length - 1) {
-                console.log("Concat", row[3].toString(), " index: ", index);
-                idString+=row[3].toString()+",";
-                console.log("sdsdas", idString);
-              } else {
-                console.log("Concat last: ", row[3].toString(), " index: ", index);
-                idString+=row[3].toString();
-              }
-              // 
+            idArr = [...idArr, row.post_id];
           });
+          //console.log("idArr: "+idArr);
           
-          CombinedService.set_post_to_finish(idString).then((res) => {
-            console.log("Set post to finished: ", res);
-            const updatedData = dataArray.map((item) => {
-              if (idString.includes(item[3].toString())) {
-                return [
-                  item[0],
-                  item[1],
-                  item[2],
-                  item[3],
-                  item[4],
-                  true, // Set isEnded to true
-                  item[6],
-                ];
-              }
-              return item;
-            });
-            setFilteredData(updatedData);
+          CombinedService.set_post_to_finish(idArr).then((res) => {
+          //console.log("Set post to finished: ", res);
+            setUpdateDataNeeded(true);
+            updateSelectedRow([]);
           }).catch((err) => {
             console.error("Error setting post to finished: ", err);
           });
           
         }}
       />
-      {/* <InvoiceUploadPopUp
-        title="Upload cheque or statement"
-        open={popUpOpen}
-        onClose={setPopUpOpen}
-        dataArray={selectedRows}
-        setDataArray={setFilteredData}
-      />
-
-      <InvoiceEditPopUp
-        title="Edit invoice"
-        open={popUpOpenEdit}
-        onClose={setPopUpOpenEdit}
-        invoiceInfo={editingRow}
-        setDataArray={setFilteredData}
-      /> */}
     </div>
   );
 }

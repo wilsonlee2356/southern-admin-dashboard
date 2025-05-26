@@ -1,7 +1,9 @@
 import axios from 'axios';
 import apiClient from "@/lib/api-client";
 import { AxiosResponse } from "axios";
-import { invoiceData, client, post, invoiceDataOutput, invoiceOutstandingSummary } from '@/types/ObjectTypes/InvoiceType';
+import { invoiceData, client, post, invoiceDataOutput, postClientInvoiceSummary } from '@/types/ObjectTypes/InvoiceType';
+
+
 
 const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
 // if (!baseURL) {
@@ -64,10 +66,12 @@ export const CombinedService = {
       }
     },
 
-    async get_post_client_invoice_summry(): Promise<(string | number)[][]> {
+    async get_post_client_invoice_summry(): Promise<postClientInvoiceSummary[]> {
       try{
         const response = await fetch(`http://localhost:8080/api/posts/PostAndClientWithInvoiceSum`);
         const data = await response.json();
+        //console.log("Data fetched from API:", data);
+        // const formattedData = JSON.parse(data) as postClientInvoiceSummary[]
         return data;
       } catch (error) {
         console.error('Error fetching invoice by ID:', error);
@@ -92,14 +96,14 @@ export const CombinedService = {
       }
     },
 
-    async set_post_to_finish(ids: string): Promise<post[]> {
+    async set_post_to_finish(ids: number[]): Promise<post[]> {
       try{
-        const response = await fetch(`http://localhost:8080/api/posts/setEnded/${ids}`, {
+        const response = await fetch(`http://localhost:8080/api/posts/setEnded`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: null,
+          body: JSON.stringify(ids),
         });
         const data = await response.json();
         return data;

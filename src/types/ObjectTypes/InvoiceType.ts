@@ -71,3 +71,13 @@ export type invoiceOutstandingSummary = {
   totalOutstanding: number;
   clientName: string;
 }
+
+export type postClientInvoiceSummary = {
+  numberOfInvoices: number;
+  totalAmount: number;
+  outstanding: number;
+  post_id: number;
+  postcode: string;
+  ended: boolean;
+  client_name: string;
+}

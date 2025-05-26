@@ -8,8 +8,9 @@ import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoComple
 import AutoCompleteWithoutSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithoutSelectorButton";
 import NumberInput from "@/components/FormElements/InputGroup/NumberInputs/NumberInput";
 import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
-import { client, post, invoice, invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { client, post, invoice, invoiceData, postClientInvoiceSummary } from "@/types/ObjectTypes/InvoiceType";
 import { CloseIcon, SearchIcon, UploadIcon } from "@/assets/icons";
+import { MuiCheckbox } from "@/components/FormElements/Checkboxes/MuiCheckbox";
 import { CombinedService } from "@/app/api/invoice";
 import InvoiceCreatePopUp from "@/components/Layouts/Dialog/InvoiceCreatePopUp";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
@@ -18,11 +19,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type PostSearchBoxProps = {
-  dataArray: (string | number)[][]; // Pass data as a prop instead of fetching here
+  dataArray: postClientInvoiceSummary[]; // Pass data as a prop instead of fetching here
   clientData: client[];
   postData: post[];
   clientName: string;
   postcode: string;
+  showNotEndedPosts: boolean;
+  showEndedPosts: boolean;
   // amount: string;
   // Setters for the state variables
   setClientName:any;
@@ -30,11 +33,13 @@ type PostSearchBoxProps = {
   // setAmount:any;
   setFilteredData: any;
   setUpdateDataNeeded : any;
+  setShowNotEndedPosts: any;
+  setShowEndedPosts: any;
 };
 
 
 
-const PostSearchBox = ({ dataArray, clientData, postData, clientName, postcode, setClientName, setPostcode, setFilteredData, setUpdateDataNeeded }: PostSearchBoxProps) => {
+const PostSearchBox = ({ dataArray, clientData, postData, clientName, postcode, showNotEndedPosts, showEndedPosts, setClientName, setPostcode, setFilteredData, setUpdateDataNeeded, setShowEndedPosts, setShowNotEndedPosts }: PostSearchBoxProps) => {
 
   const [popUpOpen, setPopUpOpen] = useState(false);
 
@@ -137,6 +142,28 @@ const PostSearchBox = ({ dataArray, clientData, postData, clientName, postcode, 
             stateSetter={setPostcode}
             input ={postcode}
           />
+        </div>
+        <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
+          <MuiCheckbox
+            label="Unfinished Posts"
+            name="unfinishedPosts"
+            checked={showNotEndedPosts}
+            onChange={(e) => setShowNotEndedPosts(e.target.checked)}
+          />
+
+          <MuiCheckbox
+            label="Finished Posts"
+            name="finishedPosts"
+            checked={showEndedPosts}
+            onChange={(e) => setShowEndedPosts(e.target.checked)}
+          />
+          
+          {/* <Checkbox
+            label="Ended Posts"
+            name="showEndedPosts"
+            // checked={showEndedPosts}
+            // onChange={(e) => setShowEndedPosts(e.target.checked)}
+          /> */}
         </div>
         <div className="flex flex-col gap-4 xl:flex-row xl:justify-center">
           <Button
