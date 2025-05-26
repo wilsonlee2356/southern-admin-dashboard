@@ -228,18 +228,19 @@ function MuiDataGridWithPopUpButton({
       flex: 2,
       align: "center",
       headerAlign: "center",
+      valueGetter: (value, row) => row.amount-row.paidAmount,
       renderCell: (params) => (
         <div
           className={cn(
             "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
             {
-              "bg-[#219653]/[0.08]": params.value !== null,
-              "bg-[#D34053]/[0.08]": params.value === null,
+              "bg-[#219653]/[0.08]": params.value <= 0,
+              "bg-[#D34053]/[0.08]": params.value > 0,
               //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
             },
           )}
         >
-          {params.value !== null ? "Paid" : "Unpaid"}
+          {params.value <= 0 ? "Paid" : "Unpaid"}
         </div>
       ),
     },

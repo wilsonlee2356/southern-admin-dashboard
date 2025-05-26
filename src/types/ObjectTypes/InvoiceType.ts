@@ -61,9 +61,11 @@ export type invoiceDataOutput = {
   //client: clientOutput;
   invoiceDate: Date | null | undefined;
   amount: number;
+  paidAmount:number;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
   chequeId: number | null | undefined;
+
 }
 
 export type invoiceOutstandingSummary = {
