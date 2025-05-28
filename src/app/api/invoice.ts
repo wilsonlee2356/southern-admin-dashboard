@@ -1,7 +1,7 @@
 import axios from 'axios';
 import apiClient from "@/lib/api-client";
 import { AxiosResponse } from "axios";
-import { invoiceData, client, post, invoiceDataOutput, postClientInvoiceSummary } from '@/types/ObjectTypes/InvoiceType';
+import { invoiceData, client, post, cheque, transaction, invoiceDataOutput, postClientInvoiceSummary } from '@/types/ObjectTypes/InvoiceType';
 
 
 
@@ -145,6 +145,41 @@ export const CombinedService = {
       }
     },
 
+    async create_cheque(newCheque: cheque): Promise<cheque> {
+      try{
+        const response = await fetch(`http://localhost:8080/api/cheques`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newCheque),
+        });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error creating cheque:', error);
+        throw error;
+      }
+    },
+
+    async create_transaction(newTransaction: transaction[]): Promise<transaction[]> {
+      try{
+        console.log("New Transaction Data:", JSON.stringify(newTransaction));
+        const response = await fetch(`http://localhost:8080/api/combined/transaction`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newTransaction),
+        });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error creating transactions:', error);
+        throw error;
+      }
+    },
+
     async update_invoice_details(id: number, updateData: invoiceData): Promise<invoiceData> {
       try{
         const response = await fetch(`http://localhost:8080/api/combined/${id}`, {
@@ -163,60 +198,3 @@ export const CombinedService = {
       
     },
 }
-// export async function GET_ALL_INVOICES(): Promise<invoiceData[]> {
-//   const response = await fetch('http://localhost:8080/api/invoices');
-//   const data = await response.json();
-//   return data;
-// }
-
-// export async function GET_INVOICE_BY_ID(id: string): Promise<invoiceData> {
-//   const response = await fetch(`http://localhost:8080/api/invoices/num=${id}`);
-//   const data = await response.json();
-//   return data;
-// }
-
-// export async function UPDATE_INVOICE_BY_ID(id: number, updateData: invoiceData): Promise<invoiceData> {
-
-//   const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
-//     method: 'PUT',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify(updateData),
-//   });
-//   const data = await response.json();
-//   return data;
-// }
-
-// export async function DELETE_INVOICE_BY_ID(id: number): Promise<invoiceData> {
-//   const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
-//     method: 'DELETE',
-//   });
-//   const data = await response.json();
-//   return data;
-// }
-
-
-// export async function CREATE_INVOICE(newInvoice: invoiceDataOutput): Promise<invoiceData> {
-//   const response = await fetch(`http://localhost:8080/api/combined`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify(newInvoice),
-//   });
-//   const data = await response.json();
-//   return data;
-// }
-
-// export async function UPDATE_INVOICE_DETAILS(id: number, updateData: invoiceData): Promise<invoiceData> {
-//   const response = await fetch(`http://localhost:8080/api/combined/${id}`, {
-//     method: 'PUT',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify(updateData),
-//   });
-//   const data = await response.json();
-//   return data;
-// }

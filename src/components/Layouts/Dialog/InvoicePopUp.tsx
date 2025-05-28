@@ -14,7 +14,8 @@ import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, transaction, PaidAmountsType } from "@/types/ObjectTypes/InvoiceType";
+import { CombinedService } from "@/app/api/invoice";
 
 type InvoicePopUpPropsType = {
     title: string;
@@ -26,13 +27,18 @@ type InvoicePopUpPropsType = {
 
 
 
+
 function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: InvoicePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
     const [amount, setAmount] = useState("");
     const [chequeFile, setChequeFile] = React.useState<File | null>(null);
     const [statementFile, setStatementFile] = React.useState<File | null>(null);
+    const [paidAmounts, setPaidAmounts] = useState<PaidAmountsType[]>([]);
 
+    useEffect(() => {
+        console.log("Paid amount:", paidAmounts);
+    }, [paidAmounts]);
 
     const closePopUp = ()=> {
         onClose(false);
@@ -56,23 +62,23 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
             scroll={scroll}>
             <DialogTitle>{title} <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
-                <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-4 content-stretch">
+                <div style={{height:'100px', width:'100%'}} className="flex flex-row gap-4 content-stretch">
                     <div className="flex flex-col gap-4.5">
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <MuiDatePicker
-                                title="Invoice Date"
-                                label="Invoice Date"
+                                title="Payment Date"
+                                label="Payment Date"
                                 value={invoiceDate}
                                 onChange={(newValue) => setInvoiceDate(newValue)}
                             />
                         </LocalizationProvider>
-                        <AutoCompleteWithoutSelectorButton
+                        {/* <AutoCompleteWithoutSelectorButton
                             title="Amount"
                             placeholder="Amount"
                             dataArr={[]}
                             stateSetter={setAmount}
                             input={amount}
-                        />
+                        /> */}
                     </div>
                     <div className="mb-1.5 flex flex-col gap-2">
                         <div className="flex flex-row gap-2">
@@ -81,9 +87,9 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
                             </DialogContentText>
                             <UploadButton width={200} setFile={setChequeFile}/>
                         </div>
-                        <FilePreviewWindow source={undefined} width={300} height={300}/>
+                        {/* <FilePreviewWindow source={undefined} width={300} height={300}/> */}
                     </div>
-                    <div className="mb-1.5 flex flex-col gap-2">
+                    {/* <div className="mb-1.5 flex flex-col gap-2">
                         <div className="flex flex-row gap-2 xl:flex-row">
                             <DialogContentText id="alert-dialog-description">
                                 <span>Statement Upload</span>
@@ -91,7 +97,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
                             <UploadButton width={200} setFile={setStatementFile}/>
                         </div>
                         <FilePreviewWindow source={undefined} width={300} height={300}/>
-                    </div>
+                    </div> */}
                     
                 </div>
             </DialogContent>
@@ -100,7 +106,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
                     <span className="text-dark">Selected invoices</span>
                 </DialogContentText>
                 <DialogContent style={{width: '100%'}} ref={descriptionElementRef} tabIndex={-1}>
-                    <SimpleMuiDataGrid dataArray={dataArray} />
+                    <SimpleMuiDataGrid dataArray={dataArray} paidAmounts={paidAmounts} setPaidAmounts={setPaidAmounts}/>
                 </DialogContent>
             </DialogContent>
             <DialogContent>
@@ -112,6 +118,56 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
                     icon={<CheckIcon className="fill-white" />}
                     onClick={() => {
                         console.log("Invoice Date: ", invoiceDate);
+                        console.log("Paid Amounts: ", paidAmounts);
+                        CombinedService.create_cheque({
+                            chequeId: 0, // Assuming chequeId is auto-generated
+                            chequeCopy: null,
+                            transactionsList: [],
+                            }).then((cheque) => {
+                                console.log("Cheque created:", cheque);
+                                let transactionsArr: transaction[] = [];
+                                paidAmounts.map((item) => {
+                                    transactionsArr.push({
+                                        invoice: {
+                                            invoiceId: item.invoiceId,
+                                            invoiceNum: dataArray.find((invoiceInfo: invoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.invoiceNum || "",
+                                            post: dataArray.find((invoiceInfo: invoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.post || null,
+                                            invoiceDate: new Date(),
+                                            amount: 0,
+                                            settlementDate: null, // Assuming this is set later
+                                            statementId: null, // Assuming this is set later
+                                            createDate: new Date(),
+                                            updateDate: new Date(),
+                                        },
+                                        cheque: {
+                                            chequeId: cheque.chequeId, // Use the created cheque's ID
+                                            chequeCopy: null,
+                                            transactionsList: [],
+                                        }, // Use the created cheque's ID
+                                        amount: item.amount,
+                                        paymentDate: invoiceDate ? invoiceDate.toDate() : new Date(),
+                                    })
+                                });
+                                CombinedService.create_transaction(transactionsArr).then((transactions) => {
+                                    console.log("Transactions created:", transactions);
+                                    // setDataArray((prevData: any) => {
+                                    //     return prevData.map((item: any) => {
+                                    //         dataArray.map((invoiceInfo: invoiceData) => {
+                                    //             if (item.invoiceId === invoiceInfo.invoiceId) {
+                                    //                 item.settlementDate = invoiceDate ? invoiceDate.toISOString() : null;
+                                    //                 item.chequeId = cheque.chequeId;
+                                    //             }
+                                    //             return item;
+                                    //         });
+                                    //     });
+                                    // });
+                                }).catch((error) => {
+                                    console.error("Error creating transactions:", error);
+                                });
+                            }).catch((error) => {
+                                console.error("Error creating cheque:", error);
+                            });
+                        
                         // if(invoiceDate !== null) {
                         //     setDataArray((prevData: any) => {
                         //     return prevData.map((item: any) => {

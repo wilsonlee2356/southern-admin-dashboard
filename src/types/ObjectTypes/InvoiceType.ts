@@ -12,6 +12,11 @@ export type invoiceArray = {
   dataArray: invoiceData[];
 }
 
+export type PaidAmountsType = {
+    invoiceId: number;
+    amount: number;
+}
+
 export type client = {
   clientId: number;
   clientName: string;
@@ -30,6 +35,19 @@ export type post = {
   updateDate: string;
 }
 
+export type cheque = {
+  chequeId: number;
+  chequeCopy: null;
+  transactionsList: transaction[];
+}
+
+export type transaction = {
+  invoice: invoiceData;
+  cheque: cheque;
+  amount: number;
+  paymentDate: Date;
+}
+
 export type invoiceData = {
   invoiceId: number;
   invoiceNum: string;
@@ -39,7 +57,6 @@ export type invoiceData = {
   amount: number;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
-  chequeId: number | null | undefined;
   createDate: Date;
   updateDate: Date;
 }

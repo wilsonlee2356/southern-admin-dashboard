@@ -7,15 +7,27 @@ import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import InvoicePopUp from "@/components/Layouts/Dialog/InvoicePopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
-import { invoice } from "@/types/ObjectTypes/InvoiceType";
+import React, { use, useEffect, useState } from "react";
+import { invoice, PaidAmountsType, invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { NumberInput } from "@heroui/react";
 
 type SimpleMuiDataGridProps = {
-  dataArray: invoice[];
+  dataArray: invoiceData[];
+  paidAmounts: PaidAmountsType[];
+  setPaidAmounts: any;
 };
 
 
-function SimpleMuiDataGrid({ dataArray }: SimpleMuiDataGridProps) {
+function SimpleMuiDataGrid({ dataArray, paidAmounts, setPaidAmounts }: SimpleMuiDataGridProps) {
+
+  useEffect(() => {
+    // Initialize paidAmounts with empty objects for each invoice
+    const initialPaidAmounts = dataArray.map((invoice) => ({
+      invoiceId: invoice.invoiceId,
+      amount: null,
+    }));
+    setPaidAmounts(initialPaidAmounts);
+  }, [dataArray]);
 
   if (!dataArray || dataArray.length === 0) {
     return (
@@ -89,6 +101,7 @@ function SimpleMuiDataGrid({ dataArray }: SimpleMuiDataGridProps) {
           flex: 2,
           align: "center",
           headerAlign: "center",
+          valueGetter: (value, row) => row.invoiceNum,
           renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
         },
         {
@@ -148,6 +161,37 @@ function SimpleMuiDataGrid({ dataArray }: SimpleMuiDataGridProps) {
             >
               {params.value!== null ? "Paid" : "Unpaid"}
             </div>
+          ),
+        },
+        {
+          field: "amountPaid",
+          headerName: "Enter Amount Paid",
+          flex: 2,
+          align: "center",
+          headerAlign: "center",
+          renderCell: (params) => (
+            <NumberInput 
+              isRequired 
+              hideStepper 
+              classNames={{
+                input: ["w-full", "focus:outline-none", "focus:ring-none", "focus:border-none"],
+                inputWrapper: ["w-full", "bg-gray"],
+              }}
+              aria-label="Enter Amount Paid"
+              aria-placeholder="Enter Amount Paid"
+              value={paidAmounts.find((item) => item.invoiceId === params.row.invoiceId)?.amount || undefined}
+              onChange={(value) => {
+                console.log("Value changed:", value);
+                const updatedPaidAmounts = paidAmounts.map((item) =>
+                  item.invoiceId === params.row.invoiceId
+                    ? { ...item, amount: parseFloat(value.toString()) }
+                    : item,
+                );
+                setPaidAmounts(updatedPaidAmounts);
+              }}
+              variant="underlined" 
+              placeholder="Enter the amount" 
+              />
           ),
         },
   ];
