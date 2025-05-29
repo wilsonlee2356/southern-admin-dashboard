@@ -11,6 +11,7 @@ import {
 } from "@mui/x-data-grid";
 import InvoiceUploadPopUp from "@/components/Layouts/Dialog/InvoicePopUp";
 import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
+import { MuiCheckbox } from "@/components/FormElements/Checkboxes/MuiCheckbox";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -24,6 +25,14 @@ type MuiDataGridWithPopUpButtonProps = {
   popUpOpenEdit: boolean;
   setPopUpOpenEdit: any;
   setFilteredData: any;
+  showNotEndedPosts: boolean;
+  setShowNotEndedPosts: (value: boolean) => void;
+  showEndedPosts: boolean;
+  setShowEndedPosts: (value: boolean) => void;
+  showUnpaidInvoices: boolean;
+  setShowUnpaidInvoices: (value: boolean) => void;
+  showPaidInvoices: boolean;
+  setShowPaidInvoices: (value: boolean) => void;
 };
 
 function MuiDataGridWithPopUpButton({
@@ -33,6 +42,14 @@ function MuiDataGridWithPopUpButton({
   popUpOpenEdit,
   setPopUpOpenEdit,
   setFilteredData,
+  showEndedPosts,
+  setShowEndedPosts,
+  showNotEndedPosts,
+  setShowNotEndedPosts,
+  showUnpaidInvoices,
+  setShowUnpaidInvoices,
+  showPaidInvoices,
+  setShowPaidInvoices,
 }: MuiDataGridWithPopUpButtonProps) {
   const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0
@@ -58,9 +75,41 @@ function MuiDataGridWithPopUpButton({
   if (!dataArray || dataArray.length === 0) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
-        <ShowcaseSection title="No Data Available" className="!p-6.5">
-          <p>No invoices found to display.</p>
-        </ShowcaseSection>
+        
+        <div className="mb-4.5 flex items-center justify-between">
+            <label className="mb-3 block text-body-xl font-medium text-dark">
+              No data available
+            </label>
+            <div className="full-width flex items-right justify-end gap-x-3.5">
+              <MuiCheckbox
+                          label="Unpaid invoice"
+                          name="unpaidInvoice"
+                          checked={showUnpaidInvoices}
+                          onChange={(e) => setShowUnpaidInvoices(e.target.checked)}
+                        />
+
+              <MuiCheckbox
+                          label="Paid invoice"
+                          name="paidInvoice"
+                          checked={showPaidInvoices}
+                          onChange={(e) => setShowPaidInvoices(e.target.checked)}
+                        />
+              <MuiCheckbox
+                          label="Unfinished Posts"
+                          name="unfinishedPosts"
+                          checked={showNotEndedPosts}
+                          onChange={(e) => setShowNotEndedPosts(e.target.checked)}
+                        />
+
+              <MuiCheckbox
+                          label="Finished Posts"
+                          name="finishedPosts"
+                          checked={showEndedPosts}
+                          onChange={(e) => setShowEndedPosts(e.target.checked)}
+                        />
+            </div>
+        </div>
+
       </div>
     );
   }
@@ -190,12 +239,13 @@ function MuiDataGridWithPopUpButton({
     {
       field: "amount",
       headerName: "Amount",
-      flex: 2,
+      flex: 2.5,
       align: "center",
       headerAlign: "center",
+      valueGetter: (value, row) => "$"+row.paidAmount+" / $"+row.amount,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">
-          {"$" + params.value.toLocaleString()}
+          {params.value}
         </h5>
       ),
     },
@@ -252,7 +302,8 @@ function MuiDataGridWithPopUpButton({
       headerAlign: "center",
       renderCell: (params) => (
         <div className="flex items-center justify-center gap-x-3.5">
-          <button className="text-dark dark:text-white">
+          <button className="text-dark dark:text-white"
+            >
             <span className="sr-only">View Invoice</span>
             <PreviewIcon className="fill-dark dark:fill-white" />
           </button>
@@ -294,12 +345,44 @@ function MuiDataGridWithPopUpButton({
 
   return (
     <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
-      <ShowcaseSection
+      {/* <ShowcaseSection
         title={`Total: $${totalAmount.toLocaleString()}`}
         className="!p-6.5"
-      >
-        <div></div>
-      </ShowcaseSection>
+      > */}
+        <div className="mb-4.5 flex items-center justify-between">
+            <label className="mb-3 block text-body-xl font-medium text-dark">
+              {`Total: $${totalAmount.toLocaleString()}`}
+            </label>
+            <div className="full-width flex items-right justify-end gap-x-3.5">
+              <MuiCheckbox
+                          label="Unpaid invoice"
+                          name="unpaidInvoice"
+                          checked={showUnpaidInvoices}
+                          onChange={(e) => setShowUnpaidInvoices(e.target.checked)}
+                        />
+
+              <MuiCheckbox
+                          label="Paid invoice"
+                          name="paidInvoice"
+                          checked={showPaidInvoices}
+                          onChange={(e) => setShowPaidInvoices(e.target.checked)}
+                        />
+              <MuiCheckbox
+                          label="Unfinished Posts"
+                          name="unfinishedPosts"
+                          checked={showNotEndedPosts}
+                          onChange={(e) => setShowNotEndedPosts(e.target.checked)}
+                        />
+
+              <MuiCheckbox
+                          label="Finished Posts"
+                          name="finishedPosts"
+                          checked={showEndedPosts}
+                          onChange={(e) => setShowEndedPosts(e.target.checked)}
+                        />
+            </div>
+        </div>
+      {/* </ShowcaseSection> */}
       <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
         <DataGrid
           rows={dataArray}

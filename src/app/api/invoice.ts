@@ -165,7 +165,7 @@ export const CombinedService = {
     async create_transaction(newTransaction: transaction[]): Promise<transaction[]> {
       try{
         console.log("New Transaction Data:", JSON.stringify(newTransaction));
-        const response = await fetch(`http://localhost:8080/api/combined/transaction`, {
+        const response = await fetch(`http://localhost:8080/api/combined/invoiceCheque`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ export const CombinedService = {
         const data = await response.json();
         return data;
       } catch (error) {
-        console.error('Error creating transactions:', error);
+        console.error('Error creating invoiceCheque:', error);
         throw error;
       }
     },

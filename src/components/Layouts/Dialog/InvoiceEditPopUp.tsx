@@ -10,6 +10,7 @@ import UploadButton from "@/components/ui-elements/upload-button";
 import InputGroup from "@/components/FormElements/InputGroup";
 import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
+import { TextAreaOne } from "@/components/FormElements/InputGroup/TextAreaOne";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
@@ -43,6 +44,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
     const [postcode, setPostcode] = React.useState<string>("");
     const [amount, setAmount] = React.useState<number>(0);
     const [clientName, setClientName] = React.useState<string>("");
+    const [fullName, setFullName] = React.useState<string>("");
+    const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
 
     useEffect(() => {
@@ -53,6 +56,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             setPostcode(invoiceInfo?.post.postcode);
             setAmount(invoiceInfo?.amount);
             setClientName(invoiceInfo?.post.client.clientName);
+            setFullName(toEmptyIfNull(invoiceInfo?.post.client.fullName));
+            setAddress(toEmptyIfNull(invoiceInfo?.post.address));
             setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
         }
         
@@ -61,7 +66,9 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
     if(Object.keys(invoiceInfo).length === 0) return(<><div>No invoice selected</div></>);
 
     //console.log("Invoice Info: ", invoiceInfo);
-
+    const toEmptyIfNull = (value: string | null) => {
+        return value === null ? "" : value;
+    }
 
     //console.log("Pop up opened: ", invoiceNum);
     const closePopUp = ()=> {
@@ -79,6 +86,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
         console.log("Invoice Date: ", invoiceDate);
         
         const newDate = new Date();
+
+        // \/ \/ \/ \/ \/ \/ \/ \/ UNCOMMENT
 
         const updateInvoice : invoiceData = {
             invoiceId: invoiceInfo.invoiceId,
@@ -101,9 +110,9 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             
             invoiceDate: invoiceDate?.toDate(),
             amount: amount,
+            paidAmount: invoiceInfo.paidAmount,
             settlementDate: null,
             statementId: null,
-            chequeId: null,
             createDate: invoiceInfo.createDate,
             updateDate: newDate,
         };
@@ -121,6 +130,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             }
         });
         
+        // ^^^^^^^^^^^^^^Uncomment the following lines to update the invoice in the database
+
         // UPDATE_INVOICE_BY_ID(invoiceInfo.invoiceId, updateInvoice).then((res) => {
         // UPDATE_INVOICE_DETAILS(invoiceInfo.invoiceId, updateInvoice).then((res) => {
         //     console.log("Updated invoice: ", res);
@@ -139,8 +150,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             aria-describedby="alert-dialog-description">
             <DialogTitle>{title} <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
-                <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-center content-stretch">
-                    <ShowcaseSection title="Contact Form" className="!p-6.5 w-full h-full">
+                <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-left items-start content-stretch">
+                    {/* <ShowcaseSection title="Contact Form" className="!p-6.5 w-full h-full "> */}
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4.5 flex flex-row gap-4.5">
                                 <InputGroup
@@ -165,7 +176,16 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
                                     className="w-full xl:w-5/12" // 20% width on extra-large screens
                                 />
 
-                                
+                                <InputGroup
+                                    label="Amount"
+                                    type="number"
+                                    placeholder="Enter amount"
+                                    value={amount.toString()}
+                                    handleChange={(e) => {
+                                        setAmount(+e.target.value);
+                                    }}
+                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
+                                />
                             </div>
                             <div className="mb-4.5 flex flex-row gap-4.5">
                                 <InputGroup
@@ -180,18 +200,19 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
                                 />
 
                                 <InputGroup
-                                    label="Amount"
-                                    type="number"
-                                    placeholder="Enter amount"
-                                    value={amount.toString()}
+                                    label="Full Name"
+                                    type="text"
+                                    placeholder="Enter client's full number"
+                                    value={fullName}
                                     handleChange={(e) => {
-                                        setAmount(+e.target.value);
+                                        setFullName(e.target.value);
                                     }}
-                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
+                                    className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-                            <div className="w-full xl:w-6/12">
+                            <div className="w-full">
+                            <TextAreaOne label="Address" placeholder="Enter Address" value={address} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <MuiDatePicker
                                     title="Invoice Date"
@@ -237,7 +258,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
                                 }}
                             />
                         </form>
-                    </ShowcaseSection>
+                    {/* </ShowcaseSection> */}
                 </div>
             </DialogContent>
             <DialogContent>

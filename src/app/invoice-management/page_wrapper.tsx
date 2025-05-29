@@ -26,6 +26,11 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
 
+  const [showNotEndedPosts, setShowNotEndedPosts] = useState(true);
+  const [showEndedPosts, setShowEndedPosts] = useState(false);
+  const [showUnpaidInvoices, setShowUnpaidInvoices] = useState(true);
+  const [showPaidInvoices, setShowPaidInvoices] = useState(false);
+
   let data =  dataArray;
   let clients = clientData;
   let posts = postData;
@@ -36,13 +41,17 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         (!checkEmpty(invoiceNumber) ? row.invoiceNum.includes(invoiceNumber) : true) && 
         (!checkEmpty(clientName) ? row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) : true) && 
         (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) && 
-        startDate && endDate ? (checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)) : true
+        startDate && endDate ? (checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)) : true &&
+        (showNotEndedPosts && !row.post.isEnded) ||
+        (showEndedPosts && row.post.isEnded) ||
+        (showUnpaidInvoices && !(row.amount<row.paidAmount)) ||
+        (showPaidInvoices && (row.amount<row.paidAmount))
         //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
       )
     );
     console.log("startDate", startDate);
     setFilteredData(selectedData);
-  }, [invoiceNumber, clientName, postcode, startDate, endDate, dataArray]);
+  }, [invoiceNumber, clientName, postcode, startDate, endDate, showNotEndedPosts, showEndedPosts, showUnpaidInvoices, showPaidInvoices, dataArray]);
 
   useEffect(() => {
     if(updateDataNeeded){
@@ -138,6 +147,14 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         popUpOpenEdit={popUpOpenEdit}
         setPopUpOpenEdit={setPopUpOpenEdit}
         setFilteredData={setFilteredData}
+        showEndedPosts={showEndedPosts}
+        setShowEndedPosts={setShowEndedPosts}
+        showNotEndedPosts={showNotEndedPosts}
+        setShowNotEndedPosts={setShowNotEndedPosts}
+        showUnpaidInvoices={showUnpaidInvoices}
+        setShowUnpaidInvoices={setShowUnpaidInvoices}
+        showPaidInvoices={showPaidInvoices}
+        setShowPaidInvoices={setShowPaidInvoices}
       />
     </>
   );

@@ -55,6 +55,7 @@ export type invoiceData = {
   //client: client;
   invoiceDate: Date;
   amount: number;
+  paidAmount: number;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
   createDate: Date;

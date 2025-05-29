@@ -85,7 +85,7 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
                 fullName: null,
               },
             },
-            
+            paidAmount: 0,
             invoiceDate: invoiceDate?.toDate(),
             amount: parseFloat(amount),
             settlementDate: null,
