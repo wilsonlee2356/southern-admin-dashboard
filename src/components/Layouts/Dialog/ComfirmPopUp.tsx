@@ -33,13 +33,14 @@ type InvoiceEditPopUpPropsType = {
     open: boolean;
     onClose: any;
     functionToRun: any;
+    confirmButtonText: string;
     // invoiceInfo: invoiceData;
     // setDataArray: any;
 }
 
 
 
-function ComfirmPopUp ({ title, message, open, onClose, functionToRun}: InvoiceEditPopUpPropsType){
+function ComfirmPopUp ({ title, message, open, onClose, functionToRun, confirmButtonText}: InvoiceEditPopUpPropsType){
 
     // const [invoiceNum, setInvoiceNum] = React.useState<string>("");
     // const [postcode, setPostcode] = React.useState<string>("");
@@ -97,7 +98,7 @@ function ComfirmPopUp ({ title, message, open, onClose, functionToRun}: InvoiceE
                         }}
                       />
                 <Button
-                        label="Set paid"
+                        label={confirmButtonText}
                         variant="green"
                         shape="default"
                         size="default"

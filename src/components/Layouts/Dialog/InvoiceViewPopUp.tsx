@@ -11,10 +11,12 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
 import { TextAreaOne } from "@/components/FormElements/InputGroup/TextAreaOne";
+import DataLabel from "../Datalabel/dataLabel";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { cn } from "@/lib/utils";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -28,19 +30,17 @@ import dayjs, { Dayjs } from "dayjs";
 //     settlementDate: string;
 // }
 
-type InvoiceEditPopUpPropsType = {
+type InvoiceViewPopUpPropsType = {
     title: string;
     open: boolean;
     onClose: any;
     invoiceInfo: invoiceData;
     setDataArray: any;
-    setUpdateDataNeeded: any; // Optional prop to trigger data update
-
 }
 
 
 
-function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, setUpdateDataNeeded }: InvoiceEditPopUpPropsType){
+function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: InvoiceViewPopUpPropsType){
 
     const [invoiceNum, setInvoiceNum] = React.useState<string>("");
     const [postcode, setPostcode] = React.useState<string>("");
@@ -54,18 +54,18 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
             return;
         else {
-            setInvoiceNum(invoiceInfo.invoiceNum);
-            setPostcode(invoiceInfo.post.postcode);
-            setAmount(invoiceInfo.amount);
-            setClientName(invoiceInfo.post.client.clientName);
-            setFullName(toEmptyIfNull(invoiceInfo.post.client.fullName));
-            setAddress(toEmptyIfNull(invoiceInfo.post.address));
-            setInvoiceDate(dayjs(invoiceInfo.invoiceDate));
+            setInvoiceNum(invoiceInfo?.invoiceNum);
+            setPostcode(invoiceInfo?.post.postcode);
+            setAmount(invoiceInfo?.amount);
+            setClientName(invoiceInfo?.post.client.clientName);
+            setFullName(toEmptyIfNull(invoiceInfo?.post.client.fullName));
+            setAddress(toEmptyIfNull(invoiceInfo?.post.address));
+            setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
         }
         
     }, [invoiceInfo]);
 
-    if(Object.keys(invoiceInfo).length === 0) return(<><div></div></>);
+     if(Object.keys(invoiceInfo).length === 0) return(<><div></div></>);
 
     //console.log("Invoice Info: ", invoiceInfo);
     const toEmptyIfNull = (value: string | null) => {
@@ -97,12 +97,12 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             post: {
                 postId: invoiceInfo.post.postId,
                 postcode: postcode,
-                address: address,
+                address: "",
                 isEnded: false,
                 client: {
                     clientId: invoiceInfo.post.client.clientId,
                     clientName: clientName,
-                    fullName: fullName,
+                    fullName: invoiceInfo.post.client.fullName,
                     createDate: invoiceInfo.post.client.createDate,
                     updateDate: newDate.toISOString(),
                 },
@@ -129,7 +129,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                         return item;
                     });
                 });
-                setUpdateDataNeeded(true); // Trigger data update
+                
             }
         });
         
@@ -155,68 +155,78 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             <DialogContent>
                 <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-left items-start content-stretch">
                     {/* <ShowcaseSection title="Contact Form" className="!p-6.5 w-full h-full "> */}
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} className="w-xl h-full flex flex-col gap-4.5 justify-start items-start content-stretch">
                             <div className="mb-4.5 flex flex-row gap-4.5">
-                                <InputGroup
-                                    label="Invoice No. "
-                                    type="text"
-                                    placeholder="Enter invoice number"
-                                    value={invoiceNum}
-                                    handleChange={(e) => {
-                                        setInvoiceNum(e.target.value);
-                                    }}
+                                <DataLabel
+                                    label="Invoice Number"
+                                    content={invoiceNum}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
-
-                                <InputGroup
+                                <DataLabel
                                     label="Postcode"
-                                    type="text"
-                                    placeholder="Enter postcode"
-                                    value={postcode}
-                                    handleChange={(e) => {
-                                        setPostcode(e.target.value);
-                                    }}
-                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
+                                    content={postcode}
+                                    className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
-
-                                <InputGroup
+                                <DataLabel
                                     label="Amount"
-                                    type="number"
-                                    placeholder="Enter amount"
-                                    value={amount.toString()}
-                                    handleChange={(e) => {
-                                        setAmount(+e.target.value);
-                                    }}
-                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
+                                    content={amount.toString()}
+                                    className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
+                                <div>
+                                    <label className="text-body-sm font-medium text-dark">Invoice Status</label>
+                                    <div
+                                        className={cn(
+                                        "mt-3 max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
+                                        {
+                                            "bg-[#219653]/[0.08]": (invoiceInfo.paidAmount-invoiceInfo.amount) > 0,
+                                            "bg-[#D34053]/[0.08]": (invoiceInfo.paidAmount-invoiceInfo.amount) <= 0,
+                                            //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
+                                        },
+                                        )}
+                                    >
+                                        {(invoiceInfo.paidAmount-invoiceInfo.amount) > 0 ? "Paid" : "Unpaid"}
+                                    </div>
+                                </div>
                             </div>
                             <div className="mb-4.5 flex flex-row gap-4.5">
-                                <InputGroup
+                                <DataLabel
                                     label="Client Name"
-                                    type="text"
-                                    placeholder="Enter client number"
-                                    value={clientName}
-                                    handleChange={(e) => {
-                                        setClientName(e.target.value);
-                                    }}
+                                    content={clientName}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
-
-                                <InputGroup
+                                <DataLabel
                                     label="Full Name"
-                                    type="text"
-                                    placeholder="Enter client's full number"
-                                    value={fullName}
-                                    handleChange={(e) => {
-                                        setFullName(e.target.value);
-                                    }}
+                                    content={fullName=="" ? "N/A" : fullName}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
+                                <div>
+                                    <label className="text-body-sm font-medium text-dark">Postcode Status</label>
+                                    <div
+                                        className={cn(
+                                        "mt-3 max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
+                                        {
+                                            "bg-[#219653]/[0.08]": (invoiceInfo.post.isEnded),
+                                            "bg-[#D34053]/[0.08]": (!invoiceInfo.post.isEnded),
+                                            //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
+                                        },
+                                        )}
+                                    >
+                                        {(invoiceInfo.post.isEnded) ? "Finish" : "NotFinish"}
+                                    </div>
+                                </div>
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-                            <div className="w-full">
-                            <TextAreaOne label="Address" placeholder="Enter Address" value={address} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DataLabel
+                                    label="Address"
+                                    content={address=="" ? "N/A" : address}
+                                    className="w-full xl:w-6/12" // 40% width on extra-large screens
+                                />
+                                <DataLabel
+                                    label="Invoice Date"
+                                    content={invoiceDate.toString()}
+                                    className="w-full xl:w-6/12" // 40% width on extra-large screens
+                                />
+                            {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <MuiDatePicker
                                     title="Invoice Date"
                                     label="Invoice Date"
@@ -225,7 +235,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                         setInvoiceDate(e as Dayjs);
                                     }}
                                 />
-                            </LocalizationProvider>
+                            </LocalizationProvider> */}
                                 {/* <DatePickerThree 
                                     label="Invoice Date" 
                                     value={invoiceDate.toString()}
@@ -233,7 +243,6 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                         
                                         setInvoiceDate(e.target.value);
                                     }}/> */}
-                            </div>
                             {/* {
                                 invoiceInfo?.settlementDate ? (
                                     <div className="w-full xl:w-6/12">
@@ -249,7 +258,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                             } */}
                             
                             </div>
-                            <Button
+                            {/* <Button
                                 label="Change"
                                 variant="green"
                                 shape="full"
@@ -259,7 +268,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                 onClick={() => {
                                     
                                 }}
-                            />
+                            /> */}
                         </form>
                     {/* </ShowcaseSection> */}
                 </div>
@@ -272,4 +281,4 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
     );
 };
 
-export default InvoiceEditPopUp;
+export default InvoiceViewPopUp;

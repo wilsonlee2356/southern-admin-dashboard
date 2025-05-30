@@ -11,7 +11,9 @@ import {
 } from "@mui/x-data-grid";
 import InvoiceUploadPopUp from "@/components/Layouts/Dialog/InvoicePopUp";
 import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
+import InvoiceViewPopUp from "@/components/Layouts/Dialog/InvoiceViewPopUp";
 import { MuiCheckbox } from "@/components/FormElements/Checkboxes/MuiCheckbox";
+import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -24,6 +26,8 @@ type MuiDataGridWithPopUpButtonProps = {
   setPopUpOpen: any;
   popUpOpenEdit: boolean;
   setPopUpOpenEdit: any;
+  popUpOpenView: boolean;
+  setPopUpOpenView: any;
   setFilteredData: any;
   showNotEndedPosts: boolean;
   setShowNotEndedPosts: (value: boolean) => void;
@@ -33,6 +37,8 @@ type MuiDataGridWithPopUpButtonProps = {
   setShowUnpaidInvoices: (value: boolean) => void;
   showPaidInvoices: boolean;
   setShowPaidInvoices: (value: boolean) => void;
+  setUpdateDataNeeded: any; // Optional prop to trigger data update
+
 };
 
 function MuiDataGridWithPopUpButton({
@@ -41,6 +47,8 @@ function MuiDataGridWithPopUpButton({
   setPopUpOpen,
   popUpOpenEdit,
   setPopUpOpenEdit,
+  popUpOpenView,
+  setPopUpOpenView,
   setFilteredData,
   showEndedPosts,
   setShowEndedPosts,
@@ -50,6 +58,7 @@ function MuiDataGridWithPopUpButton({
   setShowUnpaidInvoices,
   showPaidInvoices,
   setShowPaidInvoices,
+  setUpdateDataNeeded, // Optional prop to trigger data update
 }: MuiDataGridWithPopUpButtonProps) {
   const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0
@@ -58,6 +67,10 @@ function MuiDataGridWithPopUpButton({
   const [canSetPay, setCanSetPay] = useState<boolean>(false);
 
   const [editingRow, setEditingRow] = useState<invoiceData>({} as invoiceData);
+
+  const [deleteingRow, setDeletingRow] = useState<number>(-1);
+
+  const [confirmPopUpOpen, setConfirmPopUpOpen] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("Data array updated:", dataArray);
@@ -303,25 +316,20 @@ function MuiDataGridWithPopUpButton({
       renderCell: (params) => (
         <div className="flex items-center justify-center gap-x-3.5">
           <button className="text-dark dark:text-white"
+              onClick={() => {
+                const invoice = getInvoiceById(params.id);
+                if (!invoice) return;
+                setEditingRow(invoice);
+                setPopUpOpenView(true);
+              }}
             >
             <span className="sr-only">View Invoice</span>
             <PreviewIcon className="fill-dark dark:fill-white" />
           </button>
           <button className="text-dark dark:text-white"
             onClick={() => {
-              const invoice = getInvoiceById(params.id);
-              if (!invoice) return;
-              CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
-                console.log("Deleted invoice: ", res);
-                  const updatedData = dataArray.filter(
-                    (item) => item.invoiceId !== invoice.invoiceId,
-                  );
-                  setFilteredData(updatedData);
-              }
-              ).catch((err) => {
-                console.log("Error deleting invoice: ", err);
-              });
-              
+              setDeletingRow(params.id as number);
+              setConfirmPopUpOpen(true);
             }}>
             <span className="sr-only">Delete Invoice</span>
             <TrashIcon className="fill-dark dark:fill-white" />
@@ -440,6 +448,43 @@ function MuiDataGridWithPopUpButton({
         onClose={setPopUpOpenEdit}
         invoiceInfo={editingRow}
         setDataArray={setFilteredData}
+        setUpdateDataNeeded={setUpdateDataNeeded}
+      />
+
+      <InvoiceViewPopUp
+        title="View invoice"
+        open={popUpOpenView}
+        onClose={setPopUpOpenView}
+        invoiceInfo={editingRow}
+        setDataArray={setFilteredData}
+        
+      />
+
+      <ComfirmPopUp
+        title="Confirm"
+        message="Are you sure you want to delete?"
+        confirmButtonText="Delete"
+        open={confirmPopUpOpen}
+        onClose={setConfirmPopUpOpen}
+        functionToRun={() => {
+          if(deleteingRow !== -1){
+            const invoice = getInvoiceById(deleteingRow);
+              if (!invoice) return;
+              CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
+                console.log("Deleted invoice: ", res);
+                  const updatedData = dataArray.filter(
+                    (item) => item.invoiceId !== invoice.invoiceId,
+                  );
+                  setFilteredData(updatedData);
+                  setDeletingRow(-1);
+              }
+              ).catch((err) => {
+                console.log("Error deleting invoice: ", err);
+              });
+          }
+          
+          
+        }}
       />
     </div>
   );

@@ -225,6 +225,7 @@ function MuiDataGridForPostManagement({
       <ComfirmPopUp
         title="Confirm"
         message="Are you sure you want to set the selected invoices as paid?"
+        confirmButtonText="Set as paid"
         open={popUpOpen}
         onClose={setPopUpOpen}
         functionToRun={() => {

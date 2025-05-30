@@ -24,6 +24,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   const [endDate, setendDate] = useState<Dayjs | null>(null);
   const [popUpOpen, setPopUpOpen] = useState(false);
   const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
+  const [popUpOpenView, setPopUpOpenView] = useState(false);
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
 
   const [showNotEndedPosts, setShowNotEndedPosts] = useState(true);
@@ -41,11 +42,11 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         (!checkEmpty(invoiceNumber) ? row.invoiceNum.includes(invoiceNumber) : true) && 
         (!checkEmpty(clientName) ? row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) : true) && 
         (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) && 
-        startDate && endDate ? (checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)) : true &&
-        (showNotEndedPosts && !row.post.isEnded) ||
+        (startDate && endDate ? (checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)) : true )&&
+        ((showNotEndedPosts && !row.post.isEnded) ||
         (showEndedPosts && row.post.isEnded) ||
         (showUnpaidInvoices && !(row.amount<row.paidAmount)) ||
-        (showPaidInvoices && (row.amount<row.paidAmount))
+        (showPaidInvoices && (row.amount<row.paidAmount)))
         //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
       )
     );
@@ -146,6 +147,8 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         setPopUpOpen={setPopUpOpen}
         popUpOpenEdit={popUpOpenEdit}
         setPopUpOpenEdit={setPopUpOpenEdit}
+        popUpOpenView={popUpOpenView}
+        setPopUpOpenView={setPopUpOpenView}
         setFilteredData={setFilteredData}
         showEndedPosts={showEndedPosts}
         setShowEndedPosts={setShowEndedPosts}
@@ -155,6 +158,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         setShowUnpaidInvoices={setShowUnpaidInvoices}
         showPaidInvoices={showPaidInvoices}
         setShowPaidInvoices={setShowPaidInvoices}
+        setUpdateDataNeeded={setUpdateDataNeeded}
       />
     </>
   );
