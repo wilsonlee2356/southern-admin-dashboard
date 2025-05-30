@@ -132,7 +132,7 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
                     <div className="flex flex-col gap-5">
                         <AutoCompleteWithSelectorButton title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceArray} input={invoiceNumber} stateSetter={setInvoiceNumber}/>
                         <AutoCompleteWithSelectorButton title="Client Name" placeholder="Enter Client Name" dataArr={clientArray} input={clientName} stateSetter={setClientName}/>
-                        <AutoCompleteWithSelectorButton title="Client's Full Name" placeholder="Enter Full Client Name" dataArr={clientArray} input={fullName} stateSetter={setFullName}/>
+                        {/* <AutoCompleteWithSelectorButton title="Client's Full Name" placeholder="Enter Full Client Name" dataArr={clientArray} input={fullName} stateSetter={setFullName}/> */}
                         <AutoCompleteWithSelectorButton title="Postcode" placeholder="Enter Postcode" dataArr={postArray} input={postcode} stateSetter={setPostcode}/>
                         <TextAreaOne label="Address" placeholder="Enter Address" value={address} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/>
                         <AutoCompleteWithSelectorButton title="Amount" placeholder="Enter Amount" dataArr={[]} input={amount} stateSetter={setAmount}/>
