@@ -54,7 +54,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
     setDataToShow(selectedData);
     console.log("Filtered post data: ", selectedData);
     //console.log("Type ", selectedData = dataArray);
-  }, [clientName, postcode, showNotEndedPosts, showEndedPosts, dataArray]);
+  }, [clientName, postcode, showNotEndedPosts, showEndedPosts, dataArray, updateDataNeeded]);
 
   useEffect(() => {
       if(updateDataNeeded){

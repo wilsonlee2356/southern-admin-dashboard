@@ -1,7 +1,7 @@
 import axios from 'axios';
 import apiClient from "@/lib/api-client";
 import { AxiosResponse } from "axios";
-import { invoiceData, client, post, cheque, transaction, invoiceDataOutput, postClientInvoiceSummary } from '@/types/ObjectTypes/InvoiceType';
+import { invoiceData, client, post, cheque, invoiceCheques, invoiceDataOutput, postClientInvoiceSummary } from '@/types/ObjectTypes/InvoiceType';
 
 
 
@@ -162,15 +162,15 @@ export const CombinedService = {
       }
     },
 
-    async create_transaction(newTransaction: transaction[]): Promise<transaction[]> {
+    async create_transaction(newInvoiceCheques: invoiceCheques[]): Promise<invoiceCheques[]> {
       try{
-        console.log("New Transaction Data:", JSON.stringify(newTransaction));
+        console.log("New Transaction Data:", JSON.stringify(newInvoiceCheques));
         const response = await fetch(`http://localhost:8080/api/combined/invoiceCheque`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(newTransaction),
+          body: JSON.stringify(newInvoiceCheques),
         });
         const data = await response.json();
         return data;

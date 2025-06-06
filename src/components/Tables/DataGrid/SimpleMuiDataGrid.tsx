@@ -2,7 +2,7 @@
 import { CheckIcon, TrashIcon } from "@/assets/icons";
 import { PreviewIcon, DownloadIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
-import { Button } from "@/components/ui-elements/button";
+import { Button, ButtonGroup } from "@heroui/button";
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import InvoicePopUp from "@/components/Layouts/Dialog/InvoicePopUp";
 import { cn } from "@/lib/utils";
@@ -177,20 +177,40 @@ function SimpleMuiDataGrid({ dataArray, paidAmounts, setPaidAmounts }: SimpleMui
                 input: ["w-full", "focus:outline-none", "focus:ring-none", "focus:border-none"],
                 inputWrapper: ["w-full", "bg-gray"],
               }}
+              endContent={
+                <Button
+                  variant="light"
+                  className="bg-transparent text-red-500 dark:text-white dark:bg-gray-700"
+                  onChange={() => {
+                    const updatedPaidAmounts = paidAmounts.map((item) =>
+                      item.invoiceId === params.row.invoiceId
+                        ? { ...item, amount: 0 }
+                        : item,
+                    );
+                    setPaidAmounts(updatedPaidAmounts);
+                  }}
+                >
+                  Max
+                </Button>
+              }
               aria-label="Enter Amount Paid"
               aria-placeholder="Enter Amount Paid"
               value={paidAmounts.find((item) => item.invoiceId === params.row.invoiceId)?.amount || undefined}
               onChange={(value) => {
-                console.log("Value changed:", value);
-                const updatedPaidAmounts = paidAmounts.map((item) =>
-                  item.invoiceId === params.row.invoiceId
-                    ? { ...item, amount: parseFloat(value.toString()) }
-                    : item,
-                );
-                setPaidAmounts(updatedPaidAmounts);
+                if(Number(value) < (params.row.amount - (params.row.paidAmount))){
+                  console.log("Value changed:", value);
+                  const updatedPaidAmounts = paidAmounts.map((item) =>
+                    item.invoiceId === params.row.invoiceId
+                      ? { ...item, amount: parseFloat(value.toString()) }
+                      : item,
+                  );
+                  setPaidAmounts(updatedPaidAmounts);
+                }
+                
               }}
               variant="underlined" 
               placeholder="Enter the amount" 
+              maxValue={params.row.amount - (params.row.paidAmount || 0)}
               />
           ),
         },

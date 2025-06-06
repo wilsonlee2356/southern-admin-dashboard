@@ -37,11 +37,11 @@ export type post = {
 
 export type cheque = {
   chequeId: number;
-  chequeCopy: null;
-  transactionsList: transaction[];
+  chequeCopy: null | string;
+  invoiceChequesList: invoiceCheques[];
 }
 
-export type transaction = {
+export type invoiceCheques = {
   invoice: invoiceData;
   cheque: cheque;
   amount: number;

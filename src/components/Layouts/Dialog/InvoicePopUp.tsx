@@ -14,7 +14,7 @@ import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
-import { invoiceData, transaction, PaidAmountsType } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, invoiceCheques, PaidAmountsType } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 
 type InvoicePopUpPropsType = {
@@ -121,18 +121,19 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
                         console.log("Paid Amounts: ", paidAmounts);
                         CombinedService.create_cheque({
                             chequeId: 0, // Assuming chequeId is auto-generated
-                            chequeCopy: null,
-                            transactionsList: [],
+                            chequeCopy: "",
+                            invoiceChequesList: [],
                             }).then((cheque) => {
                                 console.log("Cheque created:", cheque);
-                                let transactionsArr: transaction[] = [];
+                                let invoiceChequesArr: invoiceCheques[] = [];
                                 paidAmounts.map((item) => {
-                                    transactionsArr.push({
+                                    invoiceChequesArr.push({
                                         invoice: {
                                             invoiceId: item.invoiceId,
                                             invoiceNum: dataArray.find((invoiceInfo: invoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.invoiceNum || "",
                                             post: dataArray.find((invoiceInfo: invoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.post || null,
                                             invoiceDate: new Date(),
+                                            paidAmount: paidAmounts.find(amount => amount.invoiceId === item.invoiceId)?.amount || 0,
                                             amount: 0,
                                             settlementDate: null, // Assuming this is set later
                                             statementId: null, // Assuming this is set later
@@ -141,14 +142,14 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
                                         },
                                         cheque: {
                                             chequeId: cheque.chequeId, // Use the created cheque's ID
-                                            chequeCopy: null,
-                                            transactionsList: [],
+                                            chequeCopy: "",
+                                            invoiceChequesList: [],
                                         }, // Use the created cheque's ID
                                         amount: item.amount,
                                         paymentDate: invoiceDate ? invoiceDate.toDate() : new Date(),
                                     })
                                 });
-                                CombinedService.create_transaction(transactionsArr).then((transactions) => {
+                                CombinedService.create_transaction(invoiceChequesArr).then((transactions) => {
                                     console.log("Transactions created:", transactions);
                                     // setDataArray((prevData: any) => {
                                     //     return prevData.map((item: any) => {
