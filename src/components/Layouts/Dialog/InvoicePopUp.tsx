@@ -23,12 +23,13 @@ type InvoicePopUpPropsType = {
     onClose: any;
     dataArray: any;
     setDataArray: any;
+    setUpdateDataNeeded: any;
 }
 
 
 
 
-function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: InvoicePopUpPropsType){
+function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdateDataNeeded }: InvoicePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
     const [amount, setAmount] = useState("");
@@ -40,9 +41,20 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
         console.log("Paid amount:", paidAmounts);
     }, [paidAmounts]);
 
+    const resetData = () => {
+        setInvoiceDate(null);
+        setAmount("");
+        setChequeFile(null);
+        setStatementFile(null);
+        setPaidAmounts([]);
+    }
+
     const closePopUp = ()=> {
+        resetData();
         onClose(false);
     }
+
+
 
     const descriptionElementRef = React.useRef<HTMLElement>(null);
     React.useEffect(() => {
@@ -149,8 +161,10 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray }: Invoic
                                         paymentDate: invoiceDate ? invoiceDate.toDate() : new Date(),
                                     })
                                 });
-                                CombinedService.create_transaction(invoiceChequesArr).then((transactions) => {
-                                    console.log("Transactions created:", transactions);
+                                CombinedService.create_transaction(invoiceChequesArr).then((invoiceCheques) => {
+                                    console.log("InvoiceCheques created:", invoiceCheques);
+                                    setUpdateDataNeeded(true);
+                                    closePopUp();
                                     // setDataArray((prevData: any) => {
                                     //     return prevData.map((item: any) => {
                                     //         dataArray.map((invoiceInfo: invoiceData) => {

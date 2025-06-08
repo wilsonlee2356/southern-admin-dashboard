@@ -181,13 +181,14 @@ function SimpleMuiDataGrid({ dataArray, paidAmounts, setPaidAmounts }: SimpleMui
                 <Button
                   variant="light"
                   className="bg-transparent text-red-500 dark:text-white dark:bg-gray-700"
-                  onChange={() => {
-                    const updatedPaidAmounts = paidAmounts.map((item) =>
+                  onPress={() => {
+                    console.log("Max button clicked for invoiceId:", params.row.invoiceId);
+                    const updatedPaidAmount = paidAmounts.map((item) =>
                       item.invoiceId === params.row.invoiceId
-                        ? { ...item, amount: 0 }
+                        ? { ...item, amount: params.row.amount - (params.row.paidAmount || 0) }
                         : item,
                     );
-                    setPaidAmounts(updatedPaidAmounts);
+                    setPaidAmounts(updatedPaidAmount);
                   }}
                 >
                   Max

@@ -21,6 +21,7 @@ export type client = {
   clientId: number;
   clientName: string;
   fullName: string;
+  address: string;
   createDate: string;
   updateDate: string;
 }
@@ -28,7 +29,8 @@ export type client = {
 export type post = {
   postId: number;
   postcode: string;
-  address: string;
+  buildingAddress: string;
+  streetAddress: string;
   client: client;
   isEnded: boolean;
   createDate: string;

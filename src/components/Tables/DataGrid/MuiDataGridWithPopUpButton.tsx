@@ -9,7 +9,7 @@ import {
   GridRowId,
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
-import InvoiceUploadPopUp from "@/components/Layouts/Dialog/InvoicePopUp";
+import InvoicePopUp from "@/components/Layouts/Dialog/InvoicePopUp";
 import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
 import InvoiceViewPopUp from "@/components/Layouts/Dialog/InvoiceViewPopUp";
 import { MuiCheckbox } from "@/components/FormElements/Checkboxes/MuiCheckbox";
@@ -434,12 +434,13 @@ function MuiDataGridWithPopUpButton({
           setPopUpOpen(true);
         }}
       />
-      <InvoiceUploadPopUp
+      <InvoicePopUp
         title="Upload cheque or statement"
         open={popUpOpen}
         onClose={setPopUpOpen}
         dataArray={selectedRows}
         setDataArray={setFilteredData}
+        setUpdateDataNeeded={setUpdateDataNeeded}
       />
 
       <InvoiceEditPopUp
