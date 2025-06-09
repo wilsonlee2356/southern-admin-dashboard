@@ -11,6 +11,7 @@ import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
+import TextInputHeroUI from "@/components/FormElements/InputGroup/text-input-heroui";
 import { TextAreaOne } from "@/components/FormElements/InputGroup/TextAreaOne";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -45,6 +46,8 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
     const [clientName, setClientName] = useState("");
     const [fullName, setFullName] = useState("");
     const [postcode, setPostcode] = useState("");
+    const [buildingAddress, setBuildingAddress] = useState("");
+    const [streetAddress, setStreetAddress] = useState("");
     const [address, setAddress] = useState("");
     const [amount, setAmount] = useState("");
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(dayjs());
@@ -70,8 +73,11 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
         setInvoiceNumber("");
         setClientName("");
         setPostcode("");
+        setBuildingAddress("");
+        setStreetAddress("");
         setAddress("");
         setAmount("");
+        setFullName("");
         setInvoiceDate(dayjs());
     }
 
@@ -80,10 +86,12 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
             invoiceNum: invoiceNumber,
             post: {
               postcode: postcode,
-              address: address,
+              buildingAddress: buildingAddress,
+              streetAddress: streetAddress,
               client: {
                 clientName: clientName,
                 fullName: fullName,
+                address: address,
               },
             },
             paidAmount: 0,
@@ -129,24 +137,49 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
             <DialogTitle> Create Invoice <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
                 <div style={{height:'600px', width:'100%'}} className="flex-col mb-10 justify-center content-stretch">
-                    <div className="flex flex-col gap-5">
-                        <AutoCompleteWithSelectorButton title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceArray} input={invoiceNumber} stateSetter={setInvoiceNumber}/>
-                        <AutoCompleteWithSelectorButton title="Client Name" placeholder="Enter Client Name" dataArr={clientArray} input={clientName} stateSetter={setClientName}/>
-                        {/* <AutoCompleteWithSelectorButton title="Client's Full Name" placeholder="Enter Full Client Name" dataArr={clientArray} input={fullName} stateSetter={setFullName}/> */}
-                        <AutoCompleteWithSelectorButton title="Postcode" placeholder="Enter Postcode" dataArr={postArray} input={postcode} stateSetter={setPostcode}/>
-                        <TextAreaOne label="Address" placeholder="Enter Address" value={address} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/>
-                        <AutoCompleteWithSelectorButton title="Amount" placeholder="Enter Amount" dataArr={[]} input={amount} stateSetter={setAmount}/>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <MuiDatePicker
-                                title="Invoice Date"
-                                label="Invoice Date"
-                                value={invoiceDate}
-                                onChange={(newValue) => setInvoiceDate(newValue)}
-                            />
-                        </LocalizationProvider>
+
+                        <div className="flex flex-row gap-4.5 xl:flex-row">
+                            <div className="flex flex-col w-full gap-2.5">
+                                <label className="text-body-lg font-medium text-center text-dark dark:text-white">
+                                    Invoice
+                                </label>
+                                <TextInputHeroUI className="w-4/7" label="Invoice Number" placeholder="Enter Invoice Number" value={invoiceNumber} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInvoiceNumber(e.currentTarget.value)}/>
+                                {/* <AutoCompleteWithSelectorButton title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceArray} input={invoiceNumber} stateSetter={setInvoiceNumber}/> */}
+                                {/* <AutoCompleteWithSelectorButton title="Client Name" placeholder="Enter Client Name" dataArr={clientArray} input={clientName} stateSetter={setClientName}/>
+                                <AutoCompleteWithSelectorButton title="Postcode" placeholder="Enter Postcode" dataArr={postArray} input={postcode} stateSetter={setPostcode}/>
+                                <TextAreaOne label="Address" placeholder="Enter Address" value={address} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/> */}
+                                <TextInputHeroUI className="w-full" label="Amount" placeholder="Enter Amount" value={amount} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAmount(e.currentTarget.value)}/>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <MuiDatePicker
+                                        title="Invoice Date"
+                                        label="Invoice Date"
+                                        value={invoiceDate}
+                                        onChange={(newValue) => setInvoiceDate(newValue)}
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                            <div className="flex flex-col w-full gap-2.5">
+                                <label className="text-body-lg font-medium text-center text-dark dark:text-white">
+                                    Client
+                                </label>
+                                <AutoCompleteWithSelectorButton title="Client Name" placeholder="Enter Client Name" dataArr={clientArray} input={clientName} stateSetter={setClientName}/>
+                                <TextInputHeroUI className="w-full" label="Full Name" placeholder="Enter Full Name" value={fullName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setFullName(e.currentTarget.value);}}/>
+                                <TextInputHeroUI className="w-full" label="Address" placeholder="Enter Address" value={address} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setAddress(e.currentTarget.value);}}/>
+                            </div>
+                            <div className="flex flex-col w-full gap-2.5">
+                                <label className="text-body-lg font-medium text-center text-dark dark:text-white">
+                                    Post
+                                </label>
+                                <AutoCompleteWithSelectorButton title="Postcode" placeholder="Enter Postcode" dataArr={postArray} input={postcode} stateSetter={setPostcode}/>
+                                <TextInputHeroUI className="w-full" label="Building Address" placeholder="Enter Building Address" value={buildingAddress} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setBuildingAddress(e.currentTarget.value)}/>
+                                <TextInputHeroUI className="w-full" label="Street Address" placeholder="Enter Street Address" value={streetAddress} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStreetAddress(e.currentTarget.value)}/>
+
+
+                            </div>
+                        </div>
 
                     
-                    </div>
+
                     <div className="flex flex-col gap-5 mt-10 xl:flex-row xl:justify-center">
                        <Button
                             label="Clear"

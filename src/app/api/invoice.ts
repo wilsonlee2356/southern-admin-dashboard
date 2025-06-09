@@ -44,6 +44,16 @@ export const CombinedService = {
       }
     },
 
+    async get_all_invoiceCheques(): Promise<invoiceCheques[]> {
+      try{
+        const response = await apiClient.get("/invoiceCheques");
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching all invoiceCheques:', error);
+        throw error;
+      }
+    },
+
     async get_invoice_by_id(id: string): Promise<invoiceData> {
       try{
         const response = await fetch(`http://localhost:8080/api/invoices/num=${id}`);

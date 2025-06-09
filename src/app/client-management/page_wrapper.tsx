@@ -1,21 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
-import { InputBox } from "../client-management/_components/input-box";
 import { client, post, invoiceData, postClientInvoiceSummary } from "@/types/ObjectTypes/InvoiceType";
-import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGridWithPopUpButton";
 import PostSearchBox from "./_components/post-search-box";
-import { InvoiceService } from "../api/services/invoiceService";
 import { CombinedService } from "@/app/api/invoice";
+import { InvoiceService } from "../api/services/invoiceService";
 import MuiDataGridForPostManagement from "@/components/Tables/DataGrid/MuiDataGridForPostManagement";
 
 type PageWrapperProps = {
-  dataArray: postClientInvoiceSummary[]; // Pass data as a prop instead of fetching here
+  dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
   clientData: client[];
   postData: post[];
 };
 
 export default function PageWrapper({ dataArray, clientData, postData }: PageWrapperProps) {
-  const [dataToShow, setDataToShow] = useState<postClientInvoiceSummary[]>([]);//0 = NumberOfInvoices, 1 = TotalAmount, 2 = TotalOutstandingAmount, 3 = post_id, 4 = postcode, 5 = is_ended, 6 = clientName
+  const [dataToShow, setDataToShow] = useState<invoiceData[]>([]);//0 = NumberOfInvoices, 1 = TotalAmount, 2 = TotalOutstandingAmount, 3 = post_id, 4 = postcode, 5 = is_ended, 6 = clientName
 //   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -41,12 +39,12 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
 
   useEffect(() => {
     
-    const selectedData : postClientInvoiceSummary[] = dataArray.filter((row: postClientInvoiceSummary) =>
+    const selectedData : invoiceData[] = dataArray.filter((row: invoiceData) =>
       (
-        (!checkEmpty(clientName) ? row.client_name.toLowerCase().includes(clientName.toLowerCase()) : true) && 
-        (!checkEmpty(postcode) ? row.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) &&
-        (showNotEndedPosts && !row.ended) ||
-        (showEndedPosts && row.ended)
+        (!checkEmpty(clientName) ? row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) : true) && 
+        (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) &&
+        (showNotEndedPosts && !row.post.isEnded) ||
+        (showEndedPosts && row.post.isEnded)
         
         //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
       )
@@ -54,12 +52,13 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
     setDataToShow(selectedData);
     console.log("Filtered post data: ", selectedData);
     //console.log("Type ", selectedData = dataArray);
-  }, [clientName, postcode, showNotEndedPosts, showEndedPosts, dataArray, updateDataNeeded]);
+  }, [clientName, postcode, showNotEndedPosts, showEndedPosts, dataArray]);
 
   useEffect(() => {
       if(updateDataNeeded){
-        
-        CombinedService.get_post_client_invoice_summry().then((res) => {
+        console.log("Updating data");
+        InvoiceService.getAll().then((res) => {
+          dataArray = res;
           setDataToShow(res);
         }
         );

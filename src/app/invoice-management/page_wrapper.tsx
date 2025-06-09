@@ -45,12 +45,12 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         (startDate && endDate ? (checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)) : true )&&
         ((showNotEndedPosts && !row.post.isEnded) ||
         (showEndedPosts && row.post.isEnded) ||
-        (showUnpaidInvoices && !(row.amount<row.paidAmount)) ||
-        (showPaidInvoices && (row.amount<row.paidAmount)))
+        (showUnpaidInvoices && (row.amount>row.paidAmount)) ||
+        (showPaidInvoices && (row.amount<=row.paidAmount)))
         //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
       )
     );
-    console.log("startDate", startDate);
+    //console.log("row.amount<=row.paidAmount", dataArray[1].amount<=dataArray[1].paidAmount);
     setFilteredData(selectedData);
   }, [invoiceNumber, clientName, postcode, startDate, endDate, showNotEndedPosts, showEndedPosts, showUnpaidInvoices, showPaidInvoices, dataArray]);
 
@@ -58,6 +58,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
     if(updateDataNeeded){
       
       InvoiceService.getAll().then((res) => {
+        dataArray = res;
         setFilteredData(res);
       }
       );

@@ -24,9 +24,12 @@ function MuiDatePicker({title, value, onChange, ...params}: DatePickerProps) {
         <DatePicker
                 aria-label="Date Picker"
                 className="w-full rounded-[7px] border-none bg-gray font-normal outline-none transition dark:border-dark-3 dark:bg-dark-2"
+                // InputProps={{
+                //     disableUnderline: true
+                // }}
+                
                 sx={{ 
-                    width: '100%'
-                    
+                    width: '100%',
                 }}
                 maxDate={currentYear}
                 openTo="year"

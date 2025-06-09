@@ -66,7 +66,7 @@ function AutoCompleteWithSelectorButton ({ title, placeholder, dataArr, stateSet
           defaultItems={dataArr}
           placeholder={placeholder}
           inputValue={input}
-          onInputChange={(value) => {stateSetter(value)}}
+          onInputChange={stateSetter}
           
           {...params}
         >

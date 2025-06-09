@@ -14,12 +14,12 @@ import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { invoiceData, postClientInvoiceSummary } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, post, postClientInvoiceSummary } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 
 type MuiDataGridWithPopUpButtonProps = {
-  dataArray: postClientInvoiceSummary[];
+  dataArray: invoiceData[];
   popUpOpen: boolean;
   setPopUpOpen: any;
   popUpOpenEdit: boolean;
@@ -37,13 +37,40 @@ function MuiDataGridForPostManagement({
   setFilteredData,
   setUpdateDataNeeded,
 }: MuiDataGridWithPopUpButtonProps) {
+  const [processedDataArray, setProcessedDataArray] = useState<postClientInvoiceSummary[]>([]);
   const [selectedRows, setSelectedRows] = useState<postClientInvoiceSummary[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0
     //dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
   );
   const [canSetFinish, setCanSetFinish] = useState<boolean>(false);
 
-  const [editingRow, setEditingRow] = useState<invoiceData>({} as invoiceData);
+  const [editingRow, setEditingRow] = useState<postClientInvoiceSummary>({} as postClientInvoiceSummary);
+
+  React.useEffect(() => {
+      const processedArray : postClientInvoiceSummary[] = [];//
+      dataArray.map((row: invoiceData) => {
+        const existingPost = processedArray.find(
+          (item) => item.post_id === row.post.postId,
+        );
+        if (existingPost) {
+          existingPost.numberOfInvoices += 1;
+          existingPost.totalAmount += row.amount;
+          existingPost.outstanding += row.amount - row.paidAmount;
+        } else {
+          processedArray.push({
+            post_id: row.post.postId,
+            postcode: row.post.postcode,
+            numberOfInvoices: 1,
+            totalAmount: row.amount,
+            outstanding: row.amount - row.paidAmount,
+            ended: row.post.isEnded,
+            client_name: row.post.client.clientName,
+          });
+        }
+        
+      });
+      setProcessedDataArray(processedArray);
+  }, [dataArray]);
 
   if (!dataArray || dataArray.length === 0) {
     return (
@@ -62,12 +89,12 @@ function MuiDataGridForPostManagement({
     } else {
       //console.log("Selected rows:", checkedRows);
 
-      const checkedData = dataArray.filter((row: postClientInvoiceSummary) =>
+      const checkedData = processedDataArray.filter((row: postClientInvoiceSummary) =>
         checkedRows.includes(row.post_id),
       );
       //console.log("Checked data:1 ", checkedData);
       const finishedInvoices = checkedData.filter(
-        (row: any) => row[5] === false,
+        (row: any) => row.ended === true,
       );
       if (
         finishedInvoices.length === 0 ||
@@ -117,7 +144,7 @@ function MuiDataGridForPostManagement({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.numberOfInvoice,
+      valueGetter: (value, row) => row.numberOfInvoices,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">
           {params.value}
@@ -180,7 +207,7 @@ function MuiDataGridForPostManagement({
       </ShowcaseSection> */}
       <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
         <DataGrid
-          rows={dataArray}
+          rows={processedDataArray}
           columns={columns}
           getRowId={(row) => row.post_id}
           columnVisibilityModel={{
@@ -212,7 +239,7 @@ function MuiDataGridForPostManagement({
         />
       </div>
       <Button
-        label="Set paid"
+        label="Set finished"
         variant="green"
         shape="full"
         size="default"

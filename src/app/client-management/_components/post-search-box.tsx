@@ -19,7 +19,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type PostSearchBoxProps = {
-  dataArray: postClientInvoiceSummary[]; // Pass data as a prop instead of fetching here
+  dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
   clientData: client[];
   postData: post[];
   clientName: string;

@@ -22,6 +22,21 @@ export const InvoiceService = {
   },
 
   /**
+   * Retrieves all invoices
+   * @returns Promise resolving to an array of InvoiceData
+   * @throws Error if the request fails
+   */
+  async getAllSortByDate(): Promise<any[]> {
+    try {
+      const response: AxiosResponse<any[]> = await apiClient.get("/invoices/sorted");
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Unable to retrieve invoices");
+    }
+  },
+
+  /**
    * Retrieves a single invoice by ID
    * @param id - The invoice ID
    * @returns Promise resolving to InvoiceData

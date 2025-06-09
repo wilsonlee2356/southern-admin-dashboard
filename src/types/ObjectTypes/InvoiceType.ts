@@ -60,6 +60,7 @@ export type invoiceData = {
   paidAmount: number;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
+  invoiceChequesList: invoiceCheques[];
   createDate: Date;
   updateDate: Date;
 }
@@ -67,11 +68,13 @@ export type invoiceData = {
 export type clientOutput = {
   clientName: string;
   fullName: string | null | undefined;
+  address: string | null | undefined;
 }
 
 export type postOutput = {
   postcode: string;
-  address: string;
+  buildingAddress: string;
+  streetAddress: string;
   client: clientOutput;
 }
 

@@ -44,14 +44,15 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
 
   const [popUpOpen, setPopUpOpen] = useState(false);
 
-  const invoiceNumArr = dataArray.map((item) => ({ 
+  const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({ 
     key: item.invoiceId.toString(),
-    name: item.invoiceNum.toString(), }));
+    name: item.invoiceNum.toString(), 
+  }));
   const clientNameArr = clientData.map((item) => ({
     key: item.clientId.toString(),
     name: item.clientName,
   }));
-  const postcodeArr = postData.map((item) => ({
+  const postcodeArr = postData.filter((item) => (item.isEnded)).map((item) => ({
     key: item.postId.toString(),
     name: item.postcode,
   }));
