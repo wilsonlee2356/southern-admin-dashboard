@@ -10,6 +10,8 @@ export default async function InvoicesPage() {
   const clientData = await CombinedService.get_all_client();
   const postData = await CombinedService.get_all_post();
 
+  console.log("postData:", postData);
+
   return (
     <div>
       <Suspense fallback={<div>Loading search form...</div>}>

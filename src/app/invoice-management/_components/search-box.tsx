@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
 import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
-import AutoCompleteWithoutSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithoutSelectorButton";
+import TextInputHeroUI from "@/components/FormElements/InputGroup/text-input-heroui";
 import NumberInput from "@/components/FormElements/InputGroup/NumberInputs/NumberInput";
 import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
 import { client, post, invoice, invoiceData } from "@/types/ObjectTypes/InvoiceType";
@@ -44,15 +44,20 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
 
   const [popUpOpen, setPopUpOpen] = useState(false);
 
-  const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({ 
-    key: item.invoiceId.toString(),
-    name: item.invoiceNum.toString(), 
-  }));
-  const clientNameArr = clientData.map((item) => ({
+  // const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({ 
+  //   key: item.invoiceId.toString(),
+  //   name: item.invoiceNum.toString(), 
+  // }));
+  let clientNameArr = clientData.map((item) => ({
     key: item.clientId.toString(),
     name: item.clientName,
   }));
-  const postcodeArr = postData.filter((item) => (item.isEnded)).map((item) => ({
+  let postcodeArr = postData.map((item) => ({
+    key: item.postId.toString(),
+    name: item.postcode,
+  }));
+
+  let postcodeArrFiltered = postData.filter( (item => (!item.isEnded))).map((item) => ({
     key: item.postId.toString(),
     name: item.postcode,
   }));
@@ -61,17 +66,26 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
       console.log("client array:", clientNameArr);
       console.log("post array:", postcodeArr);
   }, []);
-  // const invoiceNumArr = dataArray.map((item) => ({ 
-  //   key: item.invoiceId.toString(),
-  //   name: item.invoiceNum.toString(), }));
-  // const clientNameArr = dataArray.map((item) => ({
-  //   key: item.invoiceId.toString(),
-  //   name: item.client.clientName,
-  // }));
-  // const postcodeArr = dataArray.map((item) => ({
-  //   key: item.invoiceId.toString(),
-  //   name: item.post.postcode,
-  // }));
+
+  React.useEffect(() => {
+      console.log("Invoice number:", invoiceNumber);
+  }, [invoiceNumber]);
+
+  React.useEffect(() => {
+      clientNameArr = clientData.map((item) => ({
+        key: item.clientId.toString(),
+        name: item.clientName,
+      }));
+      postcodeArr = postData.map((item) => ({
+        key: item.postId.toString(),
+        name: item.postcode,
+      }));
+      postcodeArrFiltered = postData.filter( (item => (!item.isEnded))).map((item) => ({
+        key: item.postId.toString(),
+        name: item.postcode,
+      }));
+      console.log("Updated postcode array:", postcodeArr);
+  }, [clientData, postData]);
 
   const handleClear = () => {
     console.log("Clearing filters...: ", dataArray);
@@ -137,13 +151,20 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
       {/* <form onSubmit={handleSubmit}> */}
       <form>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-          <AutoCompleteWithSelectorButton
+          <TextInputHeroUI
+            className="w-full"
+            label="Invoice Number"
+            placeholder="Enter Invoice Number"
+            value={invoiceNumber}
+            onChange={(e) => setInvoiceNumber(e.target.value)}
+            />
+          {/* <AutoCompleteWithSelectorButton
             title="Invoice Number"
             placeholder="Enter Invoice Number"
             dataArr={invoiceNumArr}
             stateSetter={setInvoiceNumber}
             input ={invoiceNumber}
-          />
+          /> */}
           <AutoCompleteWithSelectorButton
             title="Client Name"
             placeholder="Enter Client Name"
@@ -236,9 +257,10 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
         open={popUpOpen}
         onClose={setPopUpOpen}
         setUpdateDataNeeded={setUpdateDataNeeded}
-        invoiceArray={invoiceNumArr}
         clientArray={clientNameArr}
-        postArray={postcodeArr}
+        postArray={postcodeArrFiltered}
+        postArrayWithDetails={postData}
+        clientArrayWithDetails={clientData}
       />
     </ShowcaseSection>
     

@@ -207,4 +207,22 @@ export const CombinedService = {
       }
       
     },
+
+    async setInvoiceToPaid(id: number, updateData: invoiceData): Promise<invoiceData> {
+      try{
+        const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateData),
+        });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error setting invoice to paid:', error);
+        throw error;
+      }
+    },
+
 }

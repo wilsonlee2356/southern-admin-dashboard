@@ -1,21 +1,9 @@
 "use client";
-import React, { JSX } from "react";
-import { useEffect } from "react";
-import { Button } from "@/components/ui-elements/button";
-import { CheckIcon } from "@/assets/icons";
+import React from "react";
+import { Button } from "@heroui/button";
 import { Dialog, DialogContent, DialogContentText, DialogProps, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { ShowcaseSection } from "@/components/Layouts/showcase-section";
-import UploadButton from "@/components/ui-elements/upload-button";
-import InputGroup from "@/components/FormElements/InputGroup";
-import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
-import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
-import { CombinedService } from "@/app/api/invoice";
-import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -85,30 +73,25 @@ function ComfirmPopUp ({ title, message, open, onClose, functionToRun, confirmBu
                 </div>
             </DialogContent>
             <DialogContent>
-                <Button
-                        label="Cancal"
-                        variant="transparent"
-                        shape="default"
-                        size="default"
-                        icon={<CheckIcon className="fill-white" />}
-                        //disabled={!canSetFinish}
-                        onClick={() => {
-                          //setPopUpOpen(true);
-                          closePopUp();
-                        }}
-                      />
-                <Button
-                        label={confirmButtonText}
-                        variant="green"
-                        shape="default"
-                        size="default"
-                        icon={<CheckIcon className="fill-white" />}
-                        //disabled={!canSetFinish}
-                        onClick={() => {
-                            functionToRun();
-                            closePopUp();
-                        }}
-                        />
+                <div className="flex flex-row gap-5 justify-center content-stretch">
+                    <Button
+                            className="w-1/2 fill-white"
+                            radius="none"
+                            color="default"
+                            size="lg"
+                            onPress={() => {
+                                closePopUp();
+                            }}>Cancel</Button>
+                    <Button
+                            className="w-1/2 bg-red-500 text-white fill-white"
+                            radius="none"
+                            color="danger"
+                            size="lg"
+                            onPress={() => {
+                                functionToRun();
+                                closePopUp();
+                            }}>Delete</Button>
+                </div>
             </DialogContent>
         </Dialog>
     </>

@@ -149,6 +149,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                                             amount: 0,
                                             settlementDate: null, // Assuming this is set later
                                             statementId: null, // Assuming this is set later
+                                            invoiceChequesList: [],
                                             createDate: new Date(),
                                             updateDate: new Date(),
                                         },

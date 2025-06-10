@@ -70,6 +70,7 @@ function MuiDataGridForPostManagement({
         
       });
       setProcessedDataArray(processedArray);
+      console.log("Processed data array: ", processedArray);
   }, [dataArray]);
 
   if (!dataArray || dataArray.length === 0) {

@@ -1,5 +1,5 @@
 "use client";
-import { CheckIcon, TrashIcon } from "@/assets/icons";
+import { CheckIcon, DoubleCheckIcon, TrashIcon } from "@/assets/icons";
 import { PreviewIcon, EditIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
@@ -73,7 +73,7 @@ function MuiDataGridWithPopUpButton({
   const [confirmPopUpOpen, setConfirmPopUpOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("Data array updated:", dataArray);
+    // console.log("Data array updated:", dataArray);
     const total = dataArray.reduce(
       (sum: number, item: any) => sum + item.amount,
       0,
@@ -173,6 +173,17 @@ function MuiDataGridWithPopUpButton({
       setTotalAmount(total);
     }
   };
+
+  const updateInvoiceToPaid = (invoiceId: number, invoiceToBeUpdated : invoiceData) => {
+      invoiceToBeUpdated.isPaid = true;
+      console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
+      CombinedService.update_invoice_details(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated).then((res) => {
+          if(res) {
+              console.log("Updated invoice: ", res);
+              setUpdateDataNeeded(true); // Trigger data update
+          }
+      });
+  }
 
   //   const total = selectedData.reduce(
   //     (sum: number, item: any) => sum + item.amount,
@@ -286,24 +297,24 @@ function MuiDataGridWithPopUpButton({
       ),
     },
     {
-      field: "settlementDate",
+      field: "status",
       headerName: "Status",
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.amount-row.paidAmount,
+      valueGetter: (value, row) => row.isPaid,
       renderCell: (params) => (
         <div
           className={cn(
             "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
             {
-              "bg-[#219653]/[0.08]": params.value <= 0,
-              "bg-[#D34053]/[0.08]": params.value > 0,
+              "bg-[#219653]/[0.08]": params.value,
+              "bg-[#D34053]/[0.08]": !params.value,
               //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
             },
           )}
         >
-          {params.value <= 0 ? "Paid" : "Unpaid"}
+          {params.value ? "Paid" : "Unpaid"}
         </div>
       ),
     },
@@ -345,6 +356,16 @@ function MuiDataGridWithPopUpButton({
           >
             <span className="sr-only">Edit Invoice</span>
             <EditIcon className="fill-dark dark:fill-white" />
+          </button>
+          <button className="text-dark dark:text-white"
+            onClick={() => {
+              const invoice = getInvoiceById(params.id);
+              if (!invoice) return;
+              updateInvoiceToPaid(invoice.invoiceId, invoice);
+              setUpdateDataNeeded(true); // Trigger data update
+            }}>
+            <span className="sr-only">Set Paid Invoice</span>
+            <CheckIcon className="fill-dark dark:fill-white" />
           </button>
         </div>
       ),

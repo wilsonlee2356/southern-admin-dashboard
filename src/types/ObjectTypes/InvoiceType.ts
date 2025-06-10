@@ -58,6 +58,7 @@ export type invoiceData = {
   invoiceDate: Date;
   amount: number;
   paidAmount: number;
+  isPaid: boolean;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
   invoiceChequesList: invoiceCheques[];
@@ -87,7 +88,6 @@ export type invoiceDataOutput = {
   paidAmount:number;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
-  chequeId: number | null | undefined;
 
 }
 

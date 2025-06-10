@@ -47,6 +47,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
     const [amount, setAmount] = React.useState<number>(0);
     const [clientName, setClientName] = React.useState<string>("");
     const [fullName, setFullName] = React.useState<string>("");
+    const [buildingAddress, setBuildingAddress] = React.useState<string>("");
+    const [streetAddress, setStreetAddress] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
 
@@ -59,7 +61,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             setAmount(invoiceInfo.amount);
             setClientName(invoiceInfo.post.client.clientName);
             setFullName(toEmptyIfNull(invoiceInfo.post.client.fullName));
-            setAddress(toEmptyIfNull(invoiceInfo.post.address));
+            setAddress(toEmptyIfNull(invoiceInfo.post.buildingAddress));
             setInvoiceDate(dayjs(invoiceInfo.invoiceDate));
         }
         
@@ -97,20 +99,23 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             post: {
                 postId: invoiceInfo.post.postId,
                 postcode: postcode,
-                address: address,
+                buildingAddress: buildingAddress,
+                streetAddress: streetAddress,
                 isEnded: false,
                 client: {
                     clientId: invoiceInfo.post.client.clientId,
                     clientName: clientName,
                     fullName: fullName,
+                    address: address,
                     createDate: invoiceInfo.post.client.createDate,
                     updateDate: newDate.toISOString(),
                 },
                 createDate: invoiceInfo.post.createDate,
                 updateDate: newDate.toISOString(),
             },
-            
+            invoiceChequesList: invoiceInfo.invoiceChequesList,
             invoiceDate: invoiceDate?.toDate(),
+            isPaid: invoiceInfo.isPaid,
             amount: amount,
             paidAmount: invoiceInfo.paidAmount,
             settlementDate: null,

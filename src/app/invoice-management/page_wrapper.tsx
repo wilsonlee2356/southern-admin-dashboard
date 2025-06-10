@@ -39,7 +39,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   useEffect(() => {
     const selectedData = dataArray.filter((row: any) =>
       (
-        (!checkEmpty(invoiceNumber) ? row.invoiceNum.includes(invoiceNumber) : true) && 
+        (!checkEmpty(invoiceNumber) ? row.invoiceNum.toLowerCase().includes(invoiceNumber.toLowerCase()) : true) && 
         (!checkEmpty(clientName) ? row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) : true) && 
         (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) && 
         (startDate && endDate ? (checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)) : true )&&
@@ -55,11 +55,18 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   }, [invoiceNumber, clientName, postcode, startDate, endDate, showNotEndedPosts, showEndedPosts, showUnpaidInvoices, showPaidInvoices, dataArray]);
 
   useEffect(() => {
+    clients = clientData;
+    posts = postData;
+    console.log("clients:", clients);
+    console.log("posts:", posts);
+  }, [clientData, postData]);
+
+  useEffect(() => {
     if(updateDataNeeded){
       
       InvoiceService.getAll().then((res) => {
         dataArray = res;
-        setFilteredData(res);
+        // setFilteredData(res);
       }
       );
       CombinedService.get_all_client().then((res) => {

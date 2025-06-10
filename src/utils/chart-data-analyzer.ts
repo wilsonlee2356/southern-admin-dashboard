@@ -11,28 +11,33 @@ export function createMonthlyTimeData(invoices : invoiceData[], invoiceCheques :
         due: [],
     };
     invoiceCheques.forEach((item : invoiceCheques) => {
-        const shortMonth = item.paymentDate.toLocaleString('default', { month: 'short'});
+        // const shortMonth = item.paymentDate.toLocaleString('default', { month: 'short'});
+        const paymentDate = new Date(item.paymentDate);
+        const shortMonthAndYear = paymentDate.getMonth() + 1 + '/' + paymentDate.getFullYear();
 
-        const foundMonthReceivedData = processedData.received.find((d) => d.x === shortMonth);
+        const foundMonthReceivedData = processedData.received.find((d) => d.x === shortMonthAndYear);
 
         if(foundMonthReceivedData != null){
-            console.log("Found month in received: ", shortMonth, item.amount);
+            console.log("Found month in received: ", shortMonthAndYear, item.amount);
             foundMonthReceivedData.y += item.amount;
         } else {
-            console.log("Adding new month to received: ", shortMonth, item.amount);
-            processedData.received.push({ x: shortMonth, y: item.amount });
+            console.log("Adding new month to received: ", shortMonthAndYear, item.amount);
+            processedData.received.push({ x: shortMonthAndYear, y: item.amount });
+            console.log("Processed Data Received: ", processedData.received);
         }
     });
 
     invoices.forEach((item : invoiceData) => {
-        const shortMonth = item.invoiceDate.toLocaleString('default', { month: 'short'});
+        // const shortMonth = item.invoiceDate.toLocaleString('default', { month: 'short'});
+        const invoiceDate = new Date(item.invoiceDate);
+        const shortMonthAndYear = invoiceDate.getMonth() + 1 + '/' + invoiceDate.getFullYear();
 
-        const foundMonthDueData = processedData.received.find((d) => d.x === shortMonth);
+        const foundMonthDueData = processedData.due.find((d) => d.x === shortMonthAndYear);
 
         if(foundMonthDueData != null){
             foundMonthDueData.y += (item.amount - item.paidAmount);
-        } else {
-            processedData.due.push({ x: shortMonth, y: item.amount - item.paidAmount });
+        } else if((item.amount - item.paidAmount) > 0) {
+            processedData.due.push({ x: shortMonthAndYear, y: item.amount - item.paidAmount });
         }
     });
 

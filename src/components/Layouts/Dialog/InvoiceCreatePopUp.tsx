@@ -29,14 +29,16 @@ type InvoiceCreatePopUpPropsType = {
     open: boolean;
     onClose: any;
     setUpdateDataNeeded: any;
-    invoiceArray: AutoCompleteArrayType[]; // Pass data as a prop instead of fetching here
+    // invoiceArray: AutoCompleteArrayType[]; // Pass data as a prop instead of fetching here
     clientArray: AutoCompleteArrayType[];
     postArray: AutoCompleteArrayType[];
+    postArrayWithDetails: post[]; // Optional prop for post array with details
+    clientArrayWithDetails: client[]; // Optional prop for client array with details
 }
 
 
 
-function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray, clientArray, postArray }: InvoiceCreatePopUpPropsType){
+function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, clientArray, postArray, postArrayWithDetails, clientArrayWithDetails }: InvoiceCreatePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     //const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
     const [chequeFile, setChequeFile] = React.useState<File | null>(null);
@@ -52,16 +54,33 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
     const [amount, setAmount] = useState("");
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(dayjs());
 
-    
-
     React.useEffect(() => {
-        if (open) {
-        const { current: descriptionElement } = descriptionElementRef;
-        if (descriptionElement !== null) {
-            descriptionElement.focus();
-        }
-        }
-    }, [open]);
+        postArrayWithDetails.find((postItem) => {
+            if (postItem.postcode === postcode) {
+                setBuildingAddress(postItem.buildingAddress);
+                setStreetAddress(postItem.streetAddress);
+                return true; // Stop searching once we find a match
+            }
+            return false; // Continue searching
+        });
+        clientArrayWithDetails.find((clientItem) => {
+            if (clientItem.clientName === clientName) {
+                setFullName(clientItem.fullName);
+                setAddress(clientItem.address);
+                return true; // Stop searching once we find a match
+            }
+            return false; // Continue searching
+        });
+    }, [postcode, clientName]);
+
+    // React.useEffect(() => {
+    //     if (open) {
+    //     const { current: descriptionElement } = descriptionElementRef;
+    //     if (descriptionElement !== null) {
+    //         descriptionElement.focus();
+    //     }
+    //     }
+    // }, [open]);
 
     const descriptionElementRef = React.useRef<HTMLElement>(null);
 
@@ -99,7 +118,6 @@ function InvoiceCreatePopUp ({ open, onClose, setUpdateDataNeeded, invoiceArray,
             amount: parseFloat(amount),
             settlementDate: null,
             statementId: null,
-            chequeId: null,
           };
           CombinedService.create_invoice(updateInvoice).then((response) => {
             console.log("Invoice created:", response);

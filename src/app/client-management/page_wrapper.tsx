@@ -59,7 +59,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
         console.log("Updating data");
         InvoiceService.getAll().then((res) => {
           dataArray = res;
-          setDataToShow(res);
+          // setDataToShow(res);
         }
         );
         CombinedService.get_all_client().then((res) => {
