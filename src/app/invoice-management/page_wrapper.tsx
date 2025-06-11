@@ -52,6 +52,7 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
     );
     //console.log("row.amount<=row.paidAmount", dataArray[1].amount<=dataArray[1].paidAmount);
     setFilteredData(selectedData);
+    console.log("Filtered Data: ", selectedData);
   }, [invoiceNumber, clientName, postcode, startDate, endDate, showNotEndedPosts, showEndedPosts, showUnpaidInvoices, showPaidInvoices, dataArray]);
 
   useEffect(() => {

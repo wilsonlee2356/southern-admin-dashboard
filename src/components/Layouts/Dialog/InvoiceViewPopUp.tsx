@@ -8,6 +8,7 @@ import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { cn } from "@/lib/utils";
 import dayjs, { Dayjs } from "dayjs";
 import ChequeMuiDataGrid from "@/components/Tables/DataGrid/ChequeMuiDataGrid";
+import ImageViewPopUp from "./ImageViewPopUp";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -38,6 +39,8 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
     const [fullName, setFullName] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
+    const [imageSrc, setImageSrc] = React.useState<string>("");
+    const [imageViewPopUp, setImageViewPopUp] = React.useState<boolean>(false);
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -51,7 +54,7 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             setAddress(toEmptyIfNull(invoiceInfo?.post.buildingAddress));
             setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
         }
-        
+        console.log("Invoice Info : ", invoiceInfo);
     }, [invoiceInfo]);
 
      if(Object.keys(invoiceInfo).length === 0) return(<><div></div></>);
@@ -167,11 +170,18 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
                         <div className="w-1/2 h-full">
                             <ChequeMuiDataGrid
                                 dataArray={invoiceInfo.invoiceChequesList}
+                                setImageSrcToView={setImageSrc}
+                                onClose={setImageViewPopUp}
                             />
                         </div>
                 </div>
             </DialogContent>
         </Dialog>
+
+        <ImageViewPopUp
+            image={imageSrc}
+            open={imageViewPopUp}
+            setOpen={setImageViewPopUp}/>
     </>
     );
 };

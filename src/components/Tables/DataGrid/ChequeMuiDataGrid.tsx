@@ -9,10 +9,12 @@ import { invoiceCheques, PaidAmountsType, invoiceData } from "@/types/ObjectType
 
 type ChequeMuiDataGridProps = {
   dataArray: invoiceCheques[];
+  setImageSrcToView: any;
+  onClose: any;
 };
 
 
-function ChequeMuiDataGrid({ dataArray }: ChequeMuiDataGridProps) {
+function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose }: ChequeMuiDataGridProps) {
 
 //   useEffect(() => {
 //     // Initialize paidAmounts with empty objects for each invoice
@@ -127,6 +129,9 @@ function ChequeMuiDataGrid({ dataArray }: ChequeMuiDataGridProps) {
                     // if (!invoice) return;
                     // setEditingRow(invoice);
                     // setPopUpOpenView(true);
+                    console.log("View Cheque clicked for cheque copy:", params.value);
+                    setImageSrcToView(params.value);
+                    onClose(true);
                   }}
                 >
                 <span className="sr-only">View Invoice</span>

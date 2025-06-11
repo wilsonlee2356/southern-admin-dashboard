@@ -17,7 +17,7 @@ function MuiDatePicker({title, value, onChange, ...params}: DatePickerProps) {
 
     return (
     <div className="w-full">
-        <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
+        <label className="mb-3 block text-body-md font-medium text-dark dark:text-white">
         {title}
         </label>
         <div className="relative">

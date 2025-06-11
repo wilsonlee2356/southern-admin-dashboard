@@ -5,11 +5,9 @@ import { Button } from "@/components/ui-elements/button";
 import { CheckIcon } from "@/assets/icons";
 import { Dialog, DialogContent, DialogContentText, DialogProps, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import UploadButton from "@/components/ui-elements/upload-button";
+import { Input } from "@heroui/input";
 import SimpleMuiDataGrid from "@/components/Tables/DataGrid/SimpleMuiDataGrid";
-import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
-import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
-import AutoCompleteWithoutSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithoutSelectorButton";
+import { fileToBase64String } from "@/utils/file-reader";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -33,19 +31,17 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
     const [amount, setAmount] = useState("");
-    const [chequeFile, setChequeFile] = React.useState<File | null>(null);
-    const [statementFile, setStatementFile] = React.useState<File | null>(null);
+    const [chequeFile, setChequeFile] = React.useState<string>();
     const [paidAmounts, setPaidAmounts] = useState<PaidAmountsType[]>([]);
 
     useEffect(() => {
-        console.log("Paid amount:", paidAmounts);
-    }, [paidAmounts]);
+        console.log("Show details invoice:", dataArray);
+    }, [dataArray]);
 
     const resetData = () => {
         setInvoiceDate(null);
         setAmount("");
-        setChequeFile(null);
-        setStatementFile(null);
+        setChequeFile("");
         setPaidAmounts([]);
     }
 
@@ -65,6 +61,8 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
         }
         }
     }, [open]);
+
+
     return (
     <>
         <Dialog 
@@ -93,12 +91,26 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                         /> */}
                     </div>
                     <div className="mb-1.5 flex flex-col gap-2">
-                        <div className="flex flex-row gap-2">
-                            <DialogContentText id="alert-dialog-description">
-                                <span>Cheque Upload</span>
-                            </DialogContentText>
-                            <UploadButton width={200} setFile={setChequeFile}/>
-                        </div>
+                        
+                        <DialogContentText id="alert-dialog-description">
+                            <span className="text-dark">Cheque Upload</span>
+                        </DialogContentText>
+                        {/* <UploadButton width={200} setFile={setChequeFile}/> */}
+                        <Input type="file" 
+                            accept=".pdf, .jpg, .jpeg, .png"
+                            onChange={ (e) => {
+                                console.log("Cheque file selected:", e.target.files);
+                                // setChequeFile(e.target.files ? e.target.files[0] : undefined);
+                                fileToBase64String(e.target.files ? e.target.files[0] : new Blob()).then((base64String) => {
+                                    console.log("Cheque file base64 string:", base64String);
+                                    setChequeFile(base64String);
+                                    console.log("Cheque file:", chequeFile);
+                                }).catch((error) => {
+                                    console.error("Error converting file to base64:", error);
+                                });
+                                }}
+                        />
+                        
                         {/* <FilePreviewWindow source={undefined} width={300} height={300}/> */}
                     </div>
                     {/* <div className="mb-1.5 flex flex-col gap-2">
@@ -133,7 +145,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                         console.log("Paid Amounts: ", paidAmounts);
                         CombinedService.create_cheque({
                             chequeId: 0, // Assuming chequeId is auto-generated
-                            chequeCopy: "",
+                            chequeCopy: chequeFile ? chequeFile : "",
                             invoiceChequesList: [],
                             }).then((cheque) => {
                                 console.log("Cheque created:", cheque);
@@ -150,6 +162,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                                             settlementDate: null, // Assuming this is set later
                                             statementId: null, // Assuming this is set later
                                             invoiceChequesList: [],
+                                            isPaid: false,
                                             createDate: new Date(),
                                             updateDate: new Date(),
                                         },
@@ -166,6 +179,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                                     console.log("InvoiceCheques created:", invoiceCheques);
                                     setUpdateDataNeeded(true);
                                     closePopUp();
+
                                     // setDataArray((prevData: any) => {
                                     //     return prevData.map((item: any) => {
                                     //         dataArray.map((invoiceInfo: invoiceData) => {
