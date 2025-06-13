@@ -9,13 +9,13 @@ import { NAV_DATA } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
-import { useAuth } from "@/contexts/authContext";
+// import { useAuth } from "@/contexts/authContext";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
-  const { currentUser } = useAuth();
+  // const { currentUser } = useAuth();
 
   const toggleExpanded = (title: string) => {
     // setExpandedItems((prev) => (prev.includes(title) ? [] : [title]));
@@ -89,7 +89,7 @@ export function Sidebar() {
 
           {/* Navigation */}
           <div className="custom-scrollbar mt-6 flex-1 overflow-y-auto pr-3 min-[850px]:mt-10">
-            {currentUser ? (
+            {
               NAV_DATA.map((section) => (
                 <div key={section.label} className="mb-6">
                   <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
@@ -178,20 +178,21 @@ export function Sidebar() {
                   </nav>
                 </div>
               ))
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <span className="text-lg font-medium text-gray-600 dark:text-gray-400">
-                  Please{" "}
-                  <Link href="/auth/sign-in" className="text-primary">
-                    Sign In{" "}
-                  </Link>
-                  Or{" "}
-                  <Link href="/auth/sign-up" className="text-primary">
-                    Sign Up
-                  </Link>
-                </span>
-              </div>
-            )}
+              //  : (
+              //   <div className="flex h-full items-center justify-center">
+              //     <span className="text-lg font-medium text-gray-600 dark:text-gray-400">
+              //       Please{" "}
+              //       <Link href="/auth/sign-in" className="text-primary">
+              //         Sign In{" "}
+              //       </Link>
+              //       Or{" "}
+              //       <Link href="/auth/sign-up" className="text-primary">
+              //         Sign Up
+              //       </Link>
+              //     </span>
+              //   </div>
+              // )
+            }
           </div>
         </div>
       </aside>
