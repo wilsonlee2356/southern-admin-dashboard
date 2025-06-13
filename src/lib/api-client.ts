@@ -3,11 +3,11 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 // Ensure baseURL is defined, fallback to a safe default
 // const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-if (!baseURL) {
-  console.error(
-    "Error: NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined in environment variables",
-  );
-}
+// if (!baseURL) {
+//   console.error(
+//     "Error: NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined in environment variables",
+//   );
+// }
 
 // Centralized axios instance for API calls
 const apiClient = axios.create({

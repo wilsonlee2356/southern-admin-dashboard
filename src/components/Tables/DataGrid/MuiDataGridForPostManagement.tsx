@@ -14,7 +14,11 @@ import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { invoiceData, post, postClientInvoiceSummary } from "@/types/ObjectTypes/InvoiceType";
+import {
+  invoiceData,
+  post,
+  postClientInvoiceSummary,
+} from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 
@@ -37,40 +41,46 @@ function MuiDataGridForPostManagement({
   setFilteredData,
   setUpdateDataNeeded,
 }: MuiDataGridWithPopUpButtonProps) {
-  const [processedDataArray, setProcessedDataArray] = useState<postClientInvoiceSummary[]>([]);
-  const [selectedRows, setSelectedRows] = useState<postClientInvoiceSummary[]>([]);
-  const [totalAmount, setTotalAmount] = useState<number>(0
+  const [processedDataArray, setProcessedDataArray] = useState<
+    postClientInvoiceSummary[]
+  >([]);
+  const [selectedRows, setSelectedRows] = useState<postClientInvoiceSummary[]>(
+    [],
+  );
+  const [totalAmount, setTotalAmount] = useState<number>(
+    0,
     //dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
   );
   const [canSetFinish, setCanSetFinish] = useState<boolean>(false);
 
-  const [editingRow, setEditingRow] = useState<postClientInvoiceSummary>({} as postClientInvoiceSummary);
+  const [editingRow, setEditingRow] = useState<postClientInvoiceSummary>(
+    {} as postClientInvoiceSummary,
+  );
 
   React.useEffect(() => {
-      const processedArray : postClientInvoiceSummary[] = [];//
-      dataArray.map((row: invoiceData) => {
-        const existingPost = processedArray.find(
-          (item) => item.post_id === row.post.postId,
-        );
-        if (existingPost) {
-          existingPost.numberOfInvoices += 1;
-          existingPost.totalAmount += row.amount;
-          existingPost.outstanding += row.amount - row.paidAmount;
-        } else {
-          processedArray.push({
-            post_id: row.post.postId,
-            postcode: row.post.postcode,
-            numberOfInvoices: 1,
-            totalAmount: row.amount,
-            outstanding: row.amount - row.paidAmount,
-            ended: row.post.isEnded,
-            client_name: row.post.client.clientName,
-          });
-        }
-        
-      });
-      setProcessedDataArray(processedArray);
-      console.log("Processed data array: ", processedArray);
+    const processedArray: postClientInvoiceSummary[] = []; //
+    dataArray?.map((row: invoiceData) => {
+      const existingPost = processedArray.find(
+        (item) => item.post_id === row.post.postId,
+      );
+      if (existingPost) {
+        existingPost.numberOfInvoices += 1;
+        existingPost.totalAmount += row.amount;
+        existingPost.outstanding += row.amount - row.paidAmount;
+      } else {
+        processedArray.push({
+          post_id: row.post.postId,
+          postcode: row.post.postcode,
+          numberOfInvoices: 1,
+          totalAmount: row.amount,
+          outstanding: row.amount - row.paidAmount,
+          ended: row.post.isEnded,
+          client_name: row.post.client.clientName,
+        });
+      }
+    });
+    setProcessedDataArray(processedArray);
+    console.log("Processed data array: ", processedArray);
   }, [dataArray]);
 
   if (!dataArray || dataArray.length === 0) {
@@ -90,8 +100,8 @@ function MuiDataGridForPostManagement({
     } else {
       //console.log("Selected rows:", checkedRows);
 
-      const checkedData = processedDataArray.filter((row: postClientInvoiceSummary) =>
-        checkedRows.includes(row.post_id),
+      const checkedData = processedDataArray.filter(
+        (row: postClientInvoiceSummary) => checkedRows.includes(row.post_id),
       );
       //console.log("Checked data:1 ", checkedData);
       const finishedInvoices = checkedData.filter(
@@ -108,7 +118,6 @@ function MuiDataGridForPostManagement({
       setSelectedRows(checkedData);
       // setTotalAmount(total);
     }
-    
   };
 
   const columns: GridColDef[] = [
@@ -147,9 +156,7 @@ function MuiDataGridForPostManagement({
       headerAlign: "center",
       valueGetter: (value, row) => row.numberOfInvoices,
       renderCell: (params) => (
-        <h5 className="text-dark dark:text-white">
-          {params.value}
-        </h5>
+        <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
     },
     {
@@ -158,7 +165,8 @@ function MuiDataGridForPostManagement({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.totalAmount === null ? 0 : row.totalAmount,
+      valueGetter: (value, row) =>
+        row.totalAmount === null ? 0 : row.totalAmount,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
@@ -169,33 +177,34 @@ function MuiDataGridForPostManagement({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.outstanding === null ? 0 : row.outstanding,
+      valueGetter: (value, row) =>
+        row.outstanding === null ? 0 : row.outstanding,
       renderCell: (params) => (
         <h5 className="text-dark dark:text-white">{params.value}</h5>
       ),
     },
     {
-          field: "isEnded",
-          headerName: "Finished",
-          flex: 2,
-          align: "center",
-          headerAlign: "center",
-          valueGetter: (value, row) => row.ended,
-          renderCell: (params) => (
-            <div
-              className={cn(
-                "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
-                {
-                  "bg-[#219653]/[0.08]": params.value !== false,
-                  "bg-[#D34053]/[0.08]": params.value === false,
-                  //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
-                },
-              )}
-            >
-              {params.value !== false ? "Paid" : "Unpaid"}
-            </div>
-          ),
-        },
+      field: "isEnded",
+      headerName: "Finished",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      valueGetter: (value, row) => row.ended,
+      renderCell: (params) => (
+        <div
+          className={cn(
+            "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
+            {
+              "bg-[#219653]/[0.08]": params.value !== false,
+              "bg-[#D34053]/[0.08]": params.value === false,
+              //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
+            },
+          )}
+        >
+          {params.value !== false ? "Paid" : "Unpaid"}
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -236,7 +245,6 @@ function MuiDataGridForPostManagement({
               backgroundColor: "dark: black",
             },
           }}
-          
         />
       </div>
       <Button
@@ -258,21 +266,22 @@ function MuiDataGridForPostManagement({
         onClose={setPopUpOpen}
         functionToRun={() => {
           // let idString = "";
-          let idArr : number[] = [];
+          let idArr: number[] = [];
           //console.log("SelectedRow: ", selectedRows);
           selectedRows.map((row, index, array) => {
             idArr = [...idArr, row.post_id];
           });
           //console.log("idArr: "+idArr);
-          
-          CombinedService.set_post_to_finish(idArr).then((res) => {
-          //console.log("Set post to finished: ", res);
-            setUpdateDataNeeded(true);
-            updateSelectedRow([]);
-          }).catch((err) => {
-            console.error("Error setting post to finished: ", err);
-          });
-          
+
+          CombinedService.set_post_to_finish(idArr)
+            .then((res) => {
+              //console.log("Set post to finished: ", res);
+              setUpdateDataNeeded(true);
+              updateSelectedRow([]);
+            })
+            .catch((err) => {
+              console.error("Error setting post to finished: ", err);
+            });
         }}
       />
     </div>
