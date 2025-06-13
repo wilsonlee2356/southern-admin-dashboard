@@ -10,13 +10,17 @@ import { start } from "repl";
 import { Dayjs } from "dayjs";
 
 type PageWrapperProps = {
-  dataArray: any[]; // Pass data as a prop instead of fetching here
-  clientData: client[];
-  postData: post[];
+  dataArray?: any[]; // Pass data as a prop instead of fetching here
+  clientData?: client[];
+  postData?: post[];
 };
 
-export default function PageWrapper({ dataArray, clientData, postData }: PageWrapperProps) {
-  const [filteredData, setFilteredData] = useState<invoiceData[]>(dataArray);
+export default function PageWrapper({
+  dataArray,
+  clientData,
+  postData,
+}: PageWrapperProps) {
+  const [filteredData, setFilteredData] = useState<any[]>(dataArray ?? []);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -32,28 +36,52 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   const [showUnpaidInvoices, setShowUnpaidInvoices] = useState(true);
   const [showPaidInvoices, setShowPaidInvoices] = useState(false);
 
-  let data =  dataArray;
+  let data = dataArray;
   let clients = clientData;
   let posts = postData;
 
   useEffect(() => {
-    const selectedData = dataArray.filter((row: any) =>
-      (
-        (!checkEmpty(invoiceNumber) ? row.invoiceNum.toLowerCase().includes(invoiceNumber.toLowerCase()) : true) && 
-        (!checkEmpty(clientName) ? row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) : true) && 
-        (!checkEmpty(postcode) ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) : true) && 
-        (startDate && endDate ? (checkDateWithinPeriod(row.invoiceDate, startDate?.toDate() ?? null, endDate?.toDate() ?? null)) : true )&&
+    const selectedData = dataArray?.filter(
+      (row: any) =>
+        (!checkEmpty(invoiceNumber)
+          ? row.invoiceNum.toLowerCase().includes(invoiceNumber.toLowerCase())
+          : true) &&
+        (!checkEmpty(clientName)
+          ? row.post.client.clientName
+              .toLowerCase()
+              .includes(clientName.toLowerCase())
+          : true) &&
+        (!checkEmpty(postcode)
+          ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase())
+          : true) &&
+        (startDate && endDate
+          ? checkDateWithinPeriod(
+              row.invoiceDate,
+              startDate?.toDate() ?? null,
+              endDate?.toDate() ?? null,
+            )
+          : true) &&
         ((showNotEndedPosts && !row.post.isEnded) ||
-        (showEndedPosts && row.post.isEnded) ||
-        (showUnpaidInvoices && (row.amount>row.paidAmount)) ||
-        (showPaidInvoices && (row.amount<=row.paidAmount)))
-        //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
-      )
+          (showEndedPosts && row.post.isEnded) ||
+          (showUnpaidInvoices && row.amount > row.paidAmount) ||
+          (showPaidInvoices && row.amount <= row.paidAmount)),
+      //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
     );
     //console.log("row.amount<=row.paidAmount", dataArray[1].amount<=dataArray[1].paidAmount);
-    setFilteredData(selectedData);
+    setFilteredData(selectedData ?? []);
     console.log("Filtered Data: ", selectedData);
-  }, [invoiceNumber, clientName, postcode, startDate, endDate, showNotEndedPosts, showEndedPosts, showUnpaidInvoices, showPaidInvoices, dataArray]);
+  }, [
+    invoiceNumber,
+    clientName,
+    postcode,
+    startDate,
+    endDate,
+    showNotEndedPosts,
+    showEndedPosts,
+    showUnpaidInvoices,
+    showPaidInvoices,
+    dataArray,
+  ]);
 
   useEffect(() => {
     clients = clientData;
@@ -63,23 +91,18 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   }, [clientData, postData]);
 
   useEffect(() => {
-    if(updateDataNeeded){
-      
+    if (updateDataNeeded) {
       InvoiceService.getAll().then((res) => {
         dataArray = res;
         // setFilteredData(res);
-      }
-      );
+      });
       CombinedService.get_all_client().then((res) => {
         clients = res;
-      }
-      );
+      });
       CombinedService.get_all_post().then((res) => {
         posts = res;
-      }
-      );
+      });
       setUpdateDataNeeded(false);
-      
     }
   }, [updateDataNeeded]);
 
@@ -88,40 +111,46 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   // }, [filteredData]);
 
   const checkEmpty = (value: string) => {
-    return value === "" || value === undefined || value === null; 
+    return value === "" || value === undefined || value === null;
   };
 
   const compareDatesLarger = (date1: Date, date2: Date) => {
-    if (date1.getFullYear() > date2.getFullYear())
-      return true;
-    else if (date1.getFullYear() < date2.getFullYear())
-      return false;
+    if (date1.getFullYear() > date2.getFullYear()) return true;
+    else if (date1.getFullYear() < date2.getFullYear()) return false;
     else {
-      if (date1.getMonth() > date2.getMonth())
-        return true;
-      else if (date1.getMonth() < date2.getMonth())
-        return false;
+      if (date1.getMonth() > date2.getMonth()) return true;
+      else if (date1.getMonth() < date2.getMonth()) return false;
       else {
-        if (date1.getDate() >= date2.getDate())
-          return true;
-        else
-          return false;
+        if (date1.getDate() >= date2.getDate()) return true;
+        else return false;
       }
     }
-  }
+  };
 
-  const checkDateWithinPeriod = (targetDate: Date, startDate: Date | null, endDate: Date | null) => {
+  const checkDateWithinPeriod = (
+    targetDate: Date,
+    startDate: Date | null,
+    endDate: Date | null,
+  ) => {
     const targetDateObj = new Date(targetDate);
     const startDateObj = startDate ? new Date(startDate) : null;
     const endDateObj = endDate ? new Date(endDate) : null;
-    
-    if(startDateObj && endDateObj){
-      return compareDatesLarger(targetDateObj, startDateObj) && compareDatesLarger(endDateObj, targetDateObj);
+
+    if (startDateObj && endDateObj) {
+      return (
+        compareDatesLarger(targetDateObj, startDateObj) &&
+        compareDatesLarger(endDateObj, targetDateObj)
+      );
     } else {
-      console.log("targetDate >= startDate", startDateObj && compareDatesLarger(targetDateObj, startDateObj));
-      return startDateObj && compareDatesLarger(targetDateObj, startDateObj) || endDateObj && compareDatesLarger(endDateObj, targetDateObj);
+      console.log(
+        "targetDate >= startDate",
+        startDateObj && compareDatesLarger(targetDateObj, startDateObj),
+      );
+      return (
+        (startDateObj && compareDatesLarger(targetDateObj, startDateObj)) ||
+        (endDateObj && compareDatesLarger(endDateObj, targetDateObj))
+      );
     }
-      
   };
 
   const checkDateWithinMonths = (date: Date, months: number) => {
@@ -134,9 +163,9 @@ export default function PageWrapper({ dataArray, clientData, postData }: PageWra
   return (
     <>
       <SearchBox
-        dataArray={data}
-        clientData={clients} 
-        postData={posts} 
+        dataArray={data ?? []}
+        clientData={clients ?? []}
+        postData={posts ?? []}
         invoiceNumber={invoiceNumber}
         clientName={clientName}
         postcode={postcode}
