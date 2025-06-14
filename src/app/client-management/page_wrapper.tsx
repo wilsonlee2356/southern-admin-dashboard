@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   client,
   post,
@@ -10,6 +10,7 @@ import PostSearchBox from "./_components/post-search-box";
 import { CombinedService } from "@/app/api/invoice";
 import { InvoiceService } from "../api/services/invoiceService";
 import MuiDataGridForPostManagement from "@/components/Tables/DataGrid/MuiDataGridForPostManagement";
+import { usePostClientContent } from "@/utils/post-client-content";
 
 type PageWrapperProps = {
   dataArray?: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -35,8 +36,8 @@ export default function PageWrapper({
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
 
   let data = dataArray;
-  let clients = clientData;
-  let posts = postData;
+  let clients = usePostClientContent().clientData;
+  let posts = usePostClientContent().postData;
   // useEffect(() => {
   //   console.log( typeof dataArray[0].postcode  );
   //   setDataToShow(dataArray);

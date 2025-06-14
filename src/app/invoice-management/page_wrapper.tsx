@@ -6,6 +6,7 @@ import { client, post, invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGridWithPopUpButton";
 import { InvoiceService } from "../api/services/invoiceService";
 import { CombinedService } from "@/app/api/invoice";
+import { usePostClientContent } from "@/utils/post-client-content";
 import { start } from "repl";
 import { Dayjs } from "dayjs";
 
@@ -37,8 +38,8 @@ export default function PageWrapper({
   const [showPaidInvoices, setShowPaidInvoices] = useState(false);
 
   let data = dataArray;
-  let clients = clientData;
-  let posts = postData;
+  let clients = usePostClientContent().clientData;
+  let posts = usePostClientContent().postData;
 
   useEffect(() => {
     const selectedData = dataArray?.filter(
@@ -83,12 +84,12 @@ export default function PageWrapper({
     dataArray,
   ]);
 
-  useEffect(() => {
-    clients = clientData;
-    posts = postData;
-    console.log("clients:", clients);
-    console.log("posts:", posts);
-  }, [clientData, postData]);
+  // useEffect(() => {
+  //   clients = clientData;
+  //   posts = postData;
+  //   console.log("clients:", clients);
+  //   console.log("posts:", posts);
+  // }, [clientData, postData]);
 
   useEffect(() => {
     if (updateDataNeeded) {

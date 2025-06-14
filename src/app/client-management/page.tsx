@@ -9,14 +9,14 @@ import PageWrapper from "./page_wrapper";
 async function ClientManagementPage() {
   // const data = await InvoiceService.getAll();
   const data = await InvoiceService.getAll();
-  const clientData = await CombinedService.get_all_client();
+  // const clientData = await CombinedService.get_all_client();
   // const postData = await CombinedService.get_all_post();
 
   return (
     <>
       <div>
         {/* <Suspense fallback={<div>Loading search form...</div>}> */}
-        <PageWrapper clientData={clientData} dataArray={data} />
+        <PageWrapper dataArray={data} />
         {/* </Suspense> */}
       </div>
       {/* <InputBox dataArray={data}/>x
