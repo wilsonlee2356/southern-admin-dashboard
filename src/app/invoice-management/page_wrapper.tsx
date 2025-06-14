@@ -12,14 +12,14 @@ import { Dayjs } from "dayjs";
 
 type PageWrapperProps = {
   dataArray?: any[]; // Pass data as a prop instead of fetching here
-  clientData?: client[];
-  postData?: post[];
+  // clientData?: client[];
+  // postData?: post[];
 };
 
 export default function PageWrapper({
   dataArray,
-  clientData,
-  postData,
+  // clientData,
+  // postData,
 }: PageWrapperProps) {
   const [filteredData, setFilteredData] = useState<any[]>(dataArray ?? []);
   const [invoiceNumber, setInvoiceNumber] = useState("");
