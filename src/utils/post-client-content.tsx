@@ -3,6 +3,7 @@
 import { CombinedService } from "@/app/api/invoice";
 import { client, post } from "@/types/ObjectTypes/InvoiceType";
 import React, { createContext, useEffect, useState } from "react";
+import { useAuth } from "@/contexts/authContext";
 
 export async function getPostClientContent() {
     const postData = await CombinedService.get_all_post();
@@ -31,12 +32,17 @@ export function PostClientContentProvider({ children }: { children: React.ReactN
     const [postData, setPostData] = useState<post[]>([]);
     const [clientData, setClientData] = useState<client[]>([]);
 
+    const { userLoggedIn } = useAuth();
+
     useEffect(() => {
-        getPostClientContent().then(({ postData, clientData }) => {
-            setPostData(postData);
-            setClientData(clientData);
-        });
-    }, []);
+        if(userLoggedIn && postData.length === 0 && clientData.length === 0) {
+            getPostClientContent().then(({ postData, clientData }) => {
+                setPostData(postData);
+                setClientData(clientData);
+            });
+        }
+        
+    }, [userLoggedIn]);
 
     const postClientContent = {
         postData,

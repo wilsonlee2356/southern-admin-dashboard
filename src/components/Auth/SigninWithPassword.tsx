@@ -4,6 +4,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import InputGroup from "../FormElements/InputGroup";
 import { Checkbox } from "../FormElements/checkbox";
+import { useAuth } from "@/contexts/authContext";
+import { useRouter } from "next/navigation";
 
 export default function SigninWithPassword({ handleSubmit }: any) {
   const [data, setData] = useState({
@@ -14,6 +16,28 @@ export default function SigninWithPassword({ handleSubmit }: any) {
 
   const [loading, setLoading] = useState(false);
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      const success = await login(email, password);
+      if (success) {
+        // Redirect to the dashboard or home page after successful login
+        router.push("");
+      } else {
+        // Handle login failure (e.g., show an error message)
+        alert("Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      console.error(error);
+    } 
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({
       ...data,
@@ -22,15 +46,21 @@ export default function SigninWithPassword({ handleSubmit }: any) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <InputGroup
-        type="email"
+        // type="email"
+        type="text"
         label="Email"
         className="mb-4 [&_input]:py-[15px]"
         placeholder="Enter your email"
         name="email"
-        handleChange={handleChange}
-        value={data.email}
+        // handleChange={handleChange}
+        handleChange={(e : any) => {
+          setEmail(e.target.value);
+          // handleChange(e);
+        }}
+        // value={data.email}
+        value={email}
         icon={<EmailIcon />}
       />
 
@@ -40,8 +70,13 @@ export default function SigninWithPassword({ handleSubmit }: any) {
         className="mb-5 [&_input]:py-[15px]"
         placeholder="Enter your password"
         name="password"
-        handleChange={handleChange}
-        value={data.password}
+        // handleChange={handleChange}
+        // value={data.password}
+        handleChange={(e : any) => {
+          setPassword(e.target.value);
+          // handleChange(e);
+        }}
+        value={password}
         icon={<PasswordIcon />}
       />
 

@@ -9,9 +9,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider defaultTheme="light" attribute="class">
       <SidebarProvider>
-          <PostClientContentProvider>
-            {children}
-          </PostClientContentProvider>
+        <AuthProvider>
+            <PostClientContentProvider>
+              {children}
+            </PostClientContentProvider>
+          </AuthProvider>
         </SidebarProvider>
     </ThemeProvider>
   );

@@ -68,6 +68,7 @@ export const CombinedService = {
     async get_invoice_outstanding_summary(): Promise<(string | number)[][]> {
       try{
         const response = await fetch(`http://localhost:8080/api/invoices/invoiceSum`);
+        console.log("Response from API:", response);
         const data = await response.json();
         return data;
       } catch (error) {
