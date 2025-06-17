@@ -6,13 +6,11 @@ import axios, { AxiosResponse } from "axios";
  */
 export const loginService = async (username: string, password: string): Promise<boolean> => {
   try {
-    // Send a GET request to the backend's root endpoint with Basic Auth
-    const response = await axios.get(`http://localhost:8080/api/`, {
-      headers: {
-        Authorization: `Basic ${btoa(`${username}:${password}`)}`, // Encode username and password in Base64
-      },
-    });
-
+    // Make a POST request to the API endpoint for LDAP authentication
+    const response = await apiClient.post("/ldap/authenticate",
+        {username : username, password: password},
+    );
+    console.log("Login response: ", response);
     if (response.status === 200) {
       return true;
     }
