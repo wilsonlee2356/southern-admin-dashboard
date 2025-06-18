@@ -25,10 +25,12 @@ export default function SigninWithPassword({ handleSubmit }: any) {
   const onSubmit = async (e: any) => {
     e.preventDefault();
     try {
+
       const success = await login(email, password);
+      console.log("Login success: ", success);
       if (success) {
         // Redirect to the dashboard or home page after successful login
-        router.push("");
+        router.push("/");
       } else {
         // Handle login failure (e.g., show an error message)
         alert("Login failed. Please check your credentials.");

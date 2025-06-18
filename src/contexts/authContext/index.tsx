@@ -8,7 +8,7 @@ import React, {
 //  import { User } from "firebase/auth";
 // import { app } from "../../auth/firebase"; // Make sure to configure Firebase in this file
 import { useRouter } from "next/navigation";
-import { loginService } from "@/app/api/services/authService";
+import { loginService, csrfTokenService } from "@/app/api/services/authService";
 
 type User = {
   email: string;
@@ -33,12 +33,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userLoggedIn, setUserLoggedIn] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   // const auth = getAuth(app);
   const router = useRouter();
 
   const login = async (username: string, password: string): Promise<boolean> => {
     console.log("Attempting to log in with", username, password);
-    const success = await loginService(username, password);
+    const token = await csrfTokenService();
+    setCsrfToken(token);
+    console.log("CSRF Token fetched: ", token);
+    if(!csrfToken) {
+      console.error("CSRF Token is not available");
+      return false;
+    }
+    // console.log("CSRF Token: ", token);
+    const success = await loginService(username, password, csrfToken);
     if (success) {
       console.log("Login successful");
       setCurrentUser({ email: username, password });
