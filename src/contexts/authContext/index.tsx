@@ -8,10 +8,10 @@ import React, {
 //  import { User } from "firebase/auth";
 // import { app } from "../../auth/firebase"; // Make sure to configure Firebase in this file
 import { useRouter } from "next/navigation";
-import { loginService, csrfTokenService } from "@/app/api/services/authService";
+import { loginService, logoutService, csrfTokenService } from "@/app/api/services/authService";
 
 type User = {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const success = await loginService(username, password, csrfToken);
     if (success) {
       console.log("Login successful");
-      setCurrentUser({ email: username, password });
+      setCurrentUser({ username: username, password });
       setUserLoggedIn(true);
     } else {
       console.error("Login failed");
@@ -59,6 +59,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   };
 
   const logout = () => {
+    if (!csrfToken) {
+      console.error("CSRF Token is not available for logout");
+      setCurrentUser(null);
+      setUserLoggedIn(false);
+      return;
+    }
+    const response = logoutService(csrfToken);
+    if(!response) {
+      console.error("Logout failed");
+      return;
+    }
     setCurrentUser(null);
     setUserLoggedIn(false);
     // Optionally clear any tokens or session data here

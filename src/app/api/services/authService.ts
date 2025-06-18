@@ -36,6 +36,30 @@ export const loginService = async (username: string, password: string, token: st
   }
 };
 
+export const logoutService = async (token: string): Promise<boolean> => {
+  try {
+    // Make a POST request to the API endpoint for LDAP authentication
+    // const response = await apiClient.post("/ldap/authenticate",
+    //     {username : username, password: password},
+    // );
+    const response = await fetch(`http://localhost:8080/api/logout`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': token, // Include CSRF token in the headers
+          },
+          credentials: 'include',
+        });
+    console.log("Logout response: ", response);
+    if (response.ok) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Logout failed: ", error);
+    return false;
+  }
+};
+
 export const csrfTokenService = async (): Promise<string> => {
   try {
     // Make a GET request to the API endpoint for CSRF token

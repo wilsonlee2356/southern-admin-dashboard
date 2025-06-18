@@ -8,13 +8,13 @@ import { PostClientContentProvider } from "@/utils/post-client-content";
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider defaultTheme="light" attribute="class">
+      <AuthProvider>
       <SidebarProvider>
-        <AuthProvider>
             <PostClientContentProvider>
               {children}
             </PostClientContentProvider>
-          </AuthProvider>
         </SidebarProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

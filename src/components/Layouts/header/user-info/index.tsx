@@ -13,12 +13,15 @@ import { useState } from "react";
 import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
 // import { useAuth } from "@/contexts/authContext";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/authContext";
 import Signin from "@/components/Auth/Signin";
+import { log } from "console";
 
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
   // const { userLoggedIn, currentUser } = useAuth();
   const router = useRouter();
+  const { userLoggedIn, logout } = useAuth();
 
   // const USER = {
   //   name: currentUser?.providerData[0]?.displayName,
@@ -110,6 +113,7 @@ export function UserInfo() {
               className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
               onClick={() => {
                 setIsOpen(false);
+                logout();
                 // doSignOut();
                 router.push("/");
               }}
