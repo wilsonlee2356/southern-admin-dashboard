@@ -4,65 +4,57 @@ import Link from "next/link";
 import React, { useState } from "react";
 import InputGroup from "../FormElements/InputGroup";
 import { Checkbox } from "../FormElements/checkbox";
-import { useAuth } from "@/contexts/authContext";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function SigninWithPassword({ handleSubmit }: any) {
-  const [data, setData] = useState({
-    email: process.env.NEXT_PUBLIC_DEMO_USER_MAIL || "",
-    password: process.env.NEXT_PUBLIC_DEMO_USER_PASS || "",
-    remember: false,
-  });
-
-  const [loading, setLoading] = useState(false);
-
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const { login } = useAuth();
   const router = useRouter();
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        username,
+        password,
+      });
 
-      const success = await login(email, password);
-      console.log("Login success: ", success);
-      if (success) {
-        // Redirect to the dashboard or home page after successful login
-        router.push("/");
+      if (result?.error) {
+        setError(
+          "Invalid credentials. Please check your username and password.",
+        );
       } else {
-        // Handle login failure (e.g., show an error message)
-        alert("Login failed. Please check your credentials.");
+        router.push("/");
       }
-    } catch (error) {
-      console.error(error);
-    } 
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData({
-      ...data,
-      [e.target.name]: e.target.value,
-    });
+    } catch (err) {
+      setError("An error occurred during login. Please try again.");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <form onSubmit={onSubmit}>
       <InputGroup
-        // type="email"
         type="text"
-        label="Email"
+        label="Username or DN"
         className="mb-4 [&_input]:py-[15px]"
-        placeholder="Enter your email"
-        name="email"
-        // handleChange={handleChange}
-        handleChange={(e : any) => {
-          setEmail(e.target.value);
-          // handleChange(e);
-        }}
-        // value={data.email}
-        value={email}
+        placeholder="e.g., uid=user,dc=example,dc=com"
+        name="username"
+        handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setUsername(e.target.value)
+        }
+        value={username}
         icon={<EmailIcon />}
       />
 
@@ -72,15 +64,14 @@ export default function SigninWithPassword({ handleSubmit }: any) {
         className="mb-5 [&_input]:py-[15px]"
         placeholder="Enter your password"
         name="password"
-        // handleChange={handleChange}
-        // value={data.password}
-        handleChange={(e : any) => {
-          setPassword(e.target.value);
-          // handleChange(e);
-        }}
+        handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPassword(e.target.value)
+        }
         value={password}
         icon={<PasswordIcon />}
       />
+
+      {error && <p className="mb-4 text-red-500">{error}</p>}
 
       <div className="mb-6 flex items-center justify-between gap-2 py-2 font-medium">
         <Checkbox
@@ -89,11 +80,8 @@ export default function SigninWithPassword({ handleSubmit }: any) {
           withIcon="check"
           minimal
           radius="md"
-          onChange={(e) =>
-            setData({
-              ...data,
-              remember: e.target.checked,
-            })
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setRemember(e.target.checked)
           }
         />
 
@@ -108,7 +96,8 @@ export default function SigninWithPassword({ handleSubmit }: any) {
       <div className="mb-4.5">
         <button
           type="submit"
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90"
+          disabled={loading}
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90 disabled:bg-opacity-50"
         >
           Sign In
           {loading && (
