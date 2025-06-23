@@ -21,8 +21,11 @@ export default function SigninWithPassword({ handleSubmit }: any) {
     setLoading(true);
     setError("");
 
+    // console.log(process.env.NEXT_PUBLIC_API_BASE_URL);
+    // console.log(process.env.NEXT_PUBLIC_LDAP_URI);
+
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         redirect: false,
         username,
         password,
