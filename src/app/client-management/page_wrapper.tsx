@@ -11,17 +11,18 @@ import { CombinedService } from "@/app/api/invoice";
 import { InvoiceService } from "../api/services/invoiceService";
 import MuiDataGridForPostManagement from "@/components/Tables/DataGrid/MuiDataGridForPostManagement";
 import { usePostClientContent } from "@/utils/post-client-content";
+import { useSession } from "next-auth/react";
 
 type PageWrapperProps = {
-  dataArray?: invoiceData[]; // Pass data as a prop instead of fetching here
-  clientData?: client[];
-  postData?: post[];
+  // dataArray?: invoiceData[]; // Pass data as a prop instead of fetching here
+  // clientData?: client[];
+  // postData?: post[];
 };
 
 export default function PageWrapper({
-  dataArray,
-  clientData,
-  postData,
+  // // dataArray,
+  // clientData,
+  // postData,
 }: PageWrapperProps) {
   const [dataToShow, setDataToShow] = useState<invoiceData[]>([]); //0 = NumberOfInvoices, 1 = TotalAmount, 2 = TotalOutstandingAmount, 3 = post_id, 4 = postcode, 5 = is_ended, 6 = clientName
   //   const [invoiceNumber, setInvoiceNumber] = useState("");
@@ -35,7 +36,9 @@ export default function PageWrapper({
   const [showEndedPosts, setShowEndedPosts] = useState(false);
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
 
-  let data = dataArray;
+  const { data: session, status } = useSession();
+
+  let data = usePostClientContent().invoiceData;
   let clients = usePostClientContent().clientData;
   let posts = usePostClientContent().postData;
   // useEffect(() => {
@@ -48,7 +51,7 @@ export default function PageWrapper({
   // }, [showEndedPosts, showNotEndedPosts]);
 
   useEffect(() => {
-    const selectedData: any = dataArray?.filter(
+    const selectedData: any = data?.filter(
       (row: invoiceData) =>
         ((!checkEmpty(clientName)
           ? row.post.client.clientName
@@ -67,19 +70,19 @@ export default function PageWrapper({
     setDataToShow(selectedData);
     console.log("Filtered post data: ", selectedData);
     //console.log("Type ", selectedData = dataArray);
-  }, [clientName, postcode, showNotEndedPosts, showEndedPosts, dataArray]);
+  }, [clientName, postcode, showNotEndedPosts, showEndedPosts, data]);
 
   useEffect(() => {
-    if (updateDataNeeded) {
+    if (updateDataNeeded && status === 'authenticated' && session?.accessToken) {
       console.log("Updating data");
-      InvoiceService.getAll().then((res) => {
-        dataArray = res;
-        // setDataToShow(res);
-      });
-      CombinedService.get_all_client().then((res) => {
+      // InvoiceService.getAll().then((res) => {
+      //   dataArray = res;
+      //   // setDataToShow(res);
+      // });
+      CombinedService.get_all_client(session.accessToken).then((res) => {
         clients = res;
       });
-      CombinedService.get_all_post().then((res) => {
+      CombinedService.get_all_post(session.accessToken).then((res) => {
         posts = res;
       });
       setUpdateDataNeeded(false);

@@ -87,9 +87,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
   useEffect(() => {
 
-      if (!userLoggedIn) {
-        router.push("/auth/sign-in");
-      }
+      // if (!userLoggedIn) {
+      //   router.push("/auth/sign-in");
+      // }
     
   }, [currentUser, userLoggedIn]);
 

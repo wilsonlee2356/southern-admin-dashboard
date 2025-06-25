@@ -7,8 +7,10 @@ import { CombinedService } from "@/app/api/invoice";
 import PageWrapper from "./page_wrapper";
 
 async function ClientManagementPage() {
-  // const data = await InvoiceService.getAll();
-  const data = await InvoiceService.getAll();
+
+  // const { data: session, status } = useSession();
+  // // const data = await InvoiceService.getAll();
+  // const data = await CombinedService.get_all_invoice(session?.accessToken);
   // const clientData = await CombinedService.get_all_client();
   // const postData = await CombinedService.get_all_post();
 
@@ -16,7 +18,7 @@ async function ClientManagementPage() {
     <>
       <div>
         {/* <Suspense fallback={<div>Loading search form...</div>}> */}
-        <PageWrapper dataArray={data} />
+        <PageWrapper />
         {/* </Suspense> */}
       </div>
       {/* <InputBox dataArray={data}/>x

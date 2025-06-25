@@ -17,6 +17,7 @@ import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
+import { useSession } from "next-auth/react";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -51,6 +52,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
     const [streetAddress, setStreetAddress] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
+
+    const { data: session, status } = useSession();
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -123,21 +126,22 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             createDate: invoiceInfo.createDate,
             updateDate: newDate,
         };
-        CombinedService.update_invoice_details(invoiceInfo.invoiceId, updateInvoice).then((res) => {
-            if(res) {
-                console.log("Updated invoice: ", res);
-                setDataArray((prevData: any) => {
-                    return prevData.map((item: any) => {
-                        if (item.invoiceId === invoiceInfo.invoiceId) {
-                            return { ...item, ...updateInvoice };
-                        }
-                        return item;
+        if (status === 'authenticated' && session?.accessToken) {
+            CombinedService.update_invoice_details(invoiceInfo.invoiceId, updateInvoice, session.accessToken).then((res) => {
+                if(res) {
+                    console.log("Updated invoice: ", res);
+                    setDataArray((prevData: any) => {
+                        return prevData.map((item: any) => {
+                            if (item.invoiceId === invoiceInfo.invoiceId) {
+                                return { ...item, ...updateInvoice };
+                            }
+                            return item;
+                        });
                     });
-                });
-                setUpdateDataNeeded(true); // Trigger data update
-            }
-        });
-        
+                    setUpdateDataNeeded(true); // Trigger data update
+                }
+            });
+        }
         // ^^^^^^^^^^^^^^Uncomment the following lines to update the invoice in the database
 
         // UPDATE_INVOICE_BY_ID(invoiceInfo.invoiceId, updateInvoice).then((res) => {

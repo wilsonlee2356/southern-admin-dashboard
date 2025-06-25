@@ -21,6 +21,7 @@ import {
 } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
+import { useSession } from "next-auth/react";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -56,6 +57,8 @@ function MuiDataGridForPostManagement({
   const [editingRow, setEditingRow] = useState<postClientInvoiceSummary>(
     {} as postClientInvoiceSummary,
   );
+
+  const { data: session, status } = useSession();
 
   React.useEffect(() => {
     const processedArray: postClientInvoiceSummary[] = []; //
@@ -265,23 +268,26 @@ function MuiDataGridForPostManagement({
         open={popUpOpen}
         onClose={setPopUpOpen}
         functionToRun={() => {
-          // let idString = "";
-          let idArr: number[] = [];
-          //console.log("SelectedRow: ", selectedRows);
-          selectedRows.map((row, index, array) => {
-            idArr = [...idArr, row.post_id];
-          });
-          //console.log("idArr: "+idArr);
+          if (status === 'authenticated' && session?.accessToken)
+          {
+              // let idString = "";
+              let idArr: number[] = [];
+              //console.log("SelectedRow: ", selectedRows);
+              selectedRows.map((row, index, array) => {
+                idArr = [...idArr, row.post_id];
+              });
+              //console.log("idArr: "+idArr);
 
-          CombinedService.set_post_to_finish(idArr)
-            .then((res) => {
-              //console.log("Set post to finished: ", res);
-              setUpdateDataNeeded(true);
-              updateSelectedRow([]);
-            })
-            .catch((err) => {
-              console.error("Error setting post to finished: ", err);
-            });
+              CombinedService.set_post_to_finish(idArr, session.accessToken)
+                .then((res) => {
+                //console.log("Set post to finished: ", res);
+                setUpdateDataNeeded(true);
+                updateSelectedRow([]);
+              })
+              .catch((err) => {
+                console.error("Error setting post to finished: ", err);
+              });
+          }
         }}
       />
     </div>

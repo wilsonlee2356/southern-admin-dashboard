@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "LDAP",
@@ -9,23 +9,10 @@ export default NextAuth({
         username: { label: "Username", type: "text", placeholder: "" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials): Promise<User | null> {
         if (!credentials?.username || !credentials?.password) {
           throw new Error("Missing username or password");
         }
-
-        // Fetch CSRF token
-        // const csrfResponse = await fetch(`http://localhost:8080/api/csrf`, {
-        //   method: "GET",
-        //   credentials: "include",
-        // });
-        // if (!csrfResponse.ok) {
-        //   throw new Error("Failed to fetch CSRF token");
-        // }
-        // const csrfData = await csrfResponse.json();
-        // const csrfToken = csrfData.token;
-
-        // Authenticate with LDAP server
         try{
           const bodyData = new URLSearchParams({
             username: credentials.username,
@@ -52,12 +39,19 @@ export default NextAuth({
           }
 
           if (data && data.token) {
-            return { token: data.token ,username: data.username };
+              return {
+                id: credentials.username,
+                name: credentials.username,
+                token: data.token,
+              };
           }
 
           throw new Error("Invalid response from server");
+
+          return null;
         } catch (err) {
           console.error("Login error:", err);
+          return null;
         }
       },
     }),
@@ -67,19 +61,25 @@ export default NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.username = user.username;
+      if (user?.token) {
+        // token.username = user.username;
+        token.accessToken = user.token;
       }
       return token;
     },
     async session({ session, token }) {
-      return { ...session, user: { username: token.username } };
+      // return { ...session, user: { username: token.username } };
+      if(typeof token.accessToken === 'string'){
+        session.accessToken = token.accessToken;
+      }
+      return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,
-    encryption: true,
+    // encryption: true,
   },
-  debug: process.env.NEXT_PUBLIC_NODE_ENV === "development",
-});
+  
+};
+export default NextAuth(authOptions);

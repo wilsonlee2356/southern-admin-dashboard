@@ -14,49 +14,87 @@ const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
 export const CombinedService = {
   
 
-    async get_all_invoice(): Promise<invoiceData[]> {
+    async get_all_invoice(accessToken : string): Promise<invoiceData[]> {
       try{
-        const response = await apiClient.get("/invoices");
-        return response.data;
+        const response = await fetch('http://localhost:8080/api/invoices', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          });
+        return response.json();
       } catch (error) {
         console.error('Error fetching all invoices:', error);
         throw error;
       }
     },
 
-    async get_all_client(): Promise<client[]> {
+    async get_all_client(accessToken : string): Promise<client[]> {
       try{
-        const response = await apiClient.get("/clients");
-        return response.data;
+        const response = await fetch('http://localhost:8080/api/clients', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+        });
+        return response.json();
+        // const response = await apiClient.get("/clients");
+        // return response.data;
       } catch (error) {
         console.error('Error fetching all invoices:', error);
         throw error;
       }
     },
 
-    async get_all_post(): Promise<post[]> {
+    async get_all_post(accessToken : string): Promise<post[]> {
       try{
-        const response = await apiClient.get("/posts");
-        return response.data;
+        const response = await fetch('http://localhost:8080/api/posts', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+        });
+        return response.json();
+
+        // const response = await apiClient.get("/posts");
+        // return response.data;
       } catch (error) {
         console.error('Error fetching all invoices:', error);
         throw error;
       }
     },
 
-    async get_all_invoiceCheques(): Promise<invoiceCheques[]> {
+    async get_all_invoiceCheques(accessToken : string): Promise<invoiceCheques[]> {
       try{
-        const response = await apiClient.get("/invoiceCheques");
-        return response.data;
+        const response = await fetch(`http://localhost:8080/api/invoiceCheques`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const data = await response.json();
+        return data;
+        // const response = await apiClient.get("/invoiceCheques");
+        // return response.data;
       } catch (error) {
         console.error('Error fetching all invoiceCheques:', error);
         throw error;
       }
     },
 
-    async get_invoice_by_id(id: string): Promise<invoiceData> {
+    async get_invoice_by_id(id: string, accessToken : string): Promise<invoiceData> {
       try{
-        const response = await fetch(`http://localhost:8080/api/invoices/num=${id}`);
+        const response = await fetch(`http://localhost:8080/api/invoices/num=${id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
         const data = await response.json();
         return data;
       } catch (error) {
@@ -65,9 +103,15 @@ export const CombinedService = {
       }
     },
 
-    async get_invoice_outstanding_summary(): Promise<(string | number)[][]> {
+    async get_invoice_outstanding_summary(accessToken : string): Promise<(string | number)[][]> {
       try{
-        const response = await fetch(`http://localhost:8080/api/invoices/invoiceSum`);
+        const response = await fetch(`http://localhost:8080/api/invoices/invoiceSum`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
         console.log("Response from API:", response);
         const data = await response.json();
         return data;
@@ -77,9 +121,15 @@ export const CombinedService = {
       }
     },
 
-    async get_post_client_invoice_summry(): Promise<postClientInvoiceSummary[]> {
+    async get_post_client_invoice_summry(accessToken : string): Promise<postClientInvoiceSummary[]> {
       try{
-        const response = await fetch(`http://localhost:8080/api/posts/PostAndClientWithInvoiceSum`);
+        const response = await fetch(`http://localhost:8080/api/posts/PostAndClientWithInvoiceSum`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
         const data = await response.json();
         //console.log("Data fetched from API:", data);
         // const formattedData = JSON.parse(data) as postClientInvoiceSummary[]
@@ -90,11 +140,12 @@ export const CombinedService = {
       }
     },
 
-    async update_invoice_by_id(id: number, updateData: invoiceData): Promise<invoiceData> {
+    async update_invoice_by_id(id: number, updateData: invoiceData, accessToken : string): Promise<invoiceData> {
       try{
         const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
           method: 'PUT',
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(updateData),
@@ -107,11 +158,12 @@ export const CombinedService = {
       }
     },
 
-    async set_post_to_finish(ids: number[]): Promise<post[]> {
+    async set_post_to_finish(ids: number[], accessToken : string): Promise<post[]> {
       try{
         const response = await fetch(`http://localhost:8080/api/posts/setEnded`, {
           method: 'PUT',
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(ids),
@@ -124,10 +176,13 @@ export const CombinedService = {
       }
     },
 
-    async delete_invoice_by_id(id: number) {
+    async delete_invoice_by_id(id: number, accessToken : string) {
       try{
         const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
           method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
         // const data = await response.json();
         // return data;
@@ -138,11 +193,12 @@ export const CombinedService = {
     },
 
 
-    async create_invoice(newInvoice: invoiceDataOutput): Promise<invoiceData> {
+    async create_invoice(newInvoice: invoiceDataOutput, accessToken : string): Promise<invoiceData> {
       try{
         const response = await fetch(`http://localhost:8080/api/combined`, {
           method: 'POST',
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(newInvoice),
@@ -156,11 +212,12 @@ export const CombinedService = {
       }
     },
 
-    async create_cheque(newCheque: cheque): Promise<cheque> {
+    async create_cheque(newCheque: cheque, accessToken : string): Promise<cheque> {
       try{
         const response = await fetch(`http://localhost:8080/api/cheques`, {
           method: 'POST',
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(newCheque),
@@ -173,12 +230,13 @@ export const CombinedService = {
       }
     },
 
-    async create_transaction(newInvoiceCheques: invoiceCheques[]): Promise<invoiceCheques[]> {
+    async create_transaction(newInvoiceCheques: invoiceCheques[], accessToken : string): Promise<invoiceCheques[]> {
       try{
         console.log("New Transaction Data:", JSON.stringify(newInvoiceCheques));
         const response = await fetch(`http://localhost:8080/api/combined/invoiceCheque`, {
           method: 'POST',
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(newInvoiceCheques),
@@ -191,11 +249,12 @@ export const CombinedService = {
       }
     },
 
-    async update_invoice_details(id: number, updateData: invoiceData): Promise<invoiceData> {
+    async update_invoice_details(id: number, updateData: invoiceData, accessToken : string): Promise<invoiceData> {
       try{
         const response = await fetch(`http://localhost:8080/api/combined/${id}`, {
         method: 'PUT',
         headers: {
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateData),
@@ -209,11 +268,12 @@ export const CombinedService = {
       
     },
 
-    async setInvoiceToPaid(id: number, updateData: invoiceData): Promise<invoiceData> {
+    async setInvoiceToPaid(id: number, updateData: invoiceData, accessToken : string): Promise<invoiceData> {
       try{
         const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
           method: 'PUT',
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(updateData),

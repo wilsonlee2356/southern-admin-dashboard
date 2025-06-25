@@ -1,24 +1,24 @@
 // app/invoices/page.tsx
 // import { Suspense } from "react";
+import React from "react";
 import PageWrapper from "./page_wrapper";
-import { InvoiceService } from "../api/services/invoiceService";
-// import { CombinedService } from "@/app/api/invoice";
+
 
 export default async function InvoicesPage() {
-  const dataArrayTesting = await InvoiceService.getAll();
+    // const data = await CombinedService.get_all_invoice(session?.accessToken);
+    // const clientData = await CombinedService.get_all_client();
+    // const postData = await CombinedService.get_all_post();
 
-  // const clientData = await CombinedService.get_all_client();
-  // const postData = await CombinedService.get_all_post();
-
-  // console.log("postData:", postData);
-
-  return (
-    <div>
-      {/* <Suspense fallback={<div>Loading search form...</div>}> */}
-      <PageWrapper dataArray={dataArrayTesting} />
-      {/* <SearchBox dataArray={dataArray} />
-        <ResultTable dataArray={dataArray} /> */}
-      {/* </Suspense> */}
-    </div>
-  );
+    return (
+      <>
+        <div>
+          {/* <Suspense fallback={<div>Loading search form...</div>}> */}
+          <PageWrapper />
+          {/* </Suspense> */}
+        </div>
+        {/* <InputBox dataArray={data}/>x
+          <br />
+          <InvoiceInputTable dataArray={data}/> */}
+      </>
+    );
 }

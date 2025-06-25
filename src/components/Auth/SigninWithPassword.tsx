@@ -36,6 +36,7 @@ export default function SigninWithPassword({ handleSubmit }: any) {
           "Invalid credentials. Please check your username and password.",
         );
       } else {
+        
         router.push("/");
       }
     } catch (err) {

@@ -7,21 +7,26 @@ import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGrid
 import { InvoiceService } from "../api/services/invoiceService";
 import { CombinedService } from "@/app/api/invoice";
 import { usePostClientContent } from "@/utils/post-client-content";
+import { useSession } from "next-auth/react";
 import { start } from "repl";
 import { Dayjs } from "dayjs";
 
 type PageWrapperProps = {
-  dataArray?: any[]; // Pass data as a prop instead of fetching here
+  // dataArray?: any[]; // Pass data as a prop instead of fetching here
   // clientData?: client[];
   // postData?: post[];
 };
 
 export default function PageWrapper({
-  dataArray,
+  // dataArray,
   // clientData,
   // postData,
 }: PageWrapperProps) {
-  const [filteredData, setFilteredData] = useState<any[]>(dataArray ?? []);
+  let data = usePostClientContent().invoiceData;
+  let clients = usePostClientContent().clientData;
+  let posts = usePostClientContent().postData;
+
+  const [filteredData, setFilteredData] = useState<any[]>(data ?? []);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -37,12 +42,10 @@ export default function PageWrapper({
   const [showUnpaidInvoices, setShowUnpaidInvoices] = useState(true);
   const [showPaidInvoices, setShowPaidInvoices] = useState(false);
 
-  let data = dataArray;
-  let clients = usePostClientContent().clientData;
-  let posts = usePostClientContent().postData;
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    const selectedData = dataArray?.filter(
+    const selectedData = data?.filter(
       (row: any) =>
         (!checkEmpty(invoiceNumber)
           ? row.invoiceNum.toLowerCase().includes(invoiceNumber.toLowerCase())
@@ -81,7 +84,7 @@ export default function PageWrapper({
     showEndedPosts,
     showUnpaidInvoices,
     showPaidInvoices,
-    dataArray,
+    data,
   ]);
 
   // useEffect(() => {
@@ -91,21 +94,21 @@ export default function PageWrapper({
   //   console.log("posts:", posts);
   // }, [clientData, postData]);
 
-  useEffect(() => {
-    if (updateDataNeeded) {
-      InvoiceService.getAll().then((res) => {
-        dataArray = res;
-        // setFilteredData(res);
-      });
-      CombinedService.get_all_client().then((res) => {
-        clients = res;
-      });
-      CombinedService.get_all_post().then((res) => {
-        posts = res;
-      });
-      setUpdateDataNeeded(false);
-    }
-  }, [updateDataNeeded]);
+  // useEffect(() => {
+  //   if (updateDataNeeded && status === 'authenticated' && session?.accessToken) {
+  //     CombinedService.get_all_invoice(session.accessToken).then((res) => {
+  //       data = res;
+  //       // setFilteredData(res);
+  //     });
+  //     CombinedService.get_all_client(session.accessToken).then((res) => {
+  //       clients = res;
+  //     });
+  //     CombinedService.get_all_post(session.accessToken).then((res) => {
+  //       posts = res;
+  //     });
+  //     setUpdateDataNeeded(false);
+  //   }
+  // }, [updateDataNeeded]);
 
   // useEffect(() => {
   //   console.log({ filteredData });

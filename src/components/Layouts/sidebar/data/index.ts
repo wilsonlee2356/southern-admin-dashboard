@@ -22,15 +22,15 @@ export const NAV_DATA = [
         items: [],
       },
       {
-        title: "Invoice Input",
+        title: "Post Management",
         url: "/client-management",
-        icon: Icons.User,
+        icon: Icons.Table,
         items: [],
       },
       {
-        title: "Post Management",
+        title: "User Management",
         url: "/post-management",
-        icon: Icons.Table,
+        icon: Icons.User,
         items: [],
       },
 
