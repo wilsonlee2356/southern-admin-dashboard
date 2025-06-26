@@ -12,6 +12,8 @@ const publicRoutes = [
 export async function middleware(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
+  console.log("Session token: ", session?.accessToken);
+
   const isPublicRoute = publicRoutes.some(
     (route) =>
       request.nextUrl.pathname === route ||

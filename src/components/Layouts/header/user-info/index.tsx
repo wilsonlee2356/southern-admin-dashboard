@@ -23,7 +23,7 @@ export function UserInfo() {
   // const { userLoggedIn, currentUser } = useAuth();
   const router = useRouter();
   // const { userLoggedIn, logout } = useAuth();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   // const USER = {
   //   name: currentUser?.providerData[0]?.displayName,
@@ -32,13 +32,13 @@ export function UserInfo() {
   // };
 
   const handleLogout = async () => {
-    if (!session?.accessToken) {
-      console.log('No session found');
+    if (status !== 'authenticated' || !session?.accessToken) {
+      console.error('Logout Error: No session or accessToken');
       return;
     }
 
     try {
-      // Call backend logout endpoint
+      console.log('Sending logout request to backend with token:', session.accessToken);
       const response = await fetch('http://localhost:8080/api/ldap/logout', {
         method: 'POST',
         headers: {
@@ -48,14 +48,16 @@ export function UserInfo() {
         credentials: 'include',
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Logout failed');
-      }
+      const responseData = await response.json();
+      console.log('Logout Response:', responseData, 'Status:', response.status);
       
+      if (!response.ok) {
+        console.error('Logout Failed:', responseData);
+        throw new Error(responseData.message || 'Logout failed');
+      }
 
       // Clear NextAuth session
-      await signOut({ callbackUrl: '/auth/signin' });
+      await signOut({ callbackUrl: '/auth/sign-in' });
     } catch (err) {
       console.log('Error: ' + (err as Error).message);
     }
