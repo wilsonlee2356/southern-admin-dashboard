@@ -42,7 +42,8 @@ export const authOptions: NextAuthOptions = {
               return {
                 id: credentials.username,
                 name: credentials.username,
-                token: data.token,
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken,
               };
           }
 
@@ -62,16 +63,16 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user?.token) {
-        // token.username = user.username;
-        token.accessToken = user.token;
+      if (user?.accessToken) {
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
       }
       return token;
     },
     async session({ session, token }) {
-      // return { ...session, user: { username: token.username } };
-      if(typeof token.accessToken === 'string'){
+      if (typeof token.accessToken === 'string') {
         session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
       }
       return session;
     },

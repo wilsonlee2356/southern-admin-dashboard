@@ -45,6 +45,7 @@ export function UserInfo() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.accessToken}`,
         },
+        body: JSON.stringify({ refreshToken: session.refreshToken }),
         credentials: 'include',
       });
 
