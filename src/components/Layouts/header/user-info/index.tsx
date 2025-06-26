@@ -14,6 +14,7 @@ import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
 // import { useAuth } from "@/contexts/authContext";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/authContext";
+import { useSession, signOut } from 'next-auth/react';
 import Signin from "@/components/Auth/Signin";
 import { log } from "console";
 
@@ -21,13 +22,44 @@ export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
   // const { userLoggedIn, currentUser } = useAuth();
   const router = useRouter();
-  const { userLoggedIn, logout } = useAuth();
+  // const { userLoggedIn, logout } = useAuth();
+  const { data: session } = useSession();
 
   // const USER = {
   //   name: currentUser?.providerData[0]?.displayName,
   //   email: currentUser?.providerData[0]?.email,
   //   img: currentUser?.providerData[0]?.photoURL,
   // };
+
+  const handleLogout = async () => {
+    if (!session?.accessToken) {
+      console.log('No session found');
+      return;
+    }
+
+    try {
+      // Call backend logout endpoint
+      const response = await fetch('http://localhost:8080/api/ldap/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Logout failed');
+      }
+      
+
+      // Clear NextAuth session
+      await signOut({ callbackUrl: '/auth/signin' });
+    } catch (err) {
+      console.log('Error: ' + (err as Error).message);
+    }
+  }
 
   return (
     <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -113,8 +145,9 @@ export function UserInfo() {
               className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
               onClick={() => {
                 setIsOpen(false);
-                logout();
+                // logout();
                 // doSignOut();
+                handleLogout();
                 router.push("/");
               }}
             >
