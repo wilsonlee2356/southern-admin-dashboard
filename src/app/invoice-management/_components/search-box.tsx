@@ -16,9 +16,7 @@ import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
-import { getSession } from 'next-auth/react';
-import { refreshAccessToken } from "@/lib/auth";
+import { useAuthenticatedRequest } from '@/lib/auth';
 
 type SearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here

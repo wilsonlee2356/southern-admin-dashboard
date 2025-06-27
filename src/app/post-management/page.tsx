@@ -1,5 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { UserService } from "../api/userService";
+import { useAuthenticatedRequest } from "@/lib/auth";
+import { user } from "@/types/ObjectTypes/UserType";
 
 // Mock data for demonstration
 const initialPosts = [
@@ -28,12 +31,24 @@ const initialPosts = [
 
 function PostManagementPage() {
   const [posts, setPosts] = useState(initialPosts);
+  const [users, setUsers] = useState<user[]>([]);
   const [userRole, setUserRole] = useState("admin"); // Can be "public", "team", or "admin"
   const [newPost, setNewPost] = useState({
     title: "",
     status: "Draft",
     access: "public",
   });
+
+  const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      const response : user[] = await UserService.get_all_users(makeAuthenticatedRequest);
+      setUsers(response);
+      console.log("All user: ", response);
+    };
+    fetchUsers();
+  }, []);
 
   // Filter posts based on user role
   const filteredPosts = posts.filter((post) => {
@@ -68,7 +83,7 @@ function PostManagementPage() {
   return (
     <div className="container mx-auto p-4">
       {/* Role Switcher - For Demo Purposes */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <h2 className="mb-2 text-xl font-bold">Switch Role:</h2>
         <div className="flex gap-4">
           {["public", "team", "admin"].map((role) => (
@@ -86,11 +101,11 @@ function PostManagementPage() {
           ))}
         </div>
         <p className="mt-2">Current Role: {userRole}</p>
-      </div>
+      </div> */}
 
       {/* Create Post Form */}
       <div className="mb-8 rounded-lg bg-gray-100 p-4">
-        <h2 className="mb-4 text-xl font-bold">Create New Post</h2>
+        <h2 className="mb-4 text-xl font-bold">Create New User</h2>
         <form onSubmit={handleCreatePost} className="space-y-4">
           <div>
             <input
@@ -99,13 +114,25 @@ function PostManagementPage() {
               onChange={(e) =>
                 setNewPost({ ...newPost, title: e.target.value })
               }
-              placeholder="Post Title"
+              placeholder="Username"
+              className="w-full rounded border p-2"
+              required
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              value={newPost.title}
+              onChange={(e) =>
+                setNewPost({ ...newPost, title: e.target.value })
+              }
+              placeholder="Password"
               className="w-full rounded border p-2"
               required
             />
           </div>
           <div className="flex gap-4">
-            <select
+            {/* <select
               value={newPost.status}
               onChange={(e) =>
                 setNewPost({ ...newPost, status: e.target.value })
@@ -114,7 +141,7 @@ function PostManagementPage() {
             >
               <option value="Draft">Draft</option>
               <option value="Published">Published</option>
-            </select>
+            </select> */}
             <select
               value={newPost.access}
               onChange={(e) =>
@@ -131,7 +158,7 @@ function PostManagementPage() {
               type="submit"
               className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
             >
-              Create Post
+              Create User
             </button>
           </div>
         </form>
@@ -140,24 +167,25 @@ function PostManagementPage() {
       {/* Posts List */}
       <div>
         <h2 className="mb-4 text-xl font-bold">
-          Posts ({filteredPosts.length})
+          User ({users.length})
         </h2>
         <div className="grid gap-4">
-          {filteredPosts.map((post) => (
+          {users.map((user) => (
             <div
-              key={post.id}
+              key={user.uid}
               className="flex items-center justify-between rounded-lg border p-4"
             >
               <div>
-                <h3 className="font-semibold">{post.title}</h3>
+                <h3 className="font-semibold">{user.uid}</h3>
                 <p className="text-sm text-gray-600">
-                  By {post.author} | Status: {post.status} | Access:{" "}
-                  {post.access}
+                  SN: {user.sn} | CN: {user.cn} | Access: {user.roles[0]}
                 </p>
               </div>
               {userRole === "admin" && (
                 <button
-                  onClick={() => handleDeletePost(post.id)}
+                  onClick={() => {
+                    // handleDeletePost(post.id)
+                  }}
                   className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                 >
                   Delete

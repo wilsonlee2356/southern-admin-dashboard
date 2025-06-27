@@ -15,9 +15,9 @@ export const CombinedService = {
   
     
 
-    async get_all_invoice(): Promise<invoiceData[]> {
+    async get_all_invoice(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>): Promise<invoiceData[]> {
       try{
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+        // const { makeAuthenticatedRequest } = useAuthenticatedRequest();
         const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/invoices', {
           method: 'GET',
         });
@@ -40,7 +40,7 @@ export const CombinedService = {
       }
     },
 
-    async get_all_client(): Promise<client[]> {
+    async get_all_client(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>): Promise<client[]> {
       try{
         // const response = await fetch('http://localhost:8080/api/clients', {
         //     method: 'GET',
@@ -50,7 +50,7 @@ export const CombinedService = {
         //     },
         // });
         // return response.json();
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+        // const { makeAuthenticatedRequest } = useAuthenticatedRequest();
         const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/clients', {
           method: 'GET',
         });
@@ -68,7 +68,7 @@ export const CombinedService = {
       }
     },
 
-    async get_all_post(): Promise<post[]> {
+    async get_all_post(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>): Promise<post[]> {
       try{
         // const response = await fetch('http://localhost:8080/api/posts', {
         //     method: 'GET',
@@ -78,7 +78,7 @@ export const CombinedService = {
         //     },
         // });
         // return response.json();
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+        // const { makeAuthenticatedRequest } = useAuthenticatedRequest();
         const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/posts', {
           method: 'GET',
         });
