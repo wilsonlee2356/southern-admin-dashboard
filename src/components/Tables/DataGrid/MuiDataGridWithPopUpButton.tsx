@@ -19,7 +19,6 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
-import { useSession } from "next-auth/react";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -72,8 +71,6 @@ function MuiDataGridWithPopUpButton({
   const [deleteingRow, setDeletingRow] = useState<number>(-1);
 
   const [confirmPopUpOpen, setConfirmPopUpOpen] = useState<boolean>(false);
-
-  const { data: session, status } = useSession();
 
   useEffect(() => {
     // console.log("Data array updated:", dataArray);
@@ -178,16 +175,16 @@ function MuiDataGridWithPopUpButton({
   };
 
   const updateInvoiceToPaid = (invoiceId: number, invoiceToBeUpdated : invoiceData) => {
-    if( status === 'authenticated' && session?.accessToken ){
-      invoiceToBeUpdated.isPaid = true;
-      console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
-      CombinedService.update_invoice_details(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated, session.accessToken).then((res) => {
-          if(res) {
-              console.log("Updated invoice: ", res);
-              setUpdateDataNeeded(true); // Trigger data update
-          }
-      });
-    }
+
+    invoiceToBeUpdated.isPaid = true;
+    console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
+    CombinedService.update_invoice_details(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated).then((res) => {
+        if(res) {
+            console.log("Updated invoice: ", res);
+            setUpdateDataNeeded(true); // Trigger data update
+        }
+    });
+    
       
   }
 
@@ -497,8 +494,8 @@ function MuiDataGridWithPopUpButton({
         functionToRun={() => {
           if(deleteingRow !== -1){
             const invoice = getInvoiceById(deleteingRow);
-              if (!invoice || status != 'authenticated' || !session?.accessToken) return;
-              CombinedService.delete_invoice_by_id(invoice.invoiceId, session.accessToken).then((res) => {
+              if (!invoice) return;
+              CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
                 console.log("Deleted invoice: ", res);
                   const updatedData = dataArray.filter(
                     (item) => item.invoiceId !== invoice.invoiceId,

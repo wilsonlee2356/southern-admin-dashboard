@@ -7,7 +7,6 @@ import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGrid
 import { InvoiceService } from "../api/services/invoiceService";
 import { CombinedService } from "@/app/api/invoice";
 import { usePostClientContent } from "@/utils/post-client-content";
-import { useSession } from "next-auth/react";
 import { start } from "repl";
 import { Dayjs } from "dayjs";
 
@@ -41,8 +40,6 @@ export default function PageWrapper({
   const [showEndedPosts, setShowEndedPosts] = useState(false);
   const [showUnpaidInvoices, setShowUnpaidInvoices] = useState(true);
   const [showPaidInvoices, setShowPaidInvoices] = useState(false);
-
-  const { data: session, status } = useSession();
 
   useEffect(() => {
     const selectedData = data?.filter(

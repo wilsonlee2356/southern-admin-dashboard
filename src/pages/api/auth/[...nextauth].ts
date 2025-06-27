@@ -32,13 +32,13 @@ export const authOptions: NextAuthOptions = {
           );
 
           const data = await response.json();
-          console.log("LDAP response:", data.token);
+          console.log("LDAP response:", data.accessToken);
 
           if (!response.ok) {
             throw new Error(data.message || "Authentication failed");
           }
 
-          if (data && data.token) {
+          if (data?.accessToken && data?.refreshToken) {
               return {
                 id: credentials.username,
                 name: credentials.username,

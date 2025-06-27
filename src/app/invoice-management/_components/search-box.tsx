@@ -17,6 +17,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+import { getSession } from 'next-auth/react';
+import { refreshAccessToken } from "@/lib/auth";
+
 type SearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
   clientData: client[];
@@ -95,7 +98,13 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
     setPostcode("");
     setStartDate(null);
     setEndDate(null);
-    
+
+  //   const session = getSession();
+  //   if (session && session.refreshToken) {
+  //   console.error('No access token available');
+  //   return null;
+  // }
+  //   const newAccessToken = refreshAccessToken(session.refreshToken);
   };
 
   

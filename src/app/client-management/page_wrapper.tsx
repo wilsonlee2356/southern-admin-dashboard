@@ -11,7 +11,6 @@ import { CombinedService } from "@/app/api/invoice";
 import { InvoiceService } from "../api/services/invoiceService";
 import MuiDataGridForPostManagement from "@/components/Tables/DataGrid/MuiDataGridForPostManagement";
 import { usePostClientContent } from "@/utils/post-client-content";
-import { useSession } from "next-auth/react";
 
 type PageWrapperProps = {
   // dataArray?: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -35,8 +34,6 @@ export default function PageWrapper({
   const [showNotEndedPosts, setShowNotEndedPosts] = useState(true);
   const [showEndedPosts, setShowEndedPosts] = useState(false);
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
-
-  const { data: session, status } = useSession();
 
   let data = usePostClientContent().invoiceData;
   let clients = usePostClientContent().clientData;
@@ -73,16 +70,16 @@ export default function PageWrapper({
   }, [clientName, postcode, showNotEndedPosts, showEndedPosts, data]);
 
   useEffect(() => {
-    if (updateDataNeeded && status === 'authenticated' && session?.accessToken) {
+    if (updateDataNeeded) {
       console.log("Updating data");
       // InvoiceService.getAll().then((res) => {
       //   dataArray = res;
       //   // setDataToShow(res);
       // });
-      CombinedService.get_all_client(session.accessToken).then((res) => {
+      CombinedService.get_all_client().then((res) => {
         clients = res;
       });
-      CombinedService.get_all_post(session.accessToken).then((res) => {
+      CombinedService.get_all_post().then((res) => {
         posts = res;
       });
       setUpdateDataNeeded(false);

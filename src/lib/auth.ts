@@ -1,4 +1,6 @@
-import { getSession, signOut } from 'next-auth/react';
+'use client';
+
+import { getSession, signOut, useSession } from 'next-auth/react';
 
 export async function refreshAccessToken(refreshToken: string): Promise<string | null> {
   try {
@@ -27,50 +29,61 @@ export async function refreshAccessToken(refreshToken: string): Promise<string |
   }
 }
 
-export async function makeAuthenticatedRequest(url: string, options: RequestInit = {}) {
-  const session = await getSession();
-  if (!session?.accessToken) {
-    console.error('No access token available');
-    return null;
-  }
+export function useAuthenticatedRequest() {
+  const { update } = useSession();
 
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        ...options.headers,
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-      credentials: 'include',
-    });
-
-    if (response.status === 401 && session.refreshToken) {
-      console.log('Access token expired, attempting refresh');
-      const newAccessToken = await refreshAccessToken(session.refreshToken);
-      if (newAccessToken) {
-        // Update session with new access token
-        // Note: This is a simplified approach; you may need to update the session properly
-        const updatedResponse = await fetch(url, {
-          ...options,
-          headers: {
-            ...options.headers,
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${newAccessToken}`,
-          },
-          credentials: 'include',
-        });
-        return updatedResponse;
-      } else {
-        console.error('Failed to refresh token, signing out');
-        await signOut({ callbackUrl: '/auth/signin' });
-        return null;
-      }
+  async function makeAuthenticatedRequest(url: string, options: RequestInit = {}): Promise<{
+    response: Response | null;
+    newAccessToken?: string;
+  }> {
+    const session = await getSession();
+    if (!session?.accessToken) {
+      console.error('No access token available');
+      return { response: null };
     }
 
-    return response;
-  } catch (err) {
-    console.error('Request Error:', err);
-    return null;
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        credentials: 'include',
+      });
+
+      if (response.status === 401 && session.refreshToken) {
+        console.log('Access token expired, attempting refresh');
+        const newAccessToken = await refreshAccessToken(session.refreshToken);
+        if (newAccessToken) {
+          console.log('New access token obtained:', newAccessToken);
+          await update({ accessToken: newAccessToken });
+          console.log('Session updated with new access token');
+          // Retry the original request
+          const updatedResponse = await fetch(url, {
+            ...options,
+            headers: {
+              ...options.headers,
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+            credentials: 'include',
+          });
+          return { response: updatedResponse, newAccessToken };
+        } else {
+          console.error('Failed to refresh token, signing out');
+          await signOut({ callbackUrl: '/auth/signin' });
+          return { response: null };
+        }
+      }
+
+      return { response };
+    } catch (err) {
+      console.error('Request Error:', err);
+      return { response: null };
+    }
   }
+
+  return { makeAuthenticatedRequest };
 }

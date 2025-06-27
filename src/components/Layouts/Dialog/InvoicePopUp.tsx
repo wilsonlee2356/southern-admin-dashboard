@@ -14,7 +14,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import { invoiceData, invoiceCheques, PaidAmountsType } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
-import { useSession } from "next-auth/react";
 
 type InvoicePopUpPropsType = {
     title: string;
@@ -34,8 +33,6 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
     const [amount, setAmount] = useState("");
     const [chequeFile, setChequeFile] = React.useState<string>();
     const [paidAmounts, setPaidAmounts] = useState<PaidAmountsType[]>([]);
-
-    const { data: session, status } = useSession();
 
     useEffect(() => {
         console.log("Show details invoice:", dataArray);
@@ -146,13 +143,11 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                     onClick={() => {
                         console.log("Invoice Date: ", invoiceDate);
                         console.log("Paid Amounts: ", paidAmounts);
-                        if (status != 'authenticated' || !session?.accessToken) return;
 
                         CombinedService.create_cheque({
                             chequeId: 0, // Assuming chequeId is auto-generated
                             chequeCopy: chequeFile ? chequeFile : "",
-                            invoiceChequesList: [],
-                            },session.accessToken
+                            invoiceChequesList: [],}
                         ).then((cheque) => {
                                 console.log("Cheque created:", cheque);
                                 let invoiceChequesArr: invoiceCheques[] = [];
@@ -181,8 +176,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                                         paymentDate: invoiceDate ? invoiceDate.toDate() : new Date(),
                                     })
                                 });
-                                if (status != 'authenticated' || !session?.accessToken) return;
-                                CombinedService.create_transaction(invoiceChequesArr,session.accessToken).then((invoiceCheques) => {
+                                CombinedService.create_transaction(invoiceChequesArr).then((invoiceCheques) => {
                                     console.log("InvoiceCheques created:", invoiceCheques);
                                     setUpdateDataNeeded(true);
                                     closePopUp();
