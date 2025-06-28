@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { UserService } from "../api/userService";
 import { useAuthenticatedRequest } from "@/lib/auth";
-import { user } from "@/types/ObjectTypes/UserType";
+import { user, userCreateType } from "@/types/ObjectTypes/UserType";
 
 // Mock data for demonstration
 const initialPosts = [
@@ -33,11 +33,11 @@ function PostManagementPage() {
   //const [posts, setPosts] = useState(initialPosts);
   const [users, setUsers] = useState<user[]>([]);
   const [userRole, setUserRole] = useState("admin"); // Can be "public", "team", or "admin"
-  const [newUser, setNewUser] = useState({
+  const [newUser, setNewUser] = useState<userCreateType>({
     username: "",
     sn: "",
     cn: "",
-    access: "Observer",
+    role: "Observers",
     password: "",
   });
 
@@ -62,9 +62,29 @@ function PostManagementPage() {
   // Handle post creation
   const handleCreatePost = (e: any) => {
     e.preventDefault();
+    console.log("New user: ",newUser);
     //do sth here
     //???????????
 
+    UserService.add_users(makeAuthenticatedRequest, newUser).then((data)=> {
+      if(data.username){
+        const newUserCreated : user = {
+          uid: data.username,
+          sn: data.sn,
+          cn: data.cn,
+          roles: [data.role]
+        }
+        setUsers([...users, newUserCreated]);
+        setNewUser({
+          username: "",
+          sn: "",
+          cn: "",
+          role: "Observer",
+          password: "",
+        });
+        console.log("Users: ", users);
+      }
+    })
     // const post = {
     //   username: "",
     //   sn: "",
@@ -136,7 +156,7 @@ function PostManagementPage() {
           </div>
           <div className="flex flex-row gap-4">
             <input
-              type="text"
+              type="password"
               value={newUser.password}
               onChange={(e) =>
                 setNewUser({ ...newUser, password: e.target.value })
@@ -168,16 +188,16 @@ function PostManagementPage() {
               <option value="Published">Published</option>
             </select> */}
             <select
-              value={newUser.access}
+              value={newUser.role}
               onChange={(e) =>
-                setNewUser({ ...newUser, access: e.target.value })
+                setNewUser({ ...newUser, role: e.target.value })
               }
               className="rounded border p-2"
               disabled={userRole !== "admin"}
             >
               <option value="observer">Observer</option>
               <option value="editor">Editor</option>
-              <option value="admin">Admin</option>
+              <option value="admins">Admin</option>
             </select>
             <button
               type="submit"
