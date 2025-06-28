@@ -30,13 +30,15 @@ const initialPosts = [
 ];
 
 function PostManagementPage() {
-  const [posts, setPosts] = useState(initialPosts);
+  //const [posts, setPosts] = useState(initialPosts);
   const [users, setUsers] = useState<user[]>([]);
   const [userRole, setUserRole] = useState("admin"); // Can be "public", "team", or "admin"
-  const [newPost, setNewPost] = useState({
-    title: "",
-    status: "Draft",
-    access: "public",
+  const [newUser, setNewUser] = useState({
+    username: "",
+    sn: "",
+    cn: "",
+    access: "Observer",
+    password: "",
   });
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
@@ -51,24 +53,27 @@ function PostManagementPage() {
   }, []);
 
   // Filter posts based on user role
-  const filteredPosts = posts.filter((post) => {
-    if (userRole === "admin") return true;
-    if (userRole === "team") return post.access !== "admin";
-    return post.access === "public";
-  });
+  // const filteredPosts = posts.filter((post) => {
+  //   if (userRole === "admin") return true;
+  //   if (userRole === "team") return post.access !== "admin";
+  //   return post.access === "public";
+  // });
 
   // Handle post creation
   const handleCreatePost = (e: any) => {
     e.preventDefault();
-    const post = {
-      id: posts.length + 1,
-      title: newPost.title,
-      author: "Current User", // In real app, get from auth
-      status: newPost.status,
-      access: newPost.access,
-    };
-    setPosts([...posts, post]);
-    setNewPost({ title: "", status: "Draft", access: "public" });
+    //do sth here
+    //???????????
+
+    // const post = {
+    //   username: "",
+    //   sn: "",
+    //   cn: "",
+    //   access: "Observer",
+    //   password: "",
+    // };
+    //setPosts([...posts, post]);
+    //setNewUser({ title: "", status: "Draft", access: "public" });
   };
 
   // Handle post deletion
@@ -77,7 +82,7 @@ function PostManagementPage() {
       alert("Only admins can delete posts");
       return;
     }
-    setPosts(posts.filter((post) => post.id !== id));
+    //setPosts(posts.filter((post) => post.id !== id));
   };
 
   return (
@@ -107,27 +112,47 @@ function PostManagementPage() {
       <div className="mb-8 rounded-lg bg-gray-100 p-4">
         <h2 className="mb-4 text-xl font-bold">Create New User</h2>
         <form onSubmit={handleCreatePost} className="space-y-4">
-          <div>
+          <div className="flex flex-row gap-4">
             <input
               type="text"
-              value={newPost.title}
+              value={newUser.username}
               onChange={(e) =>
-                setNewPost({ ...newPost, title: e.target.value })
+                setNewUser({ ...newUser, username: e.target.value })
               }
               placeholder="Username"
-              className="w-full rounded border p-2"
+              className="w-1/2 rounded border p-2"
+              required
+            />
+            <input
+              type="text"
+              value={newUser.cn}
+              onChange={(e) =>
+                setNewUser({ ...newUser, cn: e.target.value })
+              }
+              placeholder="Full name"
+              className="w-1/2 rounded border p-2"
               required
             />
           </div>
-          <div>
+          <div className="flex flex-row gap-4">
             <input
               type="text"
-              value={newPost.title}
+              value={newUser.password}
               onChange={(e) =>
-                setNewPost({ ...newPost, title: e.target.value })
+                setNewUser({ ...newUser, password: e.target.value })
               }
               placeholder="Password"
-              className="w-full rounded border p-2"
+              className="w-1/2 rounded border p-2"
+              required
+            />
+            <input
+              type="text"
+              value={newUser.sn}
+              onChange={(e) =>
+                setNewUser({ ...newUser, sn: e.target.value })
+              }
+              placeholder="Surname"
+              className="w-1/2 rounded border p-2"
               required
             />
           </div>
@@ -143,16 +168,16 @@ function PostManagementPage() {
               <option value="Published">Published</option>
             </select> */}
             <select
-              value={newPost.access}
+              value={newUser.access}
               onChange={(e) =>
-                setNewPost({ ...newPost, access: e.target.value })
+                setNewUser({ ...newUser, access: e.target.value })
               }
               className="rounded border p-2"
               disabled={userRole !== "admin"}
             >
-              <option value="public">Public</option>
-              <option value="team">Team</option>
-              <option value="admin">Admin Only</option>
+              <option value="observer">Observer</option>
+              <option value="editor">Editor</option>
+              <option value="admin">Admin</option>
             </select>
             <button
               type="submit"
