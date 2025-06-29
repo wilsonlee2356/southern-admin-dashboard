@@ -27,7 +27,7 @@ export const UserService = {
         // const response = await apiClient.get("/invoiceCheques");
         // return response.data;
       } catch (error) {
-        console.error('Error fetching all invoiceCheques:', error);
+        console.error('Error fetching all user:', error);
         throw error;
       }
     },
@@ -42,13 +42,33 @@ export const UserService = {
         if(response && response.ok){
           return response.json();
         } 
-        console.log("Unable to fetch all users possibly due to invaild token");
-        throw new Error("Unable to fetch all users possibly due to invaild token");
+        console.log("Unable to add users possibly due to invaild token");
+        throw new Error("Unable to add users possibly due to invaild token");
 
         // const response = await apiClient.get("/invoiceCheques");
         // return response.data;
       } catch (error) {
-        console.error('Error fetching all invoiceCheques:', error);
+        console.error('Error adding user:', error);
+        throw error;
+      }
+    },
+
+    async remove_users(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>, username: string) {
+      try{
+        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/ldap/users/${username}`, {
+          method: 'DELETE',
+        });
+
+        if(response && response.ok){
+          return response.json();
+        } 
+        console.log("Unable to delete users possibly due to invaild token");
+        throw new Error("Unable to delete users possibly due to invaild token");
+
+        // const response = await apiClient.get("/invoiceCheques");
+        // return response.data;
+      } catch (error) {
+        console.error('Error deleting user:', error);
         throw error;
       }
     },

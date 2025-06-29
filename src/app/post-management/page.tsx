@@ -37,7 +37,7 @@ function PostManagementPage() {
     username: "",
     sn: "",
     cn: "",
-    role: "Observers",
+    role: "observers",
     password: "",
   });
 
@@ -79,7 +79,7 @@ function PostManagementPage() {
           username: "",
           sn: "",
           cn: "",
-          role: "Observer",
+          role: "observers",
           password: "",
         });
         console.log("Users: ", users);
@@ -97,11 +97,14 @@ function PostManagementPage() {
   };
 
   // Handle post deletion
-  const handleDeletePost = (id: any) => {
-    if (userRole !== "admin") {
-      alert("Only admins can delete posts");
-      return;
-    }
+  const handleDeletePost = (username: string) => {
+    // if (userRole !== "admin") {
+    //   alert("Only admins can delete posts");
+    //   return;
+    // }
+    UserService.remove_users(makeAuthenticatedRequest, username).then((res)=> {
+        console.log("Users: ", users);
+    })
     //setPosts(posts.filter((post) => post.id !== id));
   };
 
@@ -195,8 +198,8 @@ function PostManagementPage() {
               className="rounded border p-2"
               disabled={userRole !== "admin"}
             >
-              <option value="observer">Observer</option>
-              <option value="editor">Editor</option>
+              <option value="observers">Observer</option>
+              <option value="editors">Editor</option>
               <option value="admins">Admin</option>
             </select>
             <button
@@ -229,7 +232,8 @@ function PostManagementPage() {
               {userRole === "admin" && (
                 <button
                   onClick={() => {
-                    // handleDeletePost(post.id)
+                     handleDeletePost(user.uid)
+
                   }}
                   className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                 >
