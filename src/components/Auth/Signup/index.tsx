@@ -1,10 +1,6 @@
 import Link from "next/link";
 import GoogleSigninButton from "../GoogleSigninButton";
 import SignupWithPassword from "../SignupWithPassword";
-import {
-  doSignInWithGoogle,
-  doCreateUserWithEmailAndPassword,
-} from "@/auth/auth";
 import { useAuth } from "@/contexts/authContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -20,7 +16,7 @@ export default function Signup() {
     e.preventDefault();
     setIsSigningUp(true);
     try {
-      await doCreateUserWithEmailAndPassword(email, password);
+      // await doCreateUserWithEmailAndPassword(email, password);
       router.push("/"); // Redirect to home page after successful signup
     } catch (error) {
       console.error(error);
@@ -33,7 +29,7 @@ export default function Signup() {
     e.preventDefault();
     setIsSigningUp(true);
     try {
-      await doSignInWithGoogle();
+      // await doSignInWithGoogle();
       router.push("/"); // Redirect to home page after successful signup
     } catch (error) {
       console.error(error);

@@ -1,14 +1,11 @@
 "use client";
-import { CheckIcon, TrashIcon } from "@/assets/icons";
-import { PreviewIcon, DownloadIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
-import { Button, ButtonGroup } from "@heroui/button";
-import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import InvoicePopUp from "@/components/Layouts/Dialog/InvoicePopUp";
+import { Button } from "@heroui/button";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import React, { use, useEffect, useState } from "react";
-import { invoice, PaidAmountsType, invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import React, { useEffect } from "react";
+import { PaidAmountsType, invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { NumberInput } from "@heroui/react";
 
 type SimpleMuiDataGridProps = {
