@@ -3,7 +3,6 @@ import SigninWithPassword from "../SigninWithPassword";
 // import { useAuth } from "@/contexts/authContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/authContext";
 
 export default function Signin() {
   // const { currentUser, userLoggedIn } = useAuth();
@@ -11,7 +10,7 @@ export default function Signin() {
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
   const router = useRouter();
-  
+
   // const onSubmit = async (e: any) => {
   //   e.preventDefault();
   //   setIsSigningIn(true);

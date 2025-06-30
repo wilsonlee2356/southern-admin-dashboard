@@ -6,17 +6,17 @@ import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
 import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import TextInputHeroUI from "@/components/FormElements/InputGroup/text-input-heroui";
-import NumberInput from "@/components/FormElements/InputGroup/NumberInputs/NumberInput";
-import DropdownList from "@/components/FormElements/Dropdown/DropdownList";
-import { client, post, invoice, invoiceData } from "@/types/ObjectTypes/InvoiceType";
-import { CloseIcon, SearchIcon, UploadIcon } from "@/assets/icons";
-import { CombinedService } from "@/app/api/invoice";
+import {
+  client,
+  post,
+  invoiceData,
+} from "@/types/ObjectTypes/InvoiceType";
+import { CloseIcon, UploadIcon } from "@/assets/icons";
 import InvoiceCreatePopUp from "@/components/Layouts/Dialog/InvoiceCreatePopUp";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useAuthenticatedRequest } from '@/lib/auth';
 
 type SearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -29,25 +29,38 @@ type SearchBoxProps = {
   startDate: Dayjs | null;
   endDate: Dayjs | null;
   // Setters for the state variables
-  setInvoiceNumber:any;
-  setClientName:any;
-  setPostcode:any;
+  setInvoiceNumber: any;
+  setClientName: any;
+  setPostcode: any;
   // setAmount:any;
-  setStartDate:any;
-  setEndDate:any;
+  setStartDate: any;
+  setEndDate: any;
   setFilteredData: any;
-  setUpdateDataNeeded : any;
+  setUpdateDataNeeded: any;
 };
 
-
-
-const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName, postcode, startDate, endDate, setInvoiceNumber, setClientName, setPostcode, setStartDate, setEndDate, setFilteredData, setUpdateDataNeeded }: SearchBoxProps) => {
-
+const SearchBox = ({
+  dataArray,
+  clientData,
+  postData,
+  invoiceNumber,
+  clientName,
+  postcode,
+  startDate,
+  endDate,
+  setInvoiceNumber,
+  setClientName,
+  setPostcode,
+  setStartDate,
+  setEndDate,
+  setFilteredData,
+  setUpdateDataNeeded,
+}: SearchBoxProps) => {
   const [popUpOpen, setPopUpOpen] = useState(false);
 
-  // const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({ 
+  // const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({
   //   key: item.invoiceId.toString(),
-  //   name: item.invoiceNum.toString(), 
+  //   name: item.invoiceNum.toString(),
   // }));
   let clientNameArr = clientData.map((item) => ({
     key: item.clientId.toString(),
@@ -58,34 +71,38 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
     name: item.postcode,
   }));
 
-  let postcodeArrFiltered = postData.filter( (item => (!item.isEnded))).map((item) => ({
-    key: item.postId.toString(),
-    name: item.postcode,
-  }));
+  let postcodeArrFiltered = postData
+    .filter((item) => !item.isEnded)
+    .map((item) => ({
+      key: item.postId.toString(),
+      name: item.postcode,
+    }));
 
   React.useEffect(() => {
-      console.log("client array:", clientNameArr);
-      console.log("post array:", postcodeArr);
+    console.log("client array:", clientNameArr);
+    console.log("post array:", postcodeArr);
   }, []);
 
   React.useEffect(() => {
-      console.log("Invoice number:", invoiceNumber);
+    console.log("Invoice number:", invoiceNumber);
   }, [invoiceNumber]);
 
   React.useEffect(() => {
-      clientNameArr = clientData.map((item) => ({
-        key: item.clientId.toString(),
-        name: item.clientName,
-      }));
-      postcodeArr = postData.map((item) => ({
+    clientNameArr = clientData.map((item) => ({
+      key: item.clientId.toString(),
+      name: item.clientName,
+    }));
+    postcodeArr = postData.map((item) => ({
+      key: item.postId.toString(),
+      name: item.postcode,
+    }));
+    postcodeArrFiltered = postData
+      .filter((item) => !item.isEnded)
+      .map((item) => ({
         key: item.postId.toString(),
         name: item.postcode,
       }));
-      postcodeArrFiltered = postData.filter( (item => (!item.isEnded))).map((item) => ({
-        key: item.postId.toString(),
-        name: item.postcode,
-      }));
-      console.log("Updated postcode array:", postcodeArr);
+    console.log("Updated postcode array:", postcodeArr);
   }, [clientData, postData]);
 
   const handleClear = () => {
@@ -97,15 +114,13 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
     setStartDate(null);
     setEndDate(null);
 
-  //   const session = getSession();
-  //   if (session && session.refreshToken) {
-  //   console.error('No access token available');
-  //   return null;
-  // }
-  //   const newAccessToken = refreshAccessToken(session.refreshToken);
+    //   const session = getSession();
+    //   if (session && session.refreshToken) {
+    //   console.error('No access token available');
+    //   return null;
+    // }
+    //   const newAccessToken = refreshAccessToken(session.refreshToken);
   };
-
-  
 
   // const checkDateWithinMonths = (date: Date, months: number) => {
   //   const currentDate = new Date();
@@ -117,8 +132,8 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
   // const handleSubmit = (e: React.FormEvent) => {
   //   e.preventDefault();
   //   console.log("Handle submit");
-  //   // console.log({ 
-  //   //   invoiceNumber, 
+  //   // console.log({
+  //   //   invoiceNumber,
   //   //   clientName, postcode, amount, period });
   //   // Add your search logic here
 
@@ -133,15 +148,15 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
   //   //console.log("Date compare:", );
 
   //   const checkEmpty = (value: string) => {
-  //     return value === "" || value === undefined || value === null; 
+  //     return value === "" || value === undefined || value === null;
   //   };
 
   //   const selectedData = dataArray.filter((row: any) =>
   //     (
-  //       !checkEmpty(invoiceNumber) && row.invoiceNum.includes(invoiceNumber) || 
-  //       !checkEmpty(clientName) && row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) || 
-  //       !checkEmpty(postcode) && row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) || 
-  //       !checkEmpty(amount) && /^\d+$/.test(amount) && row.amount.includes===amount || 
+  //       !checkEmpty(invoiceNumber) && row.invoiceNum.includes(invoiceNumber) ||
+  //       !checkEmpty(clientName) && row.post.client.clientName.toLowerCase().includes(clientName.toLowerCase()) ||
+  //       !checkEmpty(postcode) && row.post.postcode.toLowerCase().includes(postcode.toLowerCase()) ||
+  //       !checkEmpty(amount) && /^\d+$/.test(amount) && row.amount.includes===amount ||
   //       !checkEmpty(period) && checkDateWithinMonths(row.invoiceDate, parseInt(period))
   //     )
   //   );
@@ -149,9 +164,6 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
   //   setFilteredData(selectedData);
   //   console.log("Filtered data:", selectedData);
   // };
-
-  
-
 
   return (
     <ShowcaseSection title="Invoice Search Form" className="!p-6.5">
@@ -164,7 +176,7 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
             placeholder="Enter Invoice Number"
             value={invoiceNumber}
             onChange={(e) => setInvoiceNumber(e.target.value)}
-            />
+          />
           {/* <AutoCompleteWithSelectorButton
             title="Invoice Number"
             placeholder="Enter Invoice Number"
@@ -177,7 +189,7 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
             placeholder="Enter Client Name"
             dataArr={clientNameArr}
             stateSetter={setClientName}
-            input ={clientName}
+            input={clientName}
           />
         </div>
         <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
@@ -186,26 +198,26 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
             placeholder="Enter Postcode"
             dataArr={postcodeArr}
             stateSetter={setPostcode}
-            input ={postcode}
+            input={postcode}
           />
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <MuiDatePicker
-            title="Start Date"
-            value={startDate}
-            onChange={(newValue) => {
-              console.log("new date:", newValue);
-              setStartDate(newValue);
-            }}
-          />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MuiDatePicker
+              title="Start Date"
+              value={startDate}
+              onChange={(newValue) => {
+                console.log("new date:", newValue);
+                setStartDate(newValue);
+              }}
+            />
 
-          <MuiDatePicker
-            title="End Date"
-            value={endDate}
-            onChange={(newValue) => {
-              setEndDate(newValue);
-            }}
-          />
+            <MuiDatePicker
+              title="End Date"
+              value={endDate}
+              onChange={(newValue) => {
+                setEndDate(newValue);
+              }}
+            />
           </LocalizationProvider>
           {/* <NumberInput/>
           <AutoCompleteWithoutSelectorButton
@@ -255,8 +267,7 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
             onClick={() => {
               //handleSubmit;
               setPopUpOpen(true);
-            }
-            }
+            }}
           />
         </div>
       </form>
@@ -270,7 +281,6 @@ const SearchBox = ({ dataArray, clientData, postData, invoiceNumber, clientName,
         clientArrayWithDetails={clientData}
       />
     </ShowcaseSection>
-    
   );
 };
 export default SearchBox;

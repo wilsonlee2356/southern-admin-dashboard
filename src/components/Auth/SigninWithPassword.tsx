@@ -25,7 +25,7 @@ export default function SigninWithPassword({ handleSubmit }: any) {
     // console.log(process.env.NEXT_PUBLIC_LDAP_URI);
 
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         redirect: false,
         username,
         password,
@@ -36,7 +36,6 @@ export default function SigninWithPassword({ handleSubmit }: any) {
           "Invalid credentials. Please check your username and password.",
         );
       } else {
-        
         router.push("/");
       }
     } catch (err) {

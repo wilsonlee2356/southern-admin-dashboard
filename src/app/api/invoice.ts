@@ -1,443 +1,312 @@
-import axios from 'axios';
-import apiClient from "@/lib/api-client";
-import { AxiosResponse } from "axios";
-import { invoiceData, client, post, cheque, invoiceCheques, invoiceDataOutput, postClientInvoiceSummary } from '@/types/ObjectTypes/InvoiceType';
-import { useAuthenticatedRequest } from '@/lib/auth';
+import {
+  invoiceData,
+  client,
+  post,
+  cheque,
+  invoiceCheques,
+  invoiceDataOutput,
+  postClientInvoiceSummary,
+} from "@/types/ObjectTypes/InvoiceType";
 
-
-const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
-// if (!baseURL) {
-//   console.error(
-//     "Error: NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined in environment variables",
-//   );
-// }
-export const CombinedService = {
-  
-    
-
-    async get_all_invoice(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>): Promise<invoiceData[]> {
-      try{
-        // const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/invoices', {
-          method: 'GET',
-        });
-        // const response = await fetch('http://localhost:8080/api/invoices', {
-        //     method: 'GET',
-        //     headers: {
-        //       Authorization: `Bearer ${accessToken}`,
-        //       'Content-Type': 'application/json',
-        //     },
-        //   });
-        if(response && response.ok){
-          return response.json();
-        } 
-        console.log("Unable to fetch invoices possibly due to invaild token");
-        throw new Error("Unable to fetch invoices possibly due to invaild token");
-        
-      } catch (error) {
-        console.error('Error fetching all invoices:', error);
-        throw error;
-      }
-    },
-
-    async get_all_client(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>): Promise<client[]> {
-      try{
-        // const response = await fetch('http://localhost:8080/api/clients', {
-        //     method: 'GET',
-        //     headers: {
-        //       Authorization: `Bearer ${accessToken}`,
-        //       'Content-Type': 'application/json',
-        //     },
-        // });
-        // return response.json();
-        // const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/clients', {
-          method: 'GET',
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-        console.log("Unable to fetch clients possibly due to invaild token");
-        throw new Error("Unable to fetch clients possibly due to invaild token");
-        // const response = await apiClient.get("/clients");
-        // return response.data;
-      } catch (error) {
-        console.error('Error fetching all invoices:', error);
-        throw error;
-      }
-    },
-
-    async get_all_post(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>): Promise<post[]> {
-      try{
-        // const response = await fetch('http://localhost:8080/api/posts', {
-        //     method: 'GET',
-        //     headers: {
-        //       Authorization: `Bearer ${accessToken}`,
-        //       'Content-Type': 'application/json',
-        //     },
-        // });
-        // return response.json();
-        // const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/posts', {
-          method: 'GET',
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-        console.log("Unable to fetch posts possibly due to invaild token");
-        throw new Error("Unable to fetch posts possibly due to invaild token");
-
-        // const response = await apiClient.get("/posts");
-        // return response.data;
-      } catch (error) {
-        console.error('Error fetching all invoices:', error);
-        throw error;
-      }
-    },
-
-    async get_all_invoiceCheques(): Promise<invoiceCheques[]> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/invoiceCheques`, {
-        //   method: 'GET',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/invoiceCheques', {
-          method: 'GET',
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-        console.log("Unable to fetch invoiceCheques possibly due to invaild token");
-        throw new Error("Unable to fetch invoiceCheques possibly due to invaild token");
-
-        // const response = await apiClient.get("/invoiceCheques");
-        // return response.data;
-      } catch (error) {
-        console.error('Error fetching all invoiceCheques:', error);
-        throw error;
-      }
-    },
-
-    async get_invoice_by_id(id: string): Promise<invoiceData> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/invoices/num=${id}`, {
-        //   method: 'GET',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/invoices/num=${id}`, {
-          method: 'GET',
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to fetch invoice by id possibly due to invaild token");
-
-      } catch (error) {
-        console.error('Error fetching invoice by ID:', error);
-        throw error;
-      }
-    },
-
-    async get_invoice_outstanding_summary(): Promise<(string | number)[][]> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/invoices/invoiceSum`, {
-        //   method: 'GET',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
-        // console.log("Response from API:", response);
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/invoices/invoiceSum`, {
-          method: 'GET',
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-        throw new Error("Unable to fetch invoice summary possibly due to invaild token");
-      } catch (error) {
-        console.error('Error fetching invoice by ID:', error);
-        throw error;
-      }
-    },
-
-    async get_post_client_invoice_summry(): Promise<postClientInvoiceSummary[]> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/posts/PostAndClientWithInvoiceSum`, {
-        //   method: 'GET',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
-        // const data = await response.json();
-        // //console.log("Data fetched from API:", data);
-        // // const formattedData = JSON.parse(data) as postClientInvoiceSummary[]
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/posts/PostAndClientWithInvoiceSum`, {
-          method: 'GET',
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to fetch post client invoice summary possibly due to invaild token");
-      } catch (error) {
-        console.error('Error fetching invoice by ID:', error);
-        throw error;
-      }
-    },
-
-    async update_invoice_by_id(id: number, updateData: invoiceData): Promise<invoiceData> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
-        //   method: 'PUT',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(updateData),
-        // });
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/invoices/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify(updateData),
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to update invoice by id possibly due to invaild token");
-      } catch (error) {
-        console.error('Error updating invoice:', error);
-        throw error;
-      }
-    },
-
-    async set_post_to_finish(ids: number[]): Promise<post[]> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/posts/setEnded`, {
-        //   method: 'PUT',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(ids),
-        // });
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/posts/setEnded`, {
-          method: 'PUT',
-          body: JSON.stringify(ids),
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to set post to finish possibly due to invaild token");
-      } catch (error) {
-        console.error('Error updating invoice:', error);
-        throw error;
-      }
-    },
-
-    async delete_invoice_by_id(id: number) {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
-        //   method: 'DELETE',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //   },
-        // });
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/invoices/${id}`, {
-          method: 'DELETE',
-        });
-
-        
-        // const data = await response.json();
-        // return data;
-      } catch (error) {
-        console.error('Error deleting invoice:', error);
-        throw error;
-      }
-    },
-
-
-    async create_invoice(newInvoice: invoiceDataOutput): Promise<invoiceData> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/combined`, {
-        //   method: 'POST',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(newInvoice),
-        // });
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/combined`, {
-          method: 'POST',
-          body: JSON.stringify(newInvoice),
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to create invoice possibly due to invaild token");
-      }
-      catch (error) {
-        console.error('Error creating invoice:', error);
-        throw error;
-      }
-    },
-
-    async create_cheque(newCheque: cheque): Promise<cheque> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/cheques`, {
-        //   method: 'POST',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(newCheque),
-        // });
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/cheques`, {
-          method: 'POST',
-          body: JSON.stringify(newCheque),
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to create cheque possibly due to invaild token");
-      } catch (error) {
-        console.error('Error creating cheque:', error);
-        throw error;
-      }
-    },
-
-    async create_transaction(newInvoiceCheques: invoiceCheques[]): Promise<invoiceCheques[]> {
-      try{
-        // console.log("New Transaction Data:", JSON.stringify(newInvoiceCheques));
-        // const response = await fetch(`http://localhost:8080/api/combined/invoiceCheque`, {
-        //   method: 'POST',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(newInvoiceCheques),
-        // });
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/combined/invoiceCheque`, {
-          method: 'POST',
-          body: JSON.stringify(newInvoiceCheques),
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to create invoiceCheque possibly due to invaild token");
-      } catch (error) {
-        console.error('Error creating invoiceCheque:', error);
-        throw error;
-      }
-    },
-
-    async update_invoice_details(id: number, updateData: invoiceData): Promise<invoiceData> {
-      try{
-      //   const response = await fetch(`http://localhost:8080/api/combined/${id}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     Authorization: `Bearer ${accessToken}`,
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(updateData),
-      // });
-      // const data = await response.json();
-      // return data;
-      const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-      const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/combined/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify(updateData),
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to update invoice details possibly due to invaild token");
-      } catch (error) {
-        console.error('Error updating invoice details:', error);
-        throw error;
-      }
-      
-    },
-
-    async setInvoiceToPaid(id: number, updateData: invoiceData): Promise<invoiceData> {
-      try{
-        // const response = await fetch(`http://localhost:8080/api/invoices/${id}`, {
-        //   method: 'PUT',
-        //   headers: {
-        //     Authorization: `Bearer ${accessToken}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(updateData),
-        // });
-        // const data = await response.json();
-        // return data;
-        const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/invoices/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify(updateData),
-        });
-
-        if(response && response.ok){
-          return response.json();
-        } 
-
-        throw new Error("Unable to set invoice to paid possibly due to invaild token");
-      } catch (error) {
-        console.error('Error setting invoice to paid:', error);
-        throw error;
-      }
-    },
-
+// Define the type for makeAuthenticatedRequest
+interface AuthRequestHandler {
+  (
+    url: string,
+    options?: RequestInit,
+  ): Promise<{ response: Response | null; newAccessToken?: string }>;
 }
+
+// Helper function to construct API URLs
+const getApiUrl = (endpoint: string): string => {
+  const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
+  if (!baseURL) {
+    throw new Error("NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined");
+  }
+  return `${baseURL}${endpoint}`;
+};
+
+// Centralized API request handler with timeout and improved error handling
+async function makeApiRequest<T>(
+  endpoint: string,
+  options: RequestInit,
+  makeAuthenticatedRequest: AuthRequestHandler,
+  errorMessage: string,
+): Promise<T> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+  try {
+    const { response } = await makeAuthenticatedRequest(getApiUrl(endpoint), {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response) {
+      throw new Error(`${errorMessage}: No response received`);
+    }
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`${errorMessage}: ${response.status} ${errorText}`);
+    }
+
+    const data = await response.json();
+    if (data === null || data === undefined) {
+      throw new Error(`${errorMessage}: Empty response received`);
+    }
+
+    return data as T;
+  } catch (error) {
+    console.error(`${errorMessage}:`, error);
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// Service object with methods that accept makeAuthenticatedRequest as a parameter
+export const CombinedService = {
+  async get_all_invoice(
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData[]> {
+    return makeApiRequest<invoiceData[]>(
+      "/api/invoices",
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      "Unable to fetch invoices",
+    );
+  },
+
+  async get_all_client(
+    makeAuthenticatedRequest?: AuthRequestHandler,
+  ): Promise<client[]> {
+    return makeApiRequest<client[]>(
+      "/api/clients",
+      { method: "GET" },
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
+      "Unable to fetch clients",
+    );
+  },
+
+  async get_all_post(
+    makeAuthenticatedRequest?: AuthRequestHandler,
+  ): Promise<post[]> {
+    return makeApiRequest<post[]>(
+      "/api/posts",
+      { method: "GET" },
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
+      "Unable to fetch posts",
+    );
+  },
+
+  async get_all_invoiceCheques(
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceCheques[]> {
+    return makeApiRequest<invoiceCheques[]>(
+      "/api/invoiceCheques",
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      "Unable to fetch invoice cheques",
+    );
+  },
+
+  async get_invoice_by_id(
+    id: string,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!id || typeof id !== "string") {
+      throw new Error("Invalid invoice ID");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/invoices/num=${id}`,
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      `Unable to fetch invoice with ID ${id}`,
+    );
+  },
+
+  async get_invoice_outstanding_summary(
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<(string | number)[][]> {
+    return makeApiRequest<(string | number)[][]>(
+      "/api/invoices/invoiceSum",
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      "Unable to fetch invoice summary",
+    );
+  },
+
+  async get_post_client_invoice_summary(
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<postClientInvoiceSummary[]> {
+    return makeApiRequest<postClientInvoiceSummary[]>(
+      "/api/posts/PostAndClientWithInvoiceSum",
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      "Unable to fetch post client invoice summary",
+    );
+  },
+
+  async update_invoice_by_id(
+    id: number,
+    updateData: invoiceData,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid invoice ID");
+    }
+    if (!updateData || typeof updateData !== "object") {
+      throw new Error("Invalid invoice data");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/invoices/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(updateData),
+      },
+      makeAuthenticatedRequest,
+      `Unable to update invoice with ID ${id}`,
+    );
+  },
+
+  async set_post_to_finish(
+    ids: number[],
+    makeAuthenticatedRequest?: AuthRequestHandler,
+  ): Promise<post[]> {
+    if (
+      !Array.isArray(ids) ||
+      ids.length === 0 ||
+      !ids.every((id) => typeof id === "number")
+    ) {
+      throw new Error("Invalid post IDs");
+    }
+    return makeApiRequest<post[]>(
+      "/api/posts/setEnded",
+      {
+        method: "PUT",
+        body: JSON.stringify(ids),
+      },
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
+      "Unable to set posts to finished",
+    );
+  },
+
+  async delete_invoice_by_id(
+    id: number,
+    makeAuthenticatedRequest?: AuthRequestHandler,
+  ): Promise<void> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid invoice ID");
+    }
+    await makeApiRequest<void>(
+      `/api/invoices/${id}`,
+      { method: "DELETE" },
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
+      `Unable to delete invoice with ID ${id}`,
+    );
+  },
+
+  async create_invoice(
+    newInvoice: invoiceDataOutput,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!newInvoice || typeof newInvoice !== "object") {
+      throw new Error("Invalid invoice data");
+    }
+    return makeApiRequest<invoiceData>(
+      "/api/combined",
+      {
+        method: "POST",
+        body: JSON.stringify(newInvoice),
+      },
+      makeAuthenticatedRequest,
+      "Unable to create invoice",
+    );
+  },
+
+  async create_cheque(
+    newCheque: cheque,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<cheque> {
+    if (!newCheque || typeof newCheque !== "object") {
+      throw new Error("Invalid cheque data");
+    }
+    return makeApiRequest<cheque>(
+      "/api/cheques",
+      {
+        method: "POST",
+        body: JSON.stringify(newCheque),
+      },
+      makeAuthenticatedRequest,
+      "Unable to create cheque",
+    );
+  },
+
+  async create_transaction(
+    newInvoiceCheques: invoiceCheques[],
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceCheques[]> {
+    if (!Array.isArray(newInvoiceCheques) || newInvoiceCheques.length === 0) {
+      throw new Error("Invalid invoice cheques data");
+    }
+    return makeApiRequest<invoiceCheques[]>(
+      "/api/combined/invoiceCheque",
+      {
+        method: "POST",
+        body: JSON.stringify(newInvoiceCheques),
+      },
+      makeAuthenticatedRequest,
+      "Unable to create invoice cheque",
+    );
+  },
+
+  async update_invoice_details(
+    id: number,
+    updateData: invoiceData,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid invoice ID");
+    }
+    if (!updateData || typeof updateData !== "object") {
+      throw new Error("Invalid invoice data");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/combined/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(updateData),
+      },
+      makeAuthenticatedRequest,
+      `Unable to update invoice details for ID ${id}`,
+    );
+  },
+
+  async setInvoiceToPaid(
+    id: number,
+    updateData: invoiceData,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid invoice ID");
+    }
+    if (!updateData || typeof updateData !== "object") {
+      throw new Error("Invalid invoice data");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/invoices/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(updateData),
+      },
+      makeAuthenticatedRequest,
+      `Unable to set invoice to paid for ID ${id}`,
+    );
+  },
+};

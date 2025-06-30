@@ -19,7 +19,7 @@ const TablesPage = () => {
 
       <div className="space-y-10">
         <Suspense fallback={<TopChannelsSkeleton />}>
-          <TopChannels />
+          <TopChannels outstandingList={[]} className={""} />
         </Suspense>
         
         <Suspense fallback={<TopProductsSkeleton />}>

@@ -1,13 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import SearchBox from "./_components/search-box";
-import ResultTable from "./_components/result-table";
-import { client, post, invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGridWithPopUpButton";
-import { InvoiceService } from "../api/services/invoiceService";
-import { CombinedService } from "@/app/api/invoice";
 import { usePostClientContent } from "@/utils/post-client-content";
-import { start } from "repl";
 import { Dayjs } from "dayjs";
 
 type PageWrapperProps = {
@@ -16,11 +11,13 @@ type PageWrapperProps = {
   // postData?: post[];
 };
 
-export default function PageWrapper({
-  // dataArray,
-  // clientData,
-  // postData,
-}: PageWrapperProps) {
+export default function PageWrapper(
+  {
+    // dataArray,
+    // clientData,
+    // postData,
+  }: PageWrapperProps,
+) {
   let data = usePostClientContent().invoiceData;
   let clients = usePostClientContent().clientData;
   let posts = usePostClientContent().postData;

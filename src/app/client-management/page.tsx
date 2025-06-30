@@ -1,13 +1,7 @@
 import React from "react";
-import { Suspense } from "react";
-import { getInvoiceTableData } from "@/components/Tables/fetch";
-import InvoiceInputTable from "@/components/FormElements/TableLists/InvoiceInputTable";
-import { InvoiceService } from "../api/services/invoiceService";
-import { CombinedService } from "@/app/api/invoice";
 import PageWrapper from "./page_wrapper";
 
 async function ClientManagementPage() {
-
   // const { data: session, status } = useSession();
   // // const data = await InvoiceService.getAll();
   // const data = await CombinedService.get_all_invoice(session?.accessToken);

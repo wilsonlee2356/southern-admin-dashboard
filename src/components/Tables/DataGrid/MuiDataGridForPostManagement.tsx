@@ -1,22 +1,12 @@
 "use client";
-import { CheckIcon, TrashIcon } from "@/assets/icons";
-import { PreviewIcon, EditIcon } from "@/components/Tables/icons";
+import { CheckIcon } from "@/assets/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
-import {
-  DataGrid,
-  GridColDef,
-  GridRowId,
-  GridRowSelectionModel,
-} from "@mui/x-data-grid";
-import InvoiceUploadPopUp from "@/components/Layouts/Dialog/InvoicePopUp";
-import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { cn } from "@/lib/utils";
-import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   invoiceData,
-  post,
   postClientInvoiceSummary,
 } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
@@ -36,9 +26,6 @@ function MuiDataGridForPostManagement({
   dataArray,
   popUpOpen,
   setPopUpOpen,
-  popUpOpenEdit,
-  setPopUpOpenEdit,
-  setFilteredData,
   setUpdateDataNeeded,
 }: MuiDataGridWithPopUpButtonProps) {
   const [processedDataArray, setProcessedDataArray] = useState<
@@ -47,15 +34,7 @@ function MuiDataGridForPostManagement({
   const [selectedRows, setSelectedRows] = useState<postClientInvoiceSummary[]>(
     [],
   );
-  const [totalAmount, setTotalAmount] = useState<number>(
-    0,
-    //dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
-  );
   const [canSetFinish, setCanSetFinish] = useState<boolean>(false);
-
-  const [editingRow, setEditingRow] = useState<postClientInvoiceSummary>(
-    {} as postClientInvoiceSummary,
-  );
 
   React.useEffect(() => {
     const processedArray: postClientInvoiceSummary[] = []; //
@@ -265,25 +244,23 @@ function MuiDataGridForPostManagement({
         open={popUpOpen}
         onClose={setPopUpOpen}
         functionToRun={() => {
+          // let idString = "";
+          let idArr: number[] = [];
+          //console.log("SelectedRow: ", selectedRows);
+          selectedRows.map((row) => {
+            idArr = [...idArr, row.post_id];
+          });
+          //console.log("idArr: "+idArr);
 
-            // let idString = "";
-            let idArr: number[] = [];
-            //console.log("SelectedRow: ", selectedRows);
-            selectedRows.map((row, index, array) => {
-              idArr = [...idArr, row.post_id];
-            });
-            //console.log("idArr: "+idArr);
-
-            CombinedService.set_post_to_finish(idArr)
-              .then((res) => {
+          CombinedService.set_post_to_finish(idArr)
+            .then(() => {
               //console.log("Set post to finished: ", res);
               setUpdateDataNeeded(true);
               updateSelectedRow([]);
             })
             .catch((err) => {
               console.error("Error setting post to finished: ", err);
-              });
-          
+            });
         }}
       />
     </div>

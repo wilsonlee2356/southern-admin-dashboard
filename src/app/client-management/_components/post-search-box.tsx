@@ -63,7 +63,6 @@ const PostSearchBox = ({
     setPostcode("");
   };
 
-
   return (
     <ShowcaseSection title="Post Management" className="!p-6.5">
       {/* <form onSubmit={handleSubmit}> */}

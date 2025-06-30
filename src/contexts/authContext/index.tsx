@@ -5,15 +5,17 @@ import React, {
   useEffect,
   useState,
 } from "react";
-//  import { User } from "firebase/auth";
-// import { app } from "../../auth/firebase"; // Make sure to configure Firebase in this file
 import { useRouter } from "next/navigation";
-import { loginService, logoutService, csrfTokenService } from "@/app/api/services/authService";
+import {
+  loginService,
+  logoutService,
+  csrfTokenService,
+} from "@/app/api/services/authService";
 
 type User = {
   username: string;
   password: string;
-}
+};
 
 interface AuthContextProps {
   currentUser: User | null;
@@ -37,12 +39,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   // const auth = getAuth(app);
   const router = useRouter();
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (
+    username: string,
+    password: string,
+  ): Promise<boolean> => {
     console.log("Attempting to log in with", username, password);
     const token = await csrfTokenService();
     setCsrfToken(token);
     console.log("CSRF Token fetched: ", token);
-    if(!csrfToken) {
+    if (!csrfToken) {
       console.error("CSRF Token is not available");
       return false;
     }
@@ -66,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       return;
     }
     const response = logoutService(csrfToken);
-    if(!response) {
+    if (!response) {
       console.error("Logout failed");
       return;
     }
@@ -86,11 +91,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   // }, [auth]);
 
   useEffect(() => {
-
-      // if (!userLoggedIn) {
-      //   router.push("/auth/sign-in");
-      // }
-    
+    // if (!userLoggedIn) {
+    //   router.push("/auth/sign-in");
+    // }
   }, [currentUser, userLoggedIn]);
 
   // useEffect(() => {

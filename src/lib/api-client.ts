@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 
 // Ensure baseURL is defined, fallback to a safe default
 // const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;

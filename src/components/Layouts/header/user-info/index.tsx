@@ -7,16 +7,11 @@ import {
   DropdownTrigger,
 } from "@/components/ui/dropdown";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
-import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
+import { LogOutIcon } from "./icons";
 // import { useAuth } from "@/contexts/authContext";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/authContext";
-import { useSession, signOut } from 'next-auth/react';
-import Signin from "@/components/Auth/Signin";
-import { log } from "console";
+import { useSession, signOut } from "next-auth/react";
 
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,37 +27,40 @@ export function UserInfo() {
   // };
 
   const handleLogout = async () => {
-    if (status !== 'authenticated' || !session?.accessToken) {
-      console.error('Logout Error: No session or accessToken');
+    if (status !== "authenticated" || !session?.accessToken) {
+      console.error("Logout Error: No session or accessToken");
       return;
     }
 
     try {
-      console.log('Sending logout request to backend with token:', session.accessToken);
-      const response = await fetch('http://localhost:8080/api/ldap/logout', {
-        method: 'POST',
+      console.log(
+        "Sending logout request to backend with token:",
+        session.accessToken,
+      );
+      const response = await fetch("http://localhost:8080/api/ldap/logout", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${session.accessToken}`,
         },
         body: JSON.stringify({ refreshToken: session.refreshToken }),
-        credentials: 'include',
+        credentials: "include",
       });
 
       const responseData = await response.json();
-      console.log('Logout Response:', responseData, 'Status:', response.status);
-      
+      console.log("Logout Response:", responseData, "Status:", response.status);
+
       if (!response.ok) {
-        console.error('Logout Failed:', responseData);
-        throw new Error(responseData.message || 'Logout failed');
+        console.error("Logout Failed:", responseData);
+        throw new Error(responseData.message || "Logout failed");
       }
 
       // Clear NextAuth session
-      await signOut({ callbackUrl: '/auth/sign-in' });
+      await signOut({ callbackUrl: "/auth/sign-in" });
     } catch (err) {
-      console.log('Error: ' + (err as Error).message);
+      console.log("Error: " + (err as Error).message);
     }
-  }
+  };
 
   return (
     <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}>

@@ -14,9 +14,11 @@ type SimpleMuiDataGridProps = {
   setPaidAmounts: any;
 };
 
-
-function SimpleMuiDataGrid({ dataArray, paidAmounts, setPaidAmounts }: SimpleMuiDataGridProps) {
-
+function SimpleMuiDataGrid({
+  dataArray,
+  paidAmounts,
+  setPaidAmounts,
+}: SimpleMuiDataGridProps) {
   useEffect(() => {
     // Initialize paidAmounts with empty objects for each invoice
     const initialPaidAmounts = dataArray.map((invoice) => ({
@@ -41,7 +43,6 @@ function SimpleMuiDataGrid({ dataArray, paidAmounts, setPaidAmounts }: SimpleMui
   //   0,
   // );
 
-    
   //   const total = selectedData.reduce(
   //     (sum: number, item: any) => sum + item.amount,
   //     0,
@@ -77,8 +78,7 @@ function SimpleMuiDataGrid({ dataArray, paidAmounts, setPaidAmounts }: SimpleMui
     //         );
     //         updateTotalAmount();
     //       }
-          
-            
+
     //       }
     //       className="text-dark dark:text-white"
     //     />
@@ -93,156 +93,175 @@ function SimpleMuiDataGrid({ dataArray, paidAmounts, setPaidAmounts }: SimpleMui
     //   ),
     // },
     {
-          field: "invoiceNum",
-          headerName: "Invoice No.",
-          flex: 2,
-          align: "center",
-          headerAlign: "center",
-          valueGetter: (value, row) => row.invoiceNum,
-          renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
-        },
-        {
-          field: "clienName",
-          headerName: "Client name",
-          flex: 2,
-          align: "center",
-          headerAlign: "center",
-          valueGetter: (value, row) => row.post.client.clientName,
-          renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
-        },
-        {
-          field: "amount",
-          headerName: "Amount",
-          flex: 2,
-          align: "center",
-          headerAlign: "center",
-          renderCell: (params) => <h5 className="text-dark dark:text-white">{"$"+params.value.toLocaleString()}</h5>,
-        },
-        {
-          field: "postCode",
-          headerName: "Postcode",
-          flex: 2,
-          align: "center",
-          headerAlign: "center",
-          valueGetter: (value, row) => row.post.postcode,
-          renderCell: (params) => <h5 className="text-dark dark:text-white">{params.value}</h5>,
-        },
-        {
-          field: "createDate",
-          headerName: "Invoice Date",
-          flex: 2,
-          align: "center",
-          headerAlign: "center",
-          renderCell: (params) => (
-            <p className="text-dark dark:text-white">
-              {dayjs(params.value).format("MMM DD, YYYY")}
-            </p>
-          ),
-        },
-        {
-          field: "settlementDate",
-          headerName: "Status",
-          flex: 2,
-          align: "center",
-          headerAlign: "center",
-          renderCell: (params) => (
-            <div
-              className={cn(
-                "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
-                {
-                  "bg-[#219653]/[0.08]": params.value !== null,
-                  "bg-[#D34053]/[0.08]": params.value === null,
-                  //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
-                },
-              )}
+      field: "invoiceNum",
+      headerName: "Invoice No.",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      valueGetter: (value, row) => row.invoiceNum,
+      renderCell: (params) => (
+        <h5 className="text-dark dark:text-white">{params.value}</h5>
+      ),
+    },
+    {
+      field: "clienName",
+      headerName: "Client name",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      valueGetter: (value, row) => row.post.client.clientName,
+      renderCell: (params) => (
+        <h5 className="text-dark dark:text-white">{params.value}</h5>
+      ),
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <h5 className="text-dark dark:text-white">
+          {"$" + params.value.toLocaleString()}
+        </h5>
+      ),
+    },
+    {
+      field: "postCode",
+      headerName: "Postcode",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      valueGetter: (value, row) => row.post.postcode,
+      renderCell: (params) => (
+        <h5 className="text-dark dark:text-white">{params.value}</h5>
+      ),
+    },
+    {
+      field: "createDate",
+      headerName: "Invoice Date",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <p className="text-dark dark:text-white">
+          {dayjs(params.value).format("MMM DD, YYYY")}
+        </p>
+      ),
+    },
+    {
+      field: "settlementDate",
+      headerName: "Status",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <div
+          className={cn(
+            "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
+            {
+              "bg-[#219653]/[0.08]": params.value !== null,
+              "bg-[#D34053]/[0.08]": params.value === null,
+              //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
+            },
+          )}
+        >
+          {params.value !== null ? "Paid" : "Unpaid"}
+        </div>
+      ),
+    },
+    {
+      field: "amountPaid",
+      headerName: "Enter Amount Paid",
+      flex: 2,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <NumberInput
+          isRequired
+          hideStepper
+          classNames={{
+            input: [
+              "w-full",
+              "focus:outline-none",
+              "focus:ring-none",
+              "focus:border-none",
+            ],
+            inputWrapper: ["w-full", "bg-gray"],
+          }}
+          endContent={
+            <Button
+              variant="light"
+              className="bg-transparent text-red-500 dark:bg-gray-700 dark:text-white"
+              onPress={() => {
+                console.log(
+                  "Max button clicked for invoiceId:",
+                  params.row.invoiceId,
+                );
+                const updatedPaidAmount = paidAmounts.map((item) =>
+                  item.invoiceId === params.row.invoiceId
+                    ? {
+                        ...item,
+                        amount:
+                          params.row.amount - (params.row.paidAmount || 0),
+                      }
+                    : item,
+                );
+                setPaidAmounts(updatedPaidAmount);
+              }}
             >
-              {params.value!== null ? "Paid" : "Unpaid"}
-            </div>
-          ),
-        },
-        {
-          field: "amountPaid",
-          headerName: "Enter Amount Paid",
-          flex: 2,
-          align: "center",
-          headerAlign: "center",
-          renderCell: (params) => (
-            <NumberInput 
-              isRequired 
-              hideStepper 
-              classNames={{
-                input: ["w-full", "focus:outline-none", "focus:ring-none", "focus:border-none"],
-                inputWrapper: ["w-full", "bg-gray"],
-              }}
-              endContent={
-                <Button
-                  variant="light"
-                  className="bg-transparent text-red-500 dark:text-white dark:bg-gray-700"
-                  onPress={() => {
-                    console.log("Max button clicked for invoiceId:", params.row.invoiceId);
-                    const updatedPaidAmount = paidAmounts.map((item) =>
-                      item.invoiceId === params.row.invoiceId
-                        ? { ...item, amount: params.row.amount - (params.row.paidAmount || 0) }
-                        : item,
-                    );
-                    setPaidAmounts(updatedPaidAmount);
-                  }}
-                >
-                  Max
-                </Button>
-              }
-              aria-label="Enter Amount Paid"
-              aria-placeholder="Enter Amount Paid"
-              value={paidAmounts.find((item) => item.invoiceId === params.row.invoiceId)?.amount || undefined}
-              onChange={(value) => {
-                if(Number(value) < (params.row.amount - (params.row.paidAmount))){
-                  console.log("Value changed:", value);
-                  const updatedPaidAmounts = paidAmounts.map((item) =>
-                    item.invoiceId === params.row.invoiceId
-                      ? { ...item, amount: parseFloat(value.toString()) }
-                      : item,
-                  );
-                  setPaidAmounts(updatedPaidAmounts);
-                }
-                
-              }}
-              variant="underlined" 
-              placeholder="Enter the amount" 
-              maxValue={params.row.amount - (params.row.paidAmount || 0)}
-              />
-          ),
-        },
+              Max
+            </Button>
+          }
+          aria-label="Enter Amount Paid"
+          aria-placeholder="Enter Amount Paid"
+          value={
+            paidAmounts.find((item) => item.invoiceId === params.row.invoiceId)
+              ?.amount || undefined
+          }
+          onChange={(value) => {
+            if (Number(value) < params.row.amount - params.row.paidAmount) {
+              console.log("Value changed:", value);
+              const updatedPaidAmounts = paidAmounts.map((item) =>
+                item.invoiceId === params.row.invoiceId
+                  ? { ...item, amount: parseFloat(value.toString()) }
+                  : item,
+              );
+              setPaidAmounts(updatedPaidAmounts);
+            }
+          }}
+          variant="underlined"
+          placeholder="Enter the amount"
+          maxValue={params.row.amount - (params.row.paidAmount || 0)}
+        />
+      ),
+    },
   ];
 
   return (
-      <div style={{ height: "auto", width: "100%" }}>
-        <DataGrid
-          rows={dataArray}
-          columns={columns}
-          getRowId={(row) => row.invoiceId}
-          disableColumnMenu
-          disableRowSelectionOnClick
-          hideFooter
-          sx={{
-            "& .MuiDataGrid-cell": {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-            "& .MuiDataGrid-columnHeader": {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "dark: black"
-            },
-            
-          }}
-
-          
-        />
-      </div>
-    
-
+    <div style={{ height: "auto", width: "100%" }}>
+      <DataGrid
+        rows={dataArray}
+        columns={columns}
+        getRowId={(row) => row.invoiceId}
+        disableColumnMenu
+        disableRowSelectionOnClick
+        hideFooter
+        sx={{
+          "& .MuiDataGrid-cell": {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+          "& .MuiDataGrid-columnHeader": {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "dark: black",
+          },
+        }}
+      />
+    </div>
   );
 }
 
