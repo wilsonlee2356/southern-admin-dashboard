@@ -17,6 +17,7 @@ import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
+import { useAuthenticatedRequest } from "@/lib/auth";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -51,6 +52,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
     const [streetAddress, setStreetAddress] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
+    const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -61,8 +63,10 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             setAmount(invoiceInfo.amount);
             setClientName(invoiceInfo.post.client.clientName);
             setFullName(toEmptyIfNull(invoiceInfo.post.client.fullName));
-            setAddress(toEmptyIfNull(invoiceInfo.post.buildingAddress));
+            setAddress(toEmptyIfNull(invoiceInfo.post.client.address));
             setInvoiceDate(dayjs(invoiceInfo.invoiceDate));
+            setBuildingAddress(invoiceInfo.post.buildingAddress);
+            setStreetAddress(invoiceInfo.post.streetAddress);
         }
         
     }, [invoiceInfo]);
@@ -124,7 +128,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             updateDate: newDate,
         };
 
-        CombinedService.update_invoice_details(invoiceInfo.invoiceId, updateInvoice).then((res) => {
+        CombinedService.update_invoice_details(invoiceInfo.invoiceId, updateInvoice, makeAuthenticatedRequest).then((res) => {
             if(res) {
                 console.log("Updated invoice: ", res);
                 setDataArray((prevData: any) => {
@@ -162,7 +166,10 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                 <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-left items-start content-stretch">
                     {/* <ShowcaseSection title="Contact Form" className="!p-6.5 w-full h-full "> */}
                         <form onSubmit={handleSubmit}>
+                            <div className="w-xl h-full flex flex-col gap-4.5 justify-start items-start content-stretch">
+                            <label className="text-body-lg font-medium text-dark">Invoice Information</label>
                             <div className="mb-4.5 flex flex-row gap-4.5">
+                                
                                 <InputGroup
                                     label="Invoice No. "
                                     type="text"
@@ -175,17 +182,6 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                 />
 
                                 <InputGroup
-                                    label="Postcode"
-                                    type="text"
-                                    placeholder="Enter postcode"
-                                    value={postcode}
-                                    handleChange={(e) => {
-                                        setPostcode(e.target.value);
-                                    }}
-                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
-                                />
-
-                                <InputGroup
                                     label="Amount"
                                     type="number"
                                     placeholder="Enter amount"
@@ -195,29 +191,90 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                     }}
                                     className="w-full xl:w-5/12" // 20% width on extra-large screens
                                 />
+
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <MuiDatePicker
+                                        title="Invoice Date"
+                                        label="Invoice Date"
+                                        value={dayjs(invoiceDate)}
+                                        onChange={(e) => {
+                                            setInvoiceDate(e as Dayjs);
+                                        }}
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                            <label className="text-body-lg font-medium text-dark">Client Information</label>
+                            <div className="flex flex-col">
+                                    <div className="mb-4.5 flex flex-row gap-4.5">
+                                        <InputGroup
+                                            label="Client Name"
+                                            type="text"
+                                            placeholder="Enter client number"
+                                            value={clientName}
+                                            handleChange={(e) => {
+                                                setClientName(e.target.value);
+                                            }}
+                                            className="w-full xl:w-5/12" // 40% width on extra-large screens
+                                        />
+
+                                        <InputGroup
+                                            label="Full Name"
+                                            type="text"
+                                            placeholder="Enter client's full number"
+                                            value={fullName}
+                                            handleChange={(e) => {
+                                                setFullName(e.target.value);
+                                            }}
+                                            className="w-full xl:w-5/12" // 40% width on extra-large screens
+                                        />
+                                        
+                                    </div>
+                                    <TextAreaOne 
+                                        label="Address" 
+                                        placeholder="Enter Address" 
+                                        value={address} 
+                                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/>
+                            </div>
+                            <label className="text-body-lg font-medium text-dark">Post Information</label>
+                            <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
+                                <InputGroup
+                                    label="Postcode"
+                                    type="text"
+                                    placeholder="Enter postcode"
+                                    value={postcode}
+                                    handleChange={(e) => {
+                                        setPostcode(e.target.value);
+                                    }}
+                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
+                                />
+                                <InputGroup
+                                    label="Building Adress"
+                                    type="text"
+                                    placeholder="Enter building adress"
+                                    value={buildingAddress}
+                                    handleChange={(e) => {
+                                        setBuildingAddress(e.target.value);
+                                    }}
+                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
+                                />
+                                <InputGroup
+                                    label="Street Address"
+                                    type="text"
+                                    placeholder="Enter street address"
+                                    value={streetAddress}
+                                    handleChange={(e) => {
+                                        setStreetAddress(e.target.value);
+                                    }}
+                                    className="w-full xl:w-5/12" // 20% width on extra-large screens
+                                />
+                                
+                            </div>
+                        </div>
+                            {/* <div className="mb-4.5 flex flex-row gap-4.5">
+                                
                             </div>
                             <div className="mb-4.5 flex flex-row gap-4.5">
-                                <InputGroup
-                                    label="Client Name"
-                                    type="text"
-                                    placeholder="Enter client number"
-                                    value={clientName}
-                                    handleChange={(e) => {
-                                        setClientName(e.target.value);
-                                    }}
-                                    className="w-full xl:w-5/12" // 40% width on extra-large screens
-                                />
-
-                                <InputGroup
-                                    label="Full Name"
-                                    type="text"
-                                    placeholder="Enter client's full number"
-                                    value={fullName}
-                                    handleChange={(e) => {
-                                        setFullName(e.target.value);
-                                    }}
-                                    className="w-full xl:w-5/12" // 40% width on extra-large screens
-                                />
+                                
                             </div>
                             <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                             <div className="w-full">
@@ -231,7 +288,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                         setInvoiceDate(e as Dayjs);
                                     }}
                                 />
-                            </LocalizationProvider>
+                            </LocalizationProvider> */}
                                 {/* <DatePickerThree 
                                     label="Invoice Date" 
                                     value={invoiceDate.toString()}
@@ -239,7 +296,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                         
                                         setInvoiceDate(e.target.value);
                                     }}/> */}
-                            </div>
+                            {/* </div> */}
                             {/* {
                                 invoiceInfo?.settlementDate ? (
                                     <div className="w-full xl:w-6/12">
@@ -254,7 +311,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                 ) : null
                             } */}
                             
-                            </div>
+                            {/* </div> */}
                             <Button
                                 label="Change"
                                 variant="green"

@@ -44,12 +44,12 @@ export const authOptions: NextAuthOptions = {
                 name: credentials.username,
                 accessToken: data.accessToken,
                 refreshToken: data.refreshToken,
+                role: data.roles, // Include role
+                username: data.username,
               };
           }
 
           throw new Error("Invalid response from server");
-
-          return null;
         } catch (err) {
           console.error("Login error:", err);
           return null;
@@ -66,6 +66,8 @@ export const authOptions: NextAuthOptions = {
       if (user?.accessToken) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
+        token.role = user.role;
+        token.username = user.username;
       }
       return token;
     },
@@ -73,6 +75,8 @@ export const authOptions: NextAuthOptions = {
       if (typeof token.accessToken === 'string') {
         session.accessToken = token.accessToken;
         session.refreshToken = token.refreshToken;
+        session.role = token.role;
+        session.username = token.username;
       }
       return session;
     },
@@ -80,7 +84,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,
-    // encryption: true,
   },
   
 };

@@ -10,10 +10,12 @@ const PostClientContentContext = createContext<{
   invoiceData: invoiceData[];
   postData: post[];
   clientData: client[];
+  updateData: () => void;
 }>({
   invoiceData: [],
   postData: [],
   clientData: [],
+  updateData: () => {},
 });
 
 export function usePostClientContent() {
@@ -61,10 +63,31 @@ export function PostClientContentProvider({
     }
   }, [session, status]);
 
+  const updateData = () =>{
+    if(status === "authenticated"){
+        console.log("Refreshing data");
+        CombinedService.get_all_invoice(makeAuthenticatedRequest).then((res) => {
+          setInvoiceData(res);
+          console.log("Invoice: " + res);
+          CombinedService.get_all_post(makeAuthenticatedRequest).then((res) => {
+            setPostData(res);
+            console.log("Post: " + res);
+            CombinedService.get_all_client(makeAuthenticatedRequest).then((res) => {
+                setClientData(res);
+                console.log("Client: " + res);
+              },
+            );
+          });
+        });
+    }
+    
+  }
+
   const postClientContent = {
     invoiceData,
     postData,
     clientData,
+    updateData,
   };
 
   return (

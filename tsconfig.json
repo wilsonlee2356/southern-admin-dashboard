@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "pages/api/auth/[...nextauth].ts"
-  ],
+, "src/middleware.ts"  ],
   "exclude": ["node_modules"]
 }

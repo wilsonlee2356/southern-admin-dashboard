@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { UserService } from "../api/userService";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { user, userCreateType } from "@/types/ObjectTypes/UserType";
+import { useSession } from "next-auth/react";
 
 // Mock data for demonstration
 const initialPosts = [
@@ -31,6 +32,7 @@ const initialPosts = [
 
 function PostManagementPage() {
   //const [posts, setPosts] = useState(initialPosts);
+  const { data: session, status } = useSession();
   const [users, setUsers] = useState<user[]>([]);
   const [userRole, setUserRole] = useState("admin"); // Can be "public", "team", or "admin"
   const [newUser, setNewUser] = useState<userCreateType>({
@@ -50,6 +52,9 @@ function PostManagementPage() {
       console.log("All user: ", response);
     };
     fetchUsers();
+    if(status === 'authenticated'){
+      console.log("Current user: ", session?.username, ", ", session?.role);
+    }
   }, []);
 
   // Filter posts based on user role

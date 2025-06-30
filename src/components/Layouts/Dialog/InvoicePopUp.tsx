@@ -14,6 +14,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import { invoiceData, invoiceCheques, PaidAmountsType } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
+import { useAuthenticatedRequest } from "@/lib/auth";
 
 type InvoicePopUpPropsType = {
     title: string;
@@ -33,6 +34,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
     const [amount, setAmount] = useState("");
     const [chequeFile, setChequeFile] = React.useState<string>();
     const [paidAmounts, setPaidAmounts] = useState<PaidAmountsType[]>([]);
+    const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
     useEffect(() => {
         console.log("Show details invoice:", dataArray);
@@ -147,7 +149,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                         CombinedService.create_cheque({
                             chequeId: 0, // Assuming chequeId is auto-generated
                             chequeCopy: chequeFile ? chequeFile : "",
-                            invoiceChequesList: [],}
+                            invoiceChequesList: []}, makeAuthenticatedRequest
                         ).then((cheque) => {
                                 console.log("Cheque created:", cheque);
                                 let invoiceChequesArr: invoiceCheques[] = [];
@@ -176,7 +178,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                                         paymentDate: invoiceDate ? invoiceDate.toDate() : new Date(),
                                     })
                                 });
-                                CombinedService.create_transaction(invoiceChequesArr).then((invoiceCheques) => {
+                                CombinedService.create_transaction(invoiceChequesArr, makeAuthenticatedRequest).then((invoiceCheques) => {
                                     console.log("InvoiceCheques created:", invoiceCheques);
                                     setUpdateDataNeeded(true);
                                     closePopUp();

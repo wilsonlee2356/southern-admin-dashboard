@@ -39,6 +39,15 @@ export function CloseIcon(props: IconProps) {
   );
 }
 
+export function RefreshIcon(props: IconProps){
+   return (
+    <svg fill="#000000" width={25} height={24} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M7 12v-2l-4 3 4 3v-2h2.997A6.006 6.006 0 0 0 16 8h-2a4 4 0 0 1-3.996 4H7zM9 2H6.003A6.006 6.006 0 0 0 0 8h2a4 4 0 0 1 3.996-4H9v2l4-3-4-3v2z" fillRule="evenodd"/>
+    </svg>
+   );
+
+}
+
 export function ArrowLeftIcon(props: IconProps) {
   return (
     <svg

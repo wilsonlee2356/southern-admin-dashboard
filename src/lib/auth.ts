@@ -4,7 +4,11 @@ import { getSession, signOut, useSession } from "next-auth/react";
 
 export async function refreshAccessToken(
   refreshToken: string,
-): Promise<string | null> {
+): Promise<{
+  accessToken: string | null;
+  role?: string;
+  username?: string;
+}> {
   try {
     console.log(
       "Attempting to refresh access token with refreshToken:",
@@ -27,10 +31,14 @@ export async function refreshAccessToken(
       throw new Error(data.message || "Failed to refresh token");
     }
 
-    return data.accessToken;
+    return {
+      accessToken: data.accessToken,
+      role: data.roles, // Include role if returned by backend
+      username: data.username, // Include username if returned by backend
+    };
   } catch (err) {
     console.error("Refresh Error:", err);
-    return null;
+    return { accessToken: null };
   }
 }
 
@@ -51,7 +59,7 @@ export function useAuthenticatedRequest() {
     }
 
     try {
-      console.log("Attempt to use token access token ", session.accessToken);
+      console.log("Attempt to use access token ", session.accessToken);
       const response = await fetch(url, {
         ...options,
         headers: {
@@ -61,13 +69,17 @@ export function useAuthenticatedRequest() {
         },
         credentials: "include",
       });
-
+      console.log(response);
       if (response.status === 401 && session.refreshToken) {
         console.log("Access token expired, attempting refresh");
         const newAccessToken = await refreshAccessToken(session.refreshToken);
-        if (newAccessToken) {
+        if (newAccessToken.accessToken) {
           console.log("New access token obtained:", newAccessToken);
-          await update({ accessToken: newAccessToken });
+          await update({
+            accessToken: newAccessToken.accessToken,
+            role: newAccessToken.role,
+            username: newAccessToken.username,
+          });
           console.log("Session updated with new access token");
           // Retry the original request
           const updatedResponse = await fetch(url, {
@@ -75,11 +87,11 @@ export function useAuthenticatedRequest() {
             headers: {
               ...options.headers,
               "Content-Type": "application/json",
-              Authorization: `Bearer ${newAccessToken}`,
+              Authorization: `Bearer ${newAccessToken.accessToken}`,
             },
             credentials: "include",
           });
-          return { response: updatedResponse, newAccessToken };
+          return { response: updatedResponse, newAccessToken: newAccessToken.accessToken };
         } else {
           console.error("Failed to refresh token, signing out");
           await signOut({ callbackUrl: "/auth/signin" });

@@ -1,5 +1,5 @@
 "use client";
-import { CheckIcon, DoubleCheckIcon, TrashIcon } from "@/assets/icons";
+import { CheckIcon, RefreshIcon, TrashIcon } from "@/assets/icons";
 import { PreviewIcon, EditIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
@@ -19,6 +19,8 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
+import { useAuthenticatedRequest } from "@/lib/auth";
+import { usePostClientContent } from "@/utils/post-client-content";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -72,6 +74,10 @@ function MuiDataGridWithPopUpButton({
 
   const [confirmPopUpOpen, setConfirmPopUpOpen] = useState<boolean>(false);
 
+  const { updateData } = usePostClientContent();
+
+  const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
   useEffect(() => {
     // console.log("Data array updated:", dataArray);
     const total = dataArray.reduce(
@@ -80,6 +86,11 @@ function MuiDataGridWithPopUpButton({
     );
     setTotalAmount(total);
   }, [dataArray]);
+
+  const handleRefreshClick = () => {
+    
+    updateData();
+  };
 
   // useEffect(() => {
   //   console.log("Row selected:", editingRow);
@@ -93,7 +104,18 @@ function MuiDataGridWithPopUpButton({
             <label className="mb-3 block text-body-xl font-medium text-dark">
               No data available
             </label>
+            
             <div className="full-width flex items-right justify-end gap-x-3.5">
+              <Button
+                label="Refresh"
+                variant="blue"
+                shape="full"
+                size="small"
+                icon={<RefreshIcon className="fill-white" />}
+                onClick={() => {
+                  handleRefreshClick();
+                }}
+              />
               <MuiCheckbox
                           label="Unpaid invoice"
                           name="unpaidInvoice"
@@ -178,7 +200,7 @@ function MuiDataGridWithPopUpButton({
 
     invoiceToBeUpdated.isPaid = true;
     console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
-    CombinedService.update_invoice_details(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated).then((res) => {
+    CombinedService.update_invoice_details(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated, makeAuthenticatedRequest).then((res) => {
         if(res) {
             console.log("Updated invoice: ", res);
             setUpdateDataNeeded(true); // Trigger data update
@@ -386,6 +408,16 @@ function MuiDataGridWithPopUpButton({
               {`Total: $${totalAmount.toLocaleString()}`}
             </label>
             <div className="full-width flex items-right justify-end gap-x-3.5">
+            <Button
+                label="Refresh"
+                variant="blue"
+                shape="full"
+                size="small"
+                icon={<RefreshIcon className="fill-white" />}
+                onClick={() => {
+                  
+                }}
+              />
               <MuiCheckbox
                           label="Unpaid invoice"
                           name="unpaidInvoice"
