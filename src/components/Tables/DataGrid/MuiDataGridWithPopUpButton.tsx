@@ -532,7 +532,7 @@ function MuiDataGridWithPopUpButton({
           if(deleteingRow !== -1){
             const invoice = getInvoiceById(deleteingRow);
               if (!invoice) return;
-              CombinedService.delete_invoice_by_id(invoice.invoiceId).then((res) => {
+              CombinedService.delete_invoice_by_id(invoice.invoiceId, makeAuthenticatedRequest).then((res) => {
                 console.log("Deleted invoice: ", res);
                   const updatedData = dataArray.filter(
                     (item) => item.invoiceId !== invoice.invoiceId,

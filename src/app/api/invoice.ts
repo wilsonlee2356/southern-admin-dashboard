@@ -55,13 +55,17 @@ async function makeApiRequest<T>(
       const errorText = await response.text();
       throw new Error(`${errorMessage}: ${response.status} ${errorText}`);
     }
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      if (data === null || data === undefined) {
+        throw new Error(`${errorMessage}: Empty response received`);
+      }
 
-    const data = await response.json();
-    if (data === null || data === undefined) {
-      throw new Error(`${errorMessage}: Empty response received`);
+      return data as T;
     }
-
-    return data as T;
+    throw new Error(`${errorMessage}: Response is not JSON`);
+    
   } catch (error) {
     console.error(`${errorMessage}:`, error);
     throw error;
@@ -216,7 +220,7 @@ export const CombinedService = {
       throw new Error("Invalid invoice ID");
     }
     await makeApiRequest<void>(
-      `/api/invoices/${id}`,
+      `/api/combined/invoiceRemove/${id}`,
       { method: "DELETE" },
       makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
       `Unable to delete invoice with ID ${id}`,
