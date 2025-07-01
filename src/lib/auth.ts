@@ -33,7 +33,7 @@ export async function refreshAccessToken(
 
     return {
       accessToken: data.accessToken,
-      role: data.roles, // Include role if returned by backend
+      role: data.roles[0], // Include role if returned by backend
       username: data.username, // Include username if returned by backend
     };
   } catch (err) {

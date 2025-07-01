@@ -83,6 +83,17 @@ export const CombinedService = {
     );
   },
 
+  async get_all_invoice_sorted_by_date(
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData[]> {
+    return makeApiRequest<invoiceData[]>(
+      "/api/invoices/sorted",
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      "Unable to fetch invoices sorted by date",
+    );
+  },
+
   async get_all_client(
     makeAuthenticatedRequest?: AuthRequestHandler,
   ): Promise<client[]> {

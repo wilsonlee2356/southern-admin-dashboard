@@ -18,6 +18,7 @@ import { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { usePostClientContent } from "@/utils/post-client-content";
+import { useSession } from "next-auth/react";
 
 type SearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -58,7 +59,7 @@ const SearchBox = ({
   setUpdateDataNeeded,
 }: SearchBoxProps) => {
   const [popUpOpen, setPopUpOpen] = useState(false);
-
+  const { data: session, status } = useSession();
   const { updateData } = usePostClientContent();
 
   // const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({
@@ -275,7 +276,8 @@ const SearchBox = ({
               handleClear();
             }}
           />
-          <Button
+
+          {(status === "authenticated" && session?.accessToken && (session.role === 'admins' || session.role === 'editors')) ? <Button
             label="Create"
             variant="primary"
             shape="full"
@@ -284,8 +286,8 @@ const SearchBox = ({
             onClick={() => {
               //handleSubmit;
               setPopUpOpen(true);
-            }}
-          />
+            }}/> 
+            : <></>}
         </div>
       </form>
       <InvoiceCreatePopUp

@@ -13,26 +13,35 @@ import Image from "next/image";
 import { getTopChannels } from "../fetch";
 import { Tab } from "@mui/material";
 import { invoiceOutstandingSummary } from "@/types/ObjectTypes/InvoiceType";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { CombinedService } from "@/app/api/invoice";
+import { useAuthenticatedRequest } from "@/lib/auth";
 
 type ChannelType = {
-  outstandingList: (string | number)[][];
+  // outstandingList: (string | number)[][];
   className: string;
 };
 
 
-export function TopChannels({ className, outstandingList }: ChannelType) {
+export function TopChannels({ className }: ChannelType) {
   //const data = await getTopChannels();
+  const [outstandingList, setOutstandingList] = useState<(string | number)[][]>([]);
 
-  // useEffect(() => {
-  //     //console.log("Outstanding:", outstandingList);
-  //     // outstandingList.map((outstanding) => {
-  //     //   console.log("Outstanding:", outstanding);
-  //     //   console.log("Client Name:", outstanding[0]);
-  //     //   console.log("Number of Invoices:", outstanding[0]);
-  //     //   console.log("Total Outstanding:", outstanding[0]);
-  //     // });
-  //   }, []);
+  const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  useEffect(() => {
+    CombinedService.get_invoice_outstanding_summary(makeAuthenticatedRequest).then((data)=>{
+      setOutstandingList(data);
+      console.log("Outstanding:", outstandingList);
+    });
+    
+      // outstandingList.map((outstanding) => {
+      //   console.log("Outstanding:", outstanding);
+      //   console.log("Client Name:", outstanding[0]);
+      //   console.log("Number of Invoices:", outstanding[0]);
+      //   console.log("Total Outstanding:", outstanding[0]);
+      // });
+    }, []);
   
 
   return (

@@ -1,7 +1,6 @@
 "use client";
-import { CheckIcon, RefreshIcon, TrashIcon } from "@/assets/icons";
+import { CheckIcon, TrashIcon } from "@/assets/icons";
 import { PreviewIcon, EditIcon } from "@/components/Tables/icons";
-import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
 import {
   DataGrid,
@@ -20,7 +19,7 @@ import React, { useEffect, useState } from "react";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
-import { usePostClientContent } from "@/utils/post-client-content";
+import { useSession } from "next-auth/react";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -63,6 +62,7 @@ function MuiDataGridWithPopUpButton({
   setUpdateDataNeeded, // Optional prop to trigger data update
 }: MuiDataGridWithPopUpButtonProps) {
   const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
+
   const [totalAmount, setTotalAmount] = useState<number>(0
     //dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
   );
@@ -74,9 +74,9 @@ function MuiDataGridWithPopUpButton({
 
   const [confirmPopUpOpen, setConfirmPopUpOpen] = useState<boolean>(false);
 
-  const { updateData } = usePostClientContent();
-
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     // console.log("Data array updated:", dataArray);
@@ -361,7 +361,9 @@ function MuiDataGridWithPopUpButton({
             <span className="sr-only">View Invoice</span>
             <PreviewIcon className="fill-dark dark:fill-white" />
           </button>
-          <button className="text-dark dark:text-white"
+          
+          {(status === "authenticated" && session?.accessToken && (session.role === 'admins' || session.role === 'editors')) ?
+          <><button className="text-dark dark:text-white"
             onClick={() => {
               setDeletingRow(params.id as number);
               setConfirmPopUpOpen(true);
@@ -390,7 +392,7 @@ function MuiDataGridWithPopUpButton({
             }}>
             <span className="sr-only">Set Paid Invoice</span>
             <CheckIcon className="fill-dark dark:fill-white" />
-          </button>
+          </button></> : <></>}
         </div>
       ),
     },
@@ -478,17 +480,21 @@ function MuiDataGridWithPopUpButton({
           
         />
       </div>
-      <Button
-        label="Set paid"
-        variant="green"
-        shape="full"
-        size="default"
-        icon={<CheckIcon className="fill-white" />}
-        disabled={!canSetPay}
-        onClick={() => {
-          setPopUpOpen(true);
-        }}
-      />
+      {(status === "authenticated" && 
+          session?.accessToken && 
+          (session.role === 'admins' || session.role === 'editors')) ?
+          <Button
+            label="Set paid"
+            variant="green"
+            shape="full"
+            size="default"
+            icon={<CheckIcon className="fill-white" />}
+            disabled={!canSetPay}
+            onClick={() => {
+              setPopUpOpen(true);
+            }}
+          /> : 
+          <></>}
       <InvoicePopUp
         title="Upload cheque or statement"
         open={popUpOpen}

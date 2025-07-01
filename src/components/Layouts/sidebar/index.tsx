@@ -9,12 +9,14 @@ import { NAV_DATA } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
+import { useSession } from "next-auth/react";
 // import { useAuth } from "@/contexts/authContext";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const { data: session, status } = useSession();
   // const { currentUser } = useAuth();
 
   const toggleExpanded = (title: string) => {
@@ -99,10 +101,10 @@ export function Sidebar() {
                   <nav role="navigation" aria-label={section.label}>
                     <ul className="space-y-2">
                       {section.items.map((item) => (
-                        <li key={item.title}>
+                          <li key={item.title}>
                           {item.items.length ? (
                             <div>
-                              <MenuItem
+                              {/* <MenuItem
                                 isActive={item.items.some(
                                   ({ url }) => url === pathname,
                                 )}
@@ -142,38 +144,105 @@ export function Sidebar() {
                                     </li>
                                   ))}
                                 </ul>
-                              )}
+                              )} */}
                             </div>
                           ) : (
                             (() => {
-                              const href =
-                                "url" in item
-                                  ? item.url + ""
-                                  : "/" +
-                                    item.title
-                                      .toLowerCase()
-                                      .split(" ")
-                                      .join("-");
+                              console.log("Session role: ", session?.role);
+                              if(status === "authenticated" && session.accessToken && session.role === 'admins'){
+                                  if(item.title === "User Management"){
 
-                              return (
-                                <MenuItem
-                                  className="flex items-center gap-3 py-3"
-                                  as="link"
-                                  href={href}
-                                  isActive={pathname === href}
-                                >
-                                  <item.icon
-                                    className="size-6 shrink-0"
-                                    aria-hidden="true"
-                                  />
+                                    const href =
+                                    "url" in item
+                                      ? item.url + ""
+                                      : "/" +
+                                        item.title
+                                          .toLowerCase()
+                                          .split(" ")
+                                          .join("-");
 
-                                  <span>{item.title}</span>
-                                </MenuItem>
-                              );
+                                    return (
+                                      <MenuItem
+                                        className="flex items-center gap-3 py-3"
+                                        as="link"
+                                        href={href}
+                                        isActive={pathname === href}
+                                      >
+                                        <item.icon
+                                          className="size-6 shrink-0"
+                                          aria-hidden="true"
+                                        />
+
+                                        <span>{item.title}</span>
+                                      </MenuItem>
+                                    );
+                                  } else {
+                                    const href =
+                                    "url" in item
+                                      ? item.url + ""
+                                      : "/" +
+                                        item.title
+                                          .toLowerCase()
+                                          .split(" ")
+                                          .join("-");
+
+                                    return (
+                                      <MenuItem
+                                        className="flex items-center gap-3 py-3"
+                                        as="link"
+                                        href={href}
+                                        isActive={pathname === href}
+                                      >
+                                        <item.icon
+                                          className="size-6 shrink-0"
+                                          aria-hidden="true"
+                                        />
+
+                                        <span>{item.title}</span>
+                                      </MenuItem>
+                                    );
+                                  }
+                                } else {
+                                  if(item.title !== "User Management"){
+
+                                  const href =
+                                  "url" in item
+                                    ? item.url + ""
+                                    : "/" +
+                                      item.title
+                                        .toLowerCase()
+                                        .split(" ")
+                                        .join("-");
+
+                                  return (
+                                    <MenuItem
+                                      className="flex items-center gap-3 py-3"
+                                      as="link"
+                                      href={href}
+                                      isActive={pathname === href}
+                                    >
+                                      <item.icon
+                                        className="size-6 shrink-0"
+                                        aria-hidden="true"
+                                      />
+
+                                      <span>{item.title}</span>
+                                    </MenuItem>
+                                  );
+                                }
+                                }
+                              
                             })()
                           )}
                         </li>
-                      ))}
+
+                        
+                        
+                        
+                        
+                        
+                        )
+                      )}
                     </ul>
                   </nav>
                 </div>

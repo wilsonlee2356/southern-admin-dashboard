@@ -1,3 +1,4 @@
+"use client";
 import { PeriodPicker } from "@/components/period-picker";
 import { standardFormat } from "@/lib/format-number";
 import { cn } from "@/lib/utils";
@@ -7,6 +8,8 @@ import { InvoiceService } from "@/app/api/services/invoiceService";
 import { CombinedService } from "@/app/api/invoice";
 import { createMonthlyTimeData } from "@/utils/chart-data-analyzer";
 import { invoiceData, invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
+import { useAuthenticatedRequest } from "@/lib/auth";
+import { useEffect, useState } from "react";
 
 type PropsType = {
   timeFrame?: string;
@@ -20,14 +23,40 @@ type DataPropType = {
   };
 };
 
-export async function PaymentsOverview({
+export function PaymentsOverview({
   timeFrame = "monthly",
   className,
 }: PropsType) {
   // const data = await getPaymentsOverviewData(timeFrame);
-  const invoiceData = await InvoiceService.getAllSortByDate() as invoiceData[];
-  const invoiceCheques = await CombinedService.get_all_invoiceCheques() as invoiceCheques[];
-  const chartData = createMonthlyTimeData(invoiceData, invoiceCheques);
+
+  const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+  const [invoiceData, setInvoiceData] = useState<invoiceData[]>([]);
+  const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
+  const [chartData, setChartData] = useState<DataPropType>({
+    data: {
+      received: [],
+      due: []
+    }
+  });
+
+  useEffect(() => {
+    CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest).then((invoices)=>{
+        setInvoiceData(invoices);
+        console.log("invoices:", invoiceData);
+        CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest).then((invoiceCheques)=>{
+          setInvoiceCheques(invoiceCheques);
+          console.log("invoiceCheques:", invoiceCheques);
+          setChartData(createMonthlyTimeData(invoiceData, invoiceCheques));
+        });
+    });
+      // CombinedService.get_invoice_outstanding_summary(makeAuthenticatedRequest).then((data)=>{
+      //   setOutstandingList(data);
+      //   console.log("Outstanding:", outstandingList);
+      // });
+  }, []);
+  //const invoiceData = await CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest);
+  //const invoiceCheques = await CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest);
+  //const chartData = createMonthlyTimeData(invoiceData, invoiceCheques);
 
   return (
     <div
@@ -44,19 +73,19 @@ export async function PaymentsOverview({
         <PeriodPicker defaultValue={timeFrame} sectionKey="payments_overview" />
       </div>
 
-      <PaymentsOverviewChart data={chartData} />
+      <PaymentsOverviewChart data={chartData.data} />
 
       <dl className="grid divide-stroke text-center dark:divide-dark-3 sm:grid-cols-2 sm:divide-x [&>div]:flex [&>div]:flex-col-reverse [&>div]:gap-1">
         <div className="dark:border-dark-3 max-sm:mb-3 max-sm:border-b max-sm:pb-3">
           <dt className="text-xl font-bold text-dark dark:text-white">
-            ${standardFormat(chartData.received.reduce((acc, { y }) => acc + y, 0))}
+            ${standardFormat(chartData.data.received.reduce((acc, { y }) => acc + y, 0))}
           </dt>
           <dd className="font-medium dark:text-dark-6">Received Amount</dd>
         </div>
 
         <div>
           <dt className="text-xl font-bold text-dark dark:text-white">
-            ${standardFormat(chartData.due.reduce((acc, { y }) => acc + y, 0))}
+            ${standardFormat(chartData.data.due.reduce((acc, { y }) => acc + y, 0))}
           </dt>
           <dd className="font-medium dark:text-dark-6">Due Amount</dd>
         </div>

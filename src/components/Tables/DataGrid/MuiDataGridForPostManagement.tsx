@@ -11,6 +11,7 @@ import {
 } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
+import { useSession } from "next-auth/react";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -35,6 +36,8 @@ function MuiDataGridForPostManagement({
     [],
   );
   const [canSetFinish, setCanSetFinish] = useState<boolean>(false);
+
+  const { data: session, status } = useSession();
 
   React.useEffect(() => {
     const processedArray: postClientInvoiceSummary[] = []; //
@@ -226,7 +229,9 @@ function MuiDataGridForPostManagement({
           }}
         />
       </div>
-      <Button
+      {(status === "authenticated" && 
+          session?.accessToken && 
+          (session.role === 'admins' || session.role === 'editors')) ?<Button
         label="Set finished"
         variant="green"
         shape="full"
@@ -236,7 +241,7 @@ function MuiDataGridForPostManagement({
         onClick={() => {
           setPopUpOpen(true);
         }}
-      />
+      />:<></>}
       <ComfirmPopUp
         title="Confirm"
         message="Are you sure you want to set the selected invoices as paid?"
