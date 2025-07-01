@@ -87,10 +87,9 @@ function MuiDataGridWithPopUpButton({
     setTotalAmount(total);
   }, [dataArray]);
 
-  const handleRefreshClick = () => {
-    
-    updateData();
-  };
+  // const handleRefreshClick = () => {
+  //   updateData();
+  // };
 
   // useEffect(() => {
   //   console.log("Row selected:", editingRow);
@@ -106,16 +105,16 @@ function MuiDataGridWithPopUpButton({
             </label>
             
             <div className="full-width flex items-right justify-end gap-x-3.5">
-              <Button
-                label="Refresh"
-                variant="blue"
+              {/* <Button
+                label="Refresh Data"
+                variant="outlineBlue"
                 shape="full"
                 size="small"
-                icon={<RefreshIcon className="fill-white" />}
+                icon={<RefreshIcon className="fill-blue" />}
                 onClick={() => {
                   handleRefreshClick();
                 }}
-              />
+              /> */}
               <MuiCheckbox
                           label="Unpaid invoice"
                           name="unpaidInvoice"
@@ -408,16 +407,16 @@ function MuiDataGridWithPopUpButton({
               {`Total: $${totalAmount.toLocaleString()}`}
             </label>
             <div className="full-width flex items-right justify-end gap-x-3.5">
-            <Button
-                label="Refresh"
-                variant="blue"
+            {/* <Button
+                label="Refresh Data"
+                variant="outlineBlue"
                 shape="full"
                 size="small"
-                icon={<RefreshIcon className="fill-white" />}
+                icon={<RefreshIcon className="fill-blue" />}
                 onClick={() => {
-                  
+                  handleRefreshClick();
                 }}
-              />
+              /> */}
               <MuiCheckbox
                           label="Unpaid invoice"
                           name="unpaidInvoice"

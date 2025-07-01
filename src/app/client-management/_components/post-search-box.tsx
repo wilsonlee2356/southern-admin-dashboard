@@ -6,8 +6,9 @@ import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
 import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import { client, post, invoiceData } from "@/types/ObjectTypes/InvoiceType";
-import { CloseIcon } from "@/assets/icons";
+import { CloseIcon, RefreshIcon } from "@/assets/icons";
 import { MuiCheckbox } from "@/components/FormElements/Checkboxes/MuiCheckbox";
+import { usePostClientContent } from "@/utils/post-client-content";
 
 type PostSearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -42,6 +43,9 @@ const PostSearchBox = ({
   setShowEndedPosts,
   setShowNotEndedPosts,
 }: PostSearchBoxProps) => {
+
+  const { updateData } = usePostClientContent();
+
   const clientNameArr = clientData.map((item) => ({
     key: item.clientId.toString(),
     name: item.clientName,
@@ -61,6 +65,9 @@ const PostSearchBox = ({
     setFilteredData(dataArray); // Reset to original data
     setClientName("");
     setPostcode("");
+  };
+  const handleRefreshClick = () => {
+    updateData();
   };
 
   return (
@@ -99,6 +106,16 @@ const PostSearchBox = ({
           />
         </div>
         <div className="flex flex-col gap-4 xl:flex-row xl:justify-center">
+          <Button
+            label="Refresh Data"
+            variant="outlineBlue"
+            shape="full"
+            size="small"
+            icon={<RefreshIcon className="fill-blue" />}
+            onClick={() => {
+              handleRefreshClick();
+            }}
+          />
           <Button
             label="Clear"
             variant="outlinePrimary"

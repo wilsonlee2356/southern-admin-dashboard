@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { LogOutIcon } from "./icons";
+import { LogOutIcon, LogInIcon } from "./icons";
 // import { useAuth } from "@/contexts/authContext";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -70,7 +70,7 @@ export function UserInfo() {
 
           <figure className="flex items-center gap-3">
             <figcaption className="flex items-center gap-1 font-medium text-dark dark:text-dark-6 max-[1024px]:sr-only">
-              <span>User name here</span>
+              <span>{(status !== "authenticated" || !session?.accessToken) ? "Login" : session.username}</span>
 
               <ChevronUpIcon
                 aria-hidden
@@ -84,60 +84,43 @@ export function UserInfo() {
           </figure>
         </DropdownTrigger>
 
+        {(status !== "authenticated" || !session?.accessToken) ? 
         <DropdownContent
+          className="border border-stroke bg-white shadow-md dark:border-dark-3 dark:bg-gray-dark min-[230px]:min-w-[17.5rem]"
+          align="end"
+        >
+          <div className="p-2 text-base text-[#4B5563] dark:text-dark-6">
+            <button
+              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
+              onClick={() => {
+                
+                router.push("/auth/sign-in");
+              }}
+            >
+              <LogInIcon className="fill-grey"/>
+
+              <span className="text-base font-medium">Sign in</span>
+
+            </button>
+          </div>
+        </DropdownContent>
+        :<DropdownContent
           className="border border-stroke bg-white shadow-md dark:border-dark-3 dark:bg-gray-dark min-[230px]:min-w-[17.5rem]"
           align="end"
         >
           <h2 className="sr-only">User information</h2>
 
           <figure className="flex items-center gap-2.5 px-5 py-3.5">
-            {/* {USER.img && (
-                <Image
-                  src={USER.img}
-                  className="size-12"
-                  alt={`Avatar for ${USER.name}`}
-                  role="presentation"
-                  width={200}
-                  height={200}
-                />
-              )} */}
-
             <figcaption className="space-y-1 text-base font-medium">
               <div className="mb-2 leading-none text-dark dark:text-white">
-                {/* {USER.name} */}User name here
+                {session.username}
               </div>
 
-              <div className="leading-none text-gray-6">User email here</div>
+              <div className="leading-none text-gray-6">{session.role}</div>
             </figcaption>
           </figure>
 
           <hr className="border-[#E8E8E8] dark:border-dark-3" />
-
-          {/* <div className="p-2 text-base text-[#4B5563] dark:text-dark-6 [&>*]:cursor-pointer">
-              <Link
-                href={"/profile"}
-                onClick={() => setIsOpen(false)}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
-              >
-                <UserIcon />
-
-                <span className="mr-auto text-base font-medium">
-                  View profile
-                </span>
-              </Link>
-
-              <Link
-                href={"/pages/settings"}
-                onClick={() => setIsOpen(false)}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
-              >
-                <SettingsIcon />
-
-                <span className="mr-auto text-base font-medium">
-                  Account Settings
-                </span>
-              </Link>
-            </div> */}
 
           <hr className="border-[#E8E8E8] dark:border-dark-3" />
 
@@ -157,7 +140,7 @@ export function UserInfo() {
               <span className="text-base font-medium">Sign out</span>
             </button>
           </div>
-        </DropdownContent>
+        </DropdownContent>}
       </>
       {/* ) : (
         <>

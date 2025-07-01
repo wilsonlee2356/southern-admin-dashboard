@@ -62,25 +62,56 @@ export const authOptions: NextAuthOptions = {
     signOut: undefined,
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user?.accessToken) {
+    async jwt({ token, user, trigger, session }) {
+      // Initial sign-in
+      if (user) {
+        console.log("jwt callback (sign-in): ", user);
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.role = user.role;
         token.username = user.username;
       }
+      // Session update triggered by client (e.g., via update())
+      if (trigger === "update" && session) {
+        console.log("jwt callback (update): ", session);
+        token.accessToken = session.accessToken || token.accessToken;
+        token.refreshToken = session.refreshToken || token.refreshToken;
+        token.role = session.role || token.role;
+        token.username = session.username || token.username;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (typeof token.accessToken === 'string') {
-        session.accessToken = token.accessToken;
-        session.refreshToken = token.refreshToken;
-        session.role = token.role;
-        session.username = token.username;
-      }
+      console.log("session callback: ", token, " ,\n ", session);
+      session.accessToken = token.accessToken;
+      session.refreshToken = token.refreshToken;
+      session.role = token.role;
+      session.username = token.username;
       return session;
     },
   },
+  // callbacks: {
+  //   async jwt({ token, user }) {
+  //     if (user?.accessToken) {
+  //       console.log("jwt callback: ", user);
+  //       token.accessToken = user.accessToken;
+  //       token.refreshToken = user.refreshToken;
+  //       token.role = user.role;
+  //       token.username = user.username;
+  //     }
+  //     return token;
+  //   },
+  //   async session({ session, token }) {
+  //     // if (typeof token.accessToken === 'string') {
+  //     console.log("session callback: ", token, " ,\n ", session);
+  //     session.accessToken = token.accessToken;
+  //     session.refreshToken = token.refreshToken;
+  //     session.role = token.role;
+  //     session.username = token.username;
+  //     // }
+  //     return session;
+  //   },
+  // },
   secret: process.env.NEXTAUTH_SECRET,
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,

@@ -11,12 +11,13 @@ import {
   post,
   invoiceData,
 } from "@/types/ObjectTypes/InvoiceType";
-import { CloseIcon, UploadIcon } from "@/assets/icons";
+import { CloseIcon, UploadIcon, RefreshIcon } from "@/assets/icons";
 import InvoiceCreatePopUp from "@/components/Layouts/Dialog/InvoiceCreatePopUp";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { usePostClientContent } from "@/utils/post-client-content";
 
 type SearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -57,6 +58,8 @@ const SearchBox = ({
   setUpdateDataNeeded,
 }: SearchBoxProps) => {
   const [popUpOpen, setPopUpOpen] = useState(false);
+
+  const { updateData } = usePostClientContent();
 
   // const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({
   //   key: item.invoiceId.toString(),
@@ -120,6 +123,10 @@ const SearchBox = ({
     //   return null;
     // }
     //   const newAccessToken = refreshAccessToken(session.refreshToken);
+  };
+
+  const handleRefreshClick = () => {
+    updateData();
   };
 
   // const checkDateWithinMonths = (date: Date, months: number) => {
@@ -248,6 +255,16 @@ const SearchBox = ({
           
         </div> */}
         <div className="flex flex-col gap-4 xl:flex-row xl:justify-center">
+          <Button
+            label="Refresh Data"
+            variant="outlineBlue"
+            shape="full"
+            size="small"
+            icon={<RefreshIcon className="fill-blue" />}
+            onClick={() => {
+              handleRefreshClick();
+            }}
+          />
           <Button
             label="Clear"
             variant="outlinePrimary"

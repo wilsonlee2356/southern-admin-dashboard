@@ -75,10 +75,16 @@ export function useAuthenticatedRequest() {
         const newAccessToken = await refreshAccessToken(session.refreshToken);
         if (newAccessToken.accessToken) {
           console.log("New access token obtained:", newAccessToken);
+          // await update({
+          //   accessToken: newAccessToken.accessToken,
+          //   role: newAccessToken.role,
+          //   username: newAccessToken.username,
+          // });
           await update({
             accessToken: newAccessToken.accessToken,
             role: newAccessToken.role,
             username: newAccessToken.username,
+            refreshToken: session.refreshToken, // Preserve the refreshToken
           });
           console.log("Session updated with new access token");
           // Retry the original request

@@ -75,7 +75,7 @@ export function Header() {
           <SearchIcon className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 max-[1015px]:size-5" />
         </div> */}
 
-        <ThemeToggleSwitch />
+        {/* <ThemeToggleSwitch /> */}
 
         {/* <Notification /> */}
 
