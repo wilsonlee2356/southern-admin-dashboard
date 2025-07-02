@@ -10,18 +10,14 @@ import { ArrowLeftIcon } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
 import { useSession } from "next-auth/react";
-// import { useAuth } from "@/contexts/authContext";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const { data: session, status } = useSession();
-  // const { currentUser } = useAuth();
 
   const toggleExpanded = (title: string) => {
-    // setExpandedItems((prev) => (prev.includes(title) ? [] : [title]));
-
     // Uncomment the following line to enable multiple expanded items
     setExpandedItems((prev) =>
       prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title],

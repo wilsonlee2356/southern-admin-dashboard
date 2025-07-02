@@ -57,13 +57,6 @@ function PostManagementPage() {
     }
   }, []);
 
-  // Filter posts based on user role
-  // const filteredPosts = posts.filter((post) => {
-  //   if (userRole === "admin") return true;
-  //   if (userRole === "team") return post.access !== "admin";
-  //   return post.access === "public";
-  // });
-
   // Handle post creation
   const handleCreatePost = (e: any) => {
     e.preventDefault();

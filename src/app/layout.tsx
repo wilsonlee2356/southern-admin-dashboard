@@ -12,7 +12,6 @@ import NextTopLoader from "nextjs-toploader";
 import type { PropsWithChildren } from "react";
 import { Providers } from "./providers";
 
-
 export const metadata: Metadata = {
   title: {
     template: "%s | NextAdmin - Next.js Dashboard Kit",

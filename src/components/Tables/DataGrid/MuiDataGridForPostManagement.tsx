@@ -191,12 +191,6 @@ function MuiDataGridForPostManagement({
 
   return (
     <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
-      {/* <ShowcaseSection
-        title={`Total: $${totalAmount.toLocaleString()}`}
-        className="!p-6.5"
-      >
-        <div></div>
-      </ShowcaseSection> */}
       <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
         <DataGrid
           rows={processedDataArray}
@@ -205,7 +199,6 @@ function MuiDataGridForPostManagement({
           columnVisibilityModel={{
             id: false,
           }}
-          // isRowSelectable={(params: GridRowParams) => params.row.status === "Unpaid"}
           rowSelectionModel={selectedRows.map((row) => row.post_id)}
           onRowSelectionModelChange={(checkedRows) => {
             updateSelectedRow(checkedRows);
@@ -229,19 +222,23 @@ function MuiDataGridForPostManagement({
           }}
         />
       </div>
-      {(status === "authenticated" && 
-          session?.accessToken && 
-          (session.role === 'admins' || session.role === 'editors')) ?<Button
-        label="Set finished"
-        variant="green"
-        shape="full"
-        size="default"
-        icon={<CheckIcon className="fill-white" />}
-        disabled={!canSetFinish}
-        onClick={() => {
-          setPopUpOpen(true);
-        }}
-      />:<></>}
+      {status === "authenticated" &&
+      session?.accessToken &&
+      (session.role === "admins" || session.role === "editors") ? (
+        <Button
+          label="Set finished"
+          variant="green"
+          shape="full"
+          size="default"
+          icon={<CheckIcon className="fill-white" />}
+          disabled={!canSetFinish}
+          onClick={() => {
+            setPopUpOpen(true);
+          }}
+        />
+      ) : (
+        <></>
+      )}
       <ComfirmPopUp
         title="Confirm"
         message="Are you sure you want to set the selected invoices as paid?"
@@ -251,15 +248,12 @@ function MuiDataGridForPostManagement({
         functionToRun={() => {
           // let idString = "";
           let idArr: number[] = [];
-          //console.log("SelectedRow: ", selectedRows);
           selectedRows.map((row) => {
             idArr = [...idArr, row.post_id];
           });
-          //console.log("idArr: "+idArr);
 
           CombinedService.set_post_to_finish(idArr)
             .then(() => {
-              //console.log("Set post to finished: ", res);
               setUpdateDataNeeded(true);
               updateSelectedRow([]);
             })

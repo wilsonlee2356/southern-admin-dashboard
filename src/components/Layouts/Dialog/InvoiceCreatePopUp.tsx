@@ -32,7 +32,6 @@ type InvoiceCreatePopUpPropsType = {
   open: boolean;
   onClose: any;
   setUpdateDataNeeded: any;
-  // invoiceArray: AutoCompleteArrayType[]; // Pass data as a prop instead of fetching here
   clientArray: AutoCompleteArrayType[];
   postArray: AutoCompleteArrayType[];
   postArrayWithDetails: post[]; // Optional prop for post array with details
@@ -49,9 +48,6 @@ function InvoiceCreatePopUp({
   clientArrayWithDetails,
 }: InvoiceCreatePopUpPropsType) {
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
-  //const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
-  const [chequeFile, setChequeFile] = React.useState<File | null>(null);
-  const [statementFile, setStatementFile] = React.useState<File | null>(null);
 
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
@@ -81,15 +77,6 @@ function InvoiceCreatePopUp({
       return false; // Continue searching
     });
   }, [postcode, clientName]);
-
-  // React.useEffect(() => {
-  //     if (open) {
-  //     const { current: descriptionElement } = descriptionElementRef;
-  //     if (descriptionElement !== null) {
-  //         descriptionElement.focus();
-  //     }
-  //     }
-  // }, [open]);
 
   const closePopUp = () => {
     onClose(false);
@@ -188,10 +175,6 @@ function InvoiceCreatePopUp({
                     setInvoiceNumber(e.currentTarget.value)
                   }
                 />
-                {/* <AutoCompleteWithSelectorButton title="Invoice Number" placeholder="Enter Invoice Number" dataArr={invoiceArray} input={invoiceNumber} stateSetter={setInvoiceNumber}/> */}
-                {/* <AutoCompleteWithSelectorButton title="Client Name" placeholder="Enter Client Name" dataArr={clientArray} input={clientName} stateSetter={setClientName}/>
-                                <AutoCompleteWithSelectorButton title="Postcode" placeholder="Enter Postcode" dataArr={postArray} input={postcode} stateSetter={setPostcode}/>
-                                <TextAreaOne label="Address" placeholder="Enter Address" value={address} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/> */}
                 <TextInputHeroUI
                   className="w-full"
                   label="Amount"
@@ -294,70 +277,11 @@ function InvoiceCreatePopUp({
                   handleAdd();
                   handleClear();
                   onClose(false);
-                  // console.log("Invoice Date: ", invoiceDate);
-                  // if(invoiceDate !== null) {
-                  //     setDataArray((prevData: any) => {
-                  //     return prevData.map((item: any) => {
-                  //         dataArray.map((invoiceInfo: invoiceData) => {
-                  //             if (item.invoiceId === invoiceInfo.invoiceId) {
-                  //                 item.settlementDate = invoiceDate.toISOString();
-                  //                 //console.log(item);
-                  //             }
-
-                  //             return item;
-                  //         }
-                  //         );
-                  //     });
-                  // });
-                  // }
                 }}
               />
             </div>
-            {/* <div className="flex flex-col gap-4.5 xl:flex-row">
-                        
-                    </div> */}
-            {/* <div className="mb-1 flex flex-col gap-4.5 xl:flex-row">
-                    <div className="w-full xl:w-4/12">
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <MuiDatePicker
-                            title="Invoice Date"
-                            label="Invoice Date"
-                            value={invoiceDate}
-                            onChange={(newValue) => setInvoiceDate(newValue)}
-                        />
-                        </LocalizationProvider>
-                    </div>
-                    </div> */}
           </div>
         </DialogContent>
-        {/* <DialogContent>
-                <Button
-                    label="Create"
-                    variant="green"
-                    shape="full"
-                    size="default"
-                    icon={<CheckIcon className="fill-white" />}
-                    onClick={() => {
-                        // console.log("Invoice Date: ", invoiceDate);
-                        // if(invoiceDate !== null) {
-                        //     setDataArray((prevData: any) => {
-                        //     return prevData.map((item: any) => {
-                        //         dataArray.map((invoiceInfo: invoiceData) => {
-                        //             if (item.invoiceId === invoiceInfo.invoiceId) {
-                        //                 item.settlementDate = invoiceDate.toISOString();
-                        //                 //console.log(item);
-                        //             }
-                                    
-                        //             return item;
-                        //         }
-                        //         );
-                        //     });
-                        // });
-                        // }
-                        
-                    }}
-                />
-            </DialogContent> */}
       </Dialog>
     </>
   );

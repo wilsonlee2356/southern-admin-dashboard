@@ -14,7 +14,6 @@ export default function Signup() {
     e.preventDefault();
     setIsSigningUp(true);
     try {
-      // await doCreateUserWithEmailAndPassword(email, password);
       router.push("/"); // Redirect to home page after successful signup
     } catch (error) {
       console.error(error);
