@@ -69,22 +69,22 @@ export default function PageWrapper({
     //console.log("Type ", selectedData = dataArray);
   }, [clientName, postcode, showNotEndedPosts, showEndedPosts, data]);
 
-  useEffect(() => {
-    if (updateDataNeeded) {
-      console.log("Updating data");
-      // InvoiceService.getAll().then((res) => {
-      //   dataArray = res;
-      //   // setDataToShow(res);
-      // });
-      CombinedService.get_all_client().then((res) => {
-        clients = res;
-      });
-      CombinedService.get_all_post().then((res) => {
-        posts = res;
-      });
-      setUpdateDataNeeded(false);
-    }
-  }, [updateDataNeeded]);
+  // useEffect(() => {
+  //   if (updateDataNeeded) {
+  //     console.log("Updating data");
+  //     // InvoiceService.getAll().then((res) => {
+  //     //   dataArray = res;
+  //     //   // setDataToShow(res);
+  //     // });
+  //     CombinedService.get_all_client().then((res) => {
+  //       clients = res;
+  //     });
+  //     CombinedService.get_all_post().then((res) => {
+  //       posts = res;
+  //     });
+  //     setUpdateDataNeeded(false);
+  //   }
+  // }, [updateDataNeeded]);
 
   const checkEmpty = (value: string) => {
     return value === "" || value === undefined || value === null;

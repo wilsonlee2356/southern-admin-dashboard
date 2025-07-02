@@ -85,9 +85,9 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
               chequeCopy: newChequeCopy,
             }} : invoiceCheque
         );
-        console.log("new invoice cheque: ", newInvoiceCheque);
+        //console.log("new invoice cheque: ", newInvoiceCheque);
         setInvoiceCheques(newInvoiceCheque);
-        console.log("changed cheque: ", invoiceCheques);
+        //console.log("changed cheque: ", invoiceCheques);
     }
     //console.log("Invoice Info: ", invoiceInfo);
     const toEmptyIfNull = (value: string | null) => {

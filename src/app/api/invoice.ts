@@ -33,7 +33,7 @@ async function makeApiRequest<T>(
   errorMessage: string,
 ): Promise<T> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+  // const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
   try {
     const { response } = await makeAuthenticatedRequest(getApiUrl(endpoint), {
@@ -45,7 +45,7 @@ async function makeApiRequest<T>(
       },
     });
 
-    clearTimeout(timeoutId);
+    // clearTimeout(timeoutId);
 
     if (!response) {
       throw new Error(`${errorMessage}: No response received`);
@@ -67,7 +67,7 @@ async function makeApiRequest<T>(
     console.error(`${errorMessage}:`, error);
     throw error;
   } finally {
-    clearTimeout(timeoutId);
+    // clearTimeout(timeoutId);
   }
 }
 

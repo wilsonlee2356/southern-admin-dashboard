@@ -6,29 +6,29 @@ import { user, userCreateType } from "@/types/ObjectTypes/UserType";
 import { useSession } from "next-auth/react";
 
 // Mock data for demonstration
-const initialPosts = [
-  {
-    id: 1,
-    title: "First Post",
-    author: "John",
-    status: "Published",
-    access: "public",
-  },
-  {
-    id: 2,
-    title: "Team Update",
-    author: "Jane",
-    status: "Draft",
-    access: "team",
-  },
-  {
-    id: 3,
-    title: "Admin Notice",
-    author: "Admin",
-    status: "Published",
-    access: "admin",
-  },
-];
+// const initialPosts = [
+//   {
+//     id: 1,
+//     title: "First Post",
+//     author: "John",
+//     status: "Published",
+//     access: "public",
+//   },
+//   {
+//     id: 2,
+//     title: "Team Update",
+//     author: "Jane",
+//     status: "Draft",
+//     access: "team",
+//   },
+//   {
+//     id: 3,
+//     title: "Admin Notice",
+//     author: "Admin",
+//     status: "Published",
+//     access: "admin",
+//   },
+// ];
 
 function PostManagementPage() {
   //const [posts, setPosts] = useState(initialPosts);

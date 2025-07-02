@@ -45,11 +45,11 @@ export default async function Home({ searchParams }: PropsType) {
           timeFrame={extractTimeFrame("payments_overview")?.split(":")[1]}
         />
 
-        <WeeksProfit
+        {/* <WeeksProfit
           key={extractTimeFrame("weeks_profit")}
           timeFrame={extractTimeFrame("weeks_profit")?.split(":")[1]}
           className="col-span-12 xl:col-span-5"
-        />
+        /> */}
         {/* unComment this^^^^^^^ */}
 
         {/* <UsedDevices

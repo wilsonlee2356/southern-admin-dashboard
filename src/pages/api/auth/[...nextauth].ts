@@ -98,28 +98,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  // callbacks: {
-  //   async jwt({ token, user }) {
-  //     if (user?.accessToken) {
-  //       console.log("jwt callback: ", user);
-  //       token.accessToken = user.accessToken;
-  //       token.refreshToken = user.refreshToken;
-  //       token.role = user.role;
-  //       token.username = user.username;
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token }) {
-  //     // if (typeof token.accessToken === 'string') {
-  //     console.log("session callback: ", token, " ,\n ", session);
-  //     session.accessToken = token.accessToken;
-  //     session.refreshToken = token.refreshToken;
-  //     session.role = token.role;
-  //     session.username = token.username;
-  //     // }
-  //     return session;
-  //   },
-  // },
+
   secret: process.env.NEXTAUTH_SECRET,
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,

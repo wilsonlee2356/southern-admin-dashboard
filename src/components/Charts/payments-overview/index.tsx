@@ -40,11 +40,11 @@ export function PaymentsOverview({
   });
 
   useEffect(() => {
-    CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest).then((invoices)=>{
-        setInvoiceData(invoices);
+    CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest).then((invoicesList)=>{
+        setInvoiceData(invoicesList);
         console.log("invoices:", invoiceData);
-        CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest).then((invoiceCheques)=>{
-          setInvoiceCheques(invoiceCheques);
+        CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest).then((invoiceChequesList)=>{
+          setInvoiceCheques(invoiceChequesList);
           console.log("invoiceCheques:", invoiceCheques);
           setChartData(createMonthlyTimeData(invoiceData, invoiceCheques));
         });
