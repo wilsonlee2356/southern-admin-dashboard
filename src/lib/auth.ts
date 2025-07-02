@@ -67,7 +67,7 @@ export function useAuthenticatedRequest() {
     }
 
     try {
-      console.log("Attempt to use access token ", session.accessToken);
+      console.log("Calling api: ", url);
       const response = await fetch(url, {
         ...options,
         headers: {

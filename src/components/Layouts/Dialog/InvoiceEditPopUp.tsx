@@ -1,17 +1,15 @@
 "use client";
-import React, { JSX } from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui-elements/button";
 import { CheckIcon } from "@/assets/icons";
 import { Dialog, DialogContent, DialogContentText, DialogProps, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { ShowcaseSection } from "@/components/Layouts/showcase-section";
-import UploadButton from "@/components/ui-elements/upload-button";
+import ImageViewPopUp from "./ImageViewPopUp";
 import InputGroup from "@/components/FormElements/InputGroup";
-import FilePreviewWindow from "@/components/ui-elements/FilePreviewWindow";
-import DatePickerThree from "@/components/FormElements/DatePicker/DatePickerThree";
+import ChequeEditMuiDataGrid from "@/components/Tables/DataGrid/ChequeEditMuiDataGrid";
 import { TextAreaOne } from "@/components/FormElements/InputGroup/TextAreaOne";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -52,6 +50,10 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
     const [streetAddress, setStreetAddress] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
+    const [imageSrc, setImageSrc] = React.useState<string>("");
+    const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
+    const [imageViewPopUp, setImageViewPopUp] = React.useState<boolean>(false);
+
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
     useEffect(() => {
@@ -67,12 +69,26 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             setInvoiceDate(dayjs(invoiceInfo.invoiceDate));
             setBuildingAddress(invoiceInfo.post.buildingAddress);
             setStreetAddress(invoiceInfo.post.streetAddress);
+            setInvoiceCheques(invoiceInfo.invoiceChequesList);
         }
         
     }, [invoiceInfo]);
 
     if(Object.keys(invoiceInfo).length === 0) return(<><div></div></>);
 
+    const setChequeCopy = (chequeId: number, newChequeCopy: string) => {
+        const newInvoiceCheque = invoiceCheques.map(invoiceCheque => invoiceCheque.cheque.chequeId === chequeId ? 
+            {
+            ...invoiceCheque,
+            cheque: {
+              ...invoiceCheque.cheque,
+              chequeCopy: newChequeCopy,
+            }} : invoiceCheque
+        );
+        console.log("new invoice cheque: ", newInvoiceCheque);
+        setInvoiceCheques(newInvoiceCheque);
+        console.log("changed cheque: ", invoiceCheques);
+    }
     //console.log("Invoice Info: ", invoiceInfo);
     const toEmptyIfNull = (value: string | null) => {
         return value === null ? "" : value;
@@ -83,8 +99,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
         onClose(false);
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const submit = () => {
         console.log("Handle submit");
 
         console.log("Invoice Number: ", invoiceNum);
@@ -117,7 +132,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                 createDate: invoiceInfo.post.createDate,
                 updateDate: newDate.toISOString(),
             },
-            invoiceChequesList: invoiceInfo.invoiceChequesList,
+            invoiceChequesList: invoiceCheques,
             invoiceDate: invoiceDate?.toDate(),
             isPaid: invoiceInfo.isPaid,
             amount: amount,
@@ -165,7 +180,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
             <DialogContent>
                 <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-left items-start content-stretch">
                     {/* <ShowcaseSection title="Contact Form" className="!p-6.5 w-full h-full "> */}
-                        <form onSubmit={handleSubmit}>
+                        <form>
                             <div className="w-xl h-full flex flex-col gap-4.5 justify-start items-start content-stretch">
                             <label className="text-body-lg font-medium text-dark">Invoice Information</label>
                             <div className="mb-4.5 flex flex-row gap-4.5">
@@ -270,6 +285,14 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                 
                             </div>
                         </div>
+                        <div className="w-1.5/2 h-full">
+                            <ChequeEditMuiDataGrid
+                                dataArray={invoiceInfo.invoiceChequesList}
+                                setImageSrcToView={setImageSrc}
+                                onClose={setImageViewPopUp}
+                                setChequeCopy={setChequeCopy}
+                            />
+                        </div>
                             {/* <div className="mb-4.5 flex flex-row gap-4.5">
                                 
                             </div>
@@ -320,7 +343,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                                 type="submit"
                                 icon={<CheckIcon className="fill-white" />}
                                 onClick={() => {
-                                    
+                                    submit();
                                 }}
                             />
                         </form>
@@ -331,6 +354,10 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                 
             </DialogContent>
         </Dialog>
+        <ImageViewPopUp
+            image={imageSrc}
+            open={imageViewPopUp}
+            setOpen={setImageViewPopUp}/>
     </>
     );
 };

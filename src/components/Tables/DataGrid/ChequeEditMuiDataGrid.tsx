@@ -1,19 +1,24 @@
 "use client";
-import { CheckIcon, TrashIcon } from "@/assets/icons";
+import { UploadIcon } from "@/assets/icons";
 import { PreviewIcon, DisabledPreviewIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React from "react";
+import React, { useRef } from "react";
+import { Button } from "@heroui/react";
+import { fileToBase64String } from "@/utils/file-reader";
 import { invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
 
-type ChequeMuiDataGridProps = {
+type ChequeEditMuiDataGridProps = {
   dataArray: invoiceCheques[];
   setImageSrcToView: any;
   onClose: any;
+  setChequeCopy: any;
 };
 
 
-function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose }: ChequeMuiDataGridProps) {
+function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequeCopy }: ChequeEditMuiDataGridProps) {
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!dataArray || dataArray.length === 0) {
     return (
@@ -55,28 +60,54 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose }: ChequeMuiD
           flex: 1,
           align: "center",
           headerAlign: "center",
-          valueGetter: (value, row) => row.cheque.chequeCopy,
+          valueGetter: (value, row) => row.cheque,
           renderCell: (params) => (
             <div className="flex items-center justify-center gap-x-3.5">
-              <button className="text-dark dark:text-white"
-                  onClick={() => {
-                    // const invoice = getInvoiceById(params.id);
-                    // if (!invoice) return;
-                    // setEditingRow(invoice);
-                    // setPopUpOpenView(true);
-                    if(params.value){
-                      console.log("View Cheque clicked for cheque copy:", params.value);
-                      setImageSrcToView(params.value);
-                      onClose(true);
-                    }
-                    
-                  }}
+                
+              {(params.value.chequeCopy) ? <button className="text-dark dark:text-white"
+                    type="button"
+                    onClick={() => {
+                        if(params.value){
+                        console.log("View Cheque clicked for cheque copy:", params.value.chequeCopy);
+                        setImageSrcToView(params.value.chequeCopy);
+                        onClose(true);
+                        }
+                    }}
                 >
-                <span className="sr-only">View Invoice</span>
-                { (!params.value) ? 
+                <span className="sr-only">View Cheque copy</span>
+                { (!params.value.chequeCopy) ? 
                     <DisabledPreviewIcon className="fill-grey dark:fill-grey"/> :
                     <PreviewIcon className="fill-dark dark:fill-white"/>}
-              </button>
+              </button> : 
+              <>
+              <Button className="text-dark dark:text-white"
+                    type="button"
+                    isIconOnly
+                    onPress={() => 
+                        fileInputRef.current?.click()
+                    }
+                >
+                <span className="sr-only">Upload Cheque copy</span>
+                <UploadIcon className="fill-dark dark:fill-white"/>
+              </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    if (event.target.files && event.target.files.length > 0) {
+                        console.log("Cheque file selected:", event.target.files);
+                        // setChequeFile(e.target.files ? e.target.files[0] : undefined);
+                        fileToBase64String(event.target.files ? event.target.files[0] : new Blob()).then((base64String) => {
+                            console.log("Cheque file base64 string:", base64String);
+                            setChequeCopy(params.value.chequeId, base64String);
+                            console.log("Cheque file:", base64String);
+                        }).catch((error) => {
+                            console.error("Error converting file to base64:", error);
+                        });
+                    }
+                }}
+                style={{ display: 'none' }} // Hide the native input
+                /></>}
             </div>
           ),
     },
@@ -118,4 +149,4 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose }: ChequeMuiD
   );
 }
 
-export default ChequeMuiDataGrid;
+export default ChequeEditMuiDataGrid;
