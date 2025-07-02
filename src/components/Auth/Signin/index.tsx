@@ -6,10 +6,6 @@ import { useRouter } from "next/navigation";
 
 export default function Signin() {
   // const { currentUser, userLoggedIn } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSigningIn, setIsSigningIn] = useState(false);
-  const router = useRouter();
 
   // const onSubmit = async (e: any) => {
   //   e.preventDefault();

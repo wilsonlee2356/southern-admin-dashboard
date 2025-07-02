@@ -1,12 +1,10 @@
 import Link from "next/link";
 import GoogleSigninButton from "../GoogleSigninButton";
 import SignupWithPassword from "../SignupWithPassword";
-import { useAuth } from "@/contexts/authContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Signup() {
-  const { currentUser, userLoggedIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSigningUp, setIsSigningUp] = useState(false);

@@ -55,8 +55,8 @@ async function makeApiRequest<T>(
       const errorText = await response.text();
       throw new Error(`${errorMessage}: ${response.status} ${errorText}`);
     }
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
       if (data === null || data === undefined) {
         throw new Error(`${errorMessage}: Empty response received`);
@@ -65,7 +65,6 @@ async function makeApiRequest<T>(
       return data as T;
     }
     throw new Error(`${errorMessage}: Response is not JSON`);
-    
   } catch (error) {
     console.error(`${errorMessage}:`, error);
     throw error;
@@ -229,7 +228,7 @@ export const CombinedService = {
 
   async create_invoice(
     newInvoice: invoiceDataOutput,
-    makeAuthenticatedRequest: AuthRequestHandler,
+    makeAuthenticatedRequest?: AuthRequestHandler,
   ): Promise<invoiceData> {
     if (!newInvoice || typeof newInvoice !== "object") {
       throw new Error("Invalid invoice data");
@@ -240,7 +239,7 @@ export const CombinedService = {
         method: "POST",
         body: JSON.stringify(newInvoice),
       },
-      makeAuthenticatedRequest,
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
       "Unable to create invoice",
     );
   },

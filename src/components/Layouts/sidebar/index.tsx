@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV_DATA } from "./data";
-import { ArrowLeftIcon, ChevronUp } from "./icons";
+import { ArrowLeftIcon } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
 import { useSession } from "next-auth/react";
@@ -30,20 +30,39 @@ export function Sidebar() {
 
   useEffect(() => {
     // Keep collapsible open, when it's subpage is active
-    NAV_DATA.some((section) => {
-      return section.items.some((item) => {
-        return item.items.some((subItem) => {
-          if (subItem.url === pathname) {
-            if (!expandedItems.includes(item.title)) {
-              toggleExpanded(item.title);
-            }
+    NAV_DATA.some(
+      (section: {
+        label: string;
+        items: Array<{
+          title: string;
+          icon: React.ElementType;
+          url?: string;
+          items: Array<{ title: string; url: string }>;
+        }>;
+      }) => {
+        return section.items.some(
+          (item: {
+            title: string;
+            icon: React.ElementType;
+            url?: string;
+            items: Array<{ title: string; url: string }>;
+          }) => {
+            return item.items.some(
+              (subItem: { title: string; url: string }) => {
+                if (subItem.url === pathname) {
+                  if (!expandedItems.includes(item.title)) {
+                    toggleExpanded(item.title);
+                  }
 
-            // Break the loop
-            return true;
-          }
-        });
-      });
-    });
+                  // Break the loop
+                  return true;
+                }
+              },
+            );
+          },
+        );
+      },
+    );
   }, [pathname]);
 
   return (
@@ -92,19 +111,34 @@ export function Sidebar() {
           {/* Navigation */}
           <div className="custom-scrollbar mt-6 flex-1 overflow-y-auto pr-3 min-[850px]:mt-10">
             {
-              NAV_DATA.map((section) => (
-                <div key={section.label} className="mb-6">
-                  <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
-                    {section.label}
-                  </h2>
+              NAV_DATA.map(
+                (section: {
+                  label: string;
+                  items: Array<{
+                    title: string;
+                    icon: React.ElementType;
+                    url?: string;
+                    items: Array<{ title: string; url: string }>;
+                  }>;
+                }) => (
+                  <div key={section.label} className="mb-6">
+                    <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
+                      {section.label}
+                    </h2>
 
-                  <nav role="navigation" aria-label={section.label}>
-                    <ul className="space-y-2">
-                      {section.items.map((item) => (
-                          <li key={item.title}>
-                          {item.items.length ? (
-                            <div>
-                              {/* <MenuItem
+                    <nav role="navigation" aria-label={section.label}>
+                      <ul className="space-y-2">
+                        {section.items.map(
+                          (item: {
+                            title: string;
+                            icon: React.ElementType;
+                            url?: string;
+                            items: Array<{ title: string; url: string }>;
+                          }) => (
+                            <li key={item.title}>
+                              {item.items.length ? (
+                                <div>
+                                  {/* <MenuItem
                                 isActive={item.items.some(
                                   ({ url }) => url === pathname,
                                 )}
@@ -145,108 +179,104 @@ export function Sidebar() {
                                   ))}
                                 </ul>
                               )} */}
-                            </div>
-                          ) : (
-                            (() => {
-                              console.log("Session role: ", session?.role);
-                              if(status === "authenticated" && session.accessToken && session.role === 'admins'){
-                                  if(item.title === "User Management"){
+                                </div>
+                              ) : (
+                                (() => {
+                                  console.log("Session role: ", session?.role);
+                                  if (
+                                    status === "authenticated" &&
+                                    session.accessToken &&
+                                    session.role === "admins"
+                                  ) {
+                                    if (item.title === "User Management") {
+                                      const href =
+                                        "url" in item
+                                          ? item.url + ""
+                                          : "/" +
+                                            item.title
+                                              .toLowerCase()
+                                              .split(" ")
+                                              .join("-");
 
-                                    const href =
-                                    "url" in item
-                                      ? item.url + ""
-                                      : "/" +
-                                        item.title
-                                          .toLowerCase()
-                                          .split(" ")
-                                          .join("-");
+                                      return (
+                                        <MenuItem
+                                          className="flex items-center gap-3 py-3"
+                                          as="link"
+                                          href={href}
+                                          isActive={pathname === href}
+                                        >
+                                          <item.icon
+                                            className="size-6 shrink-0"
+                                            aria-hidden="true"
+                                          />
 
-                                    return (
-                                      <MenuItem
-                                        className="flex items-center gap-3 py-3"
-                                        as="link"
-                                        href={href}
-                                        isActive={pathname === href}
-                                      >
-                                        <item.icon
-                                          className="size-6 shrink-0"
-                                          aria-hidden="true"
-                                        />
+                                          <span>{item.title}</span>
+                                        </MenuItem>
+                                      );
+                                    } else {
+                                      const href =
+                                        "url" in item
+                                          ? item.url + ""
+                                          : "/" +
+                                            item.title
+                                              .toLowerCase()
+                                              .split(" ")
+                                              .join("-");
 
-                                        <span>{item.title}</span>
-                                      </MenuItem>
-                                    );
+                                      return (
+                                        <MenuItem
+                                          className="flex items-center gap-3 py-3"
+                                          as="link"
+                                          href={href}
+                                          isActive={pathname === href}
+                                        >
+                                          <item.icon
+                                            className="size-6 shrink-0"
+                                            aria-hidden="true"
+                                          />
+
+                                          <span>{item.title}</span>
+                                        </MenuItem>
+                                      );
+                                    }
                                   } else {
-                                    const href =
-                                    "url" in item
-                                      ? item.url + ""
-                                      : "/" +
-                                        item.title
-                                          .toLowerCase()
-                                          .split(" ")
-                                          .join("-");
+                                    if (item.title !== "User Management") {
+                                      const href =
+                                        "url" in item
+                                          ? item.url + ""
+                                          : "/" +
+                                            item.title
+                                              .toLowerCase()
+                                              .split(" ")
+                                              .join("-");
 
-                                    return (
-                                      <MenuItem
-                                        className="flex items-center gap-3 py-3"
-                                        as="link"
-                                        href={href}
-                                        isActive={pathname === href}
-                                      >
-                                        <item.icon
-                                          className="size-6 shrink-0"
-                                          aria-hidden="true"
-                                        />
+                                      return (
+                                        <MenuItem
+                                          className="flex items-center gap-3 py-3"
+                                          as="link"
+                                          href={href}
+                                          isActive={pathname === href}
+                                        >
+                                          <item.icon
+                                            className="size-6 shrink-0"
+                                            aria-hidden="true"
+                                          />
 
-                                        <span>{item.title}</span>
-                                      </MenuItem>
-                                    );
+                                          <span>{item.title}</span>
+                                        </MenuItem>
+                                      );
+                                    }
                                   }
-                                } else {
-                                  if(item.title !== "User Management"){
-
-                                  const href =
-                                  "url" in item
-                                    ? item.url + ""
-                                    : "/" +
-                                      item.title
-                                        .toLowerCase()
-                                        .split(" ")
-                                        .join("-");
-
-                                  return (
-                                    <MenuItem
-                                      className="flex items-center gap-3 py-3"
-                                      as="link"
-                                      href={href}
-                                      isActive={pathname === href}
-                                    >
-                                      <item.icon
-                                        className="size-6 shrink-0"
-                                        aria-hidden="true"
-                                      />
-
-                                      <span>{item.title}</span>
-                                    </MenuItem>
-                                  );
-                                }
-                                }
-                              
-                            })()
-                          )}
-                        </li>
-
-                        
-                        
-                        
-                        
-                        
-                        )
-                      )}
-                    </ul>
-                  </nav>
-                </div>
-              ))
+                                })()
+                              )}
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    </nav>
+                  </div>
+                ),
+              )
               //  : (
               //   <div className="flex h-full items-center justify-center">
               //     <span className="text-lg font-medium text-gray-600 dark:text-gray-400">
