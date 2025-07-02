@@ -2,6 +2,14 @@
 
 import { getSession, signOut, useSession } from "next-auth/react";
 
+const getApiUrl = (endpoint: string): string => {
+  const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
+  if (!baseURL) {
+    throw new Error("NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined");
+  }
+  return `${baseURL}${endpoint}`;
+};
+
 export async function refreshAccessToken(
   refreshToken: string,
 ): Promise<{
@@ -14,7 +22,7 @@ export async function refreshAccessToken(
       "Attempting to refresh access token with refreshToken:",
       refreshToken,
     );
-    const response = await fetch("http://localhost:8080/api/ldap/refresh", {
+    const response = await fetch(getApiUrl("/api/ldap/refresh"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

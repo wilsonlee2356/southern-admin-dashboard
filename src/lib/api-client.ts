@@ -11,7 +11,8 @@ const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Centralized axios instance for API calls
 const apiClient = axios.create({
-  baseURL: baseURL || "http://localhost:8080/api", // Fallback for development
+  // baseURL: baseURL || "http://localhost:8080/api", // Fallback for development
+  baseURL: baseURL,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",

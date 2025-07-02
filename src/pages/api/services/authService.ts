@@ -4,6 +4,14 @@ import axios, { AxiosResponse } from "axios";
 type csrfTokenResponse = {
     token: string;
 };
+
+const getApiUrl = (endpoint: string): string => {
+  const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
+  if (!baseURL) {
+    throw new Error("NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined");
+  }
+  return `${baseURL}${endpoint}`;
+};
 /**
  * Invoice Service for managing invoice-related API calls
  */
@@ -13,7 +21,7 @@ export const loginService = async (username: string, password: string, token: st
     // const response = await apiClient.post("/ldap/authenticate",
     //     {username : username, password: password},
     // );
-    const response = await fetch(`http://localhost:8080/api/ldap/authenticate`, {
+    const response = await fetch(getApiUrl(`/api/ldap/authenticate`), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,7 +50,7 @@ export const logoutService = async (token: string): Promise<boolean> => {
     // const response = await apiClient.post("/ldap/authenticate",
     //     {username : username, password: password},
     // );
-    const response = await fetch(`http://localhost:8080/api/logout`, {
+    const response = await fetch(getApiUrl(`/api/logout`), {
           method: 'POST',
           headers: {
             'X-CSRF-Token': token, // Include CSRF token in the headers

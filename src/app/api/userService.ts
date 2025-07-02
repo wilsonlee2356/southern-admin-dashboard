@@ -8,13 +8,19 @@ import { user, userCreateType } from '@/types/ObjectTypes/UserType';
 //     "Error: NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined in environment variables",
 //   );
 // }
-
+const getApiUrl = (endpoint: string): string => {
+  const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
+  if (!baseURL) {
+    throw new Error("NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined");
+  }
+  return `${baseURL}${endpoint}`;
+};
 
 export const UserService = {
   
     async get_all_users(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>): Promise<user[]> {
       try{
-        const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/ldap/users', {
+        const { response } = await makeAuthenticatedRequest(getApiUrl('/api/ldap/users'), {
           method: 'GET',
         });
 
@@ -34,7 +40,7 @@ export const UserService = {
 
     async add_users(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>, userToBeAdded: userCreateType): Promise<userCreateType> {
       try{
-        const { response } = await makeAuthenticatedRequest('http://localhost:8080/api/ldap/users', {
+        const { response } = await makeAuthenticatedRequest(getApiUrl('/api/ldap/users'), {
           method: 'POST',
           body: JSON.stringify(userToBeAdded),
         });
@@ -55,7 +61,7 @@ export const UserService = {
 
     async remove_users(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>, username: string) {
       try{
-        const { response } = await makeAuthenticatedRequest(`http://localhost:8080/api/ldap/users/${username}`, {
+        const { response } = await makeAuthenticatedRequest(getApiUrl(`/api/ldap/users/${username}`), {
           method: 'DELETE',
         });
 

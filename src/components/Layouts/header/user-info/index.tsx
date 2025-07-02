@@ -13,6 +13,14 @@ import { LogOutIcon, LogInIcon } from "./icons";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 
+const getApiUrl = (endpoint: string): string => {
+  const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_BASE_URL;
+  if (!baseURL) {
+    throw new Error("NEXT_PUBLIC_EXTERNAL_API_BASE_URL is not defined");
+  }
+  return `${baseURL}${endpoint}`;
+};
+
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
   // const { userLoggedIn, currentUser } = useAuth();
@@ -37,7 +45,7 @@ export function UserInfo() {
         "Sending logout request to backend with token:",
         session.accessToken,
       );
-      const response = await fetch("http://localhost:8080/api/ldap/logout", {
+      const response = await fetch(getApiUrl("/api/ldap/logout"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

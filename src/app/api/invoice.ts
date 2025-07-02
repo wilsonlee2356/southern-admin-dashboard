@@ -55,16 +55,53 @@ async function makeApiRequest<T>(
       const errorText = await response.text();
       throw new Error(`${errorMessage}: ${response.status} ${errorText}`);
     }
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      const data = await response.json();
-      if (data === null || data === undefined) {
-        throw new Error(`${errorMessage}: Empty response received`);
-      }
-
-      return data as T;
+    
+    const data = await response.json();
+    if (data === null || data === undefined) {
+      throw new Error(`${errorMessage}: Empty response received`);
     }
-    throw new Error(`${errorMessage}: Response is not JSON`);
+
+    return data as T;
+    
+  } catch (error) {
+    console.error(`${errorMessage}:`, error);
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// Centralized API request handler with timeout and improved error handling
+async function makeDeleteApiRequest(
+  endpoint: string,
+  options: RequestInit,
+  makeAuthenticatedRequest: AuthRequestHandler,
+  errorMessage: string,
+){
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+  try {
+    const { response } = await makeAuthenticatedRequest(getApiUrl(endpoint), {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response) {
+      throw new Error(`${errorMessage}: No response received`);
+    }
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`${errorMessage}: ${response.status} ${errorText}`);
+    }
+    
   } catch (error) {
     console.error(`${errorMessage}:`, error);
     throw error;
@@ -218,7 +255,7 @@ export const CombinedService = {
     if (!id || typeof id !== "number") {
       throw new Error("Invalid invoice ID");
     }
-    await makeApiRequest<void>(
+    await makeDeleteApiRequest(
       `/api/combined/invoiceRemove/${id}`,
       { method: "DELETE" },
       makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
