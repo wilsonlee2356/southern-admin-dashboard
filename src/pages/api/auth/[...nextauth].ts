@@ -21,40 +21,36 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.username || !credentials?.password) {
           throw new Error("Missing username or password");
         }
-        try{
+        try {
           const bodyData = new URLSearchParams({
             username: credentials.username,
             password: credentials.password,
           });
           console.log("LDAP body data:", bodyData.toString());
-          const response = await fetch(
-            getApiUrl(`/api/ldap/authenticate`),
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
-              body: bodyData,
-              credentials: "include",
+          const response = await fetch(getApiUrl(`/api/ldap/authenticate`), {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
             },
-          );
+            body: bodyData,
+            credentials: "include",
+          });
 
           const data = await response.json();
-          console.log("LDAP response:", data);
 
           if (!response.ok) {
             throw new Error(data.message || "Authentication failed");
           }
 
           if (data?.accessToken && data?.refreshToken) {
-              return {
-                id: credentials.username,
-                name: credentials.username,
-                accessToken: data.accessToken,
-                refreshToken: data.refreshToken,
-                role: data.roles[0], // Include role
-                username: data.username,
-              };
+            return {
+              id: credentials.username,
+              name: credentials.username,
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
+              role: data.roles[0], // Include role
+              username: data.username,
+            };
           }
 
           throw new Error("Invalid response from server");
@@ -100,9 +96,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  jwt: {
-    secret: process.env.NEXTAUTH_SECRET,
-  },
-  
+  // jwt: {
+  //   secret: process.env.NEXTAUTH_SECRET,
+  // },
 };
 export default NextAuth(authOptions);

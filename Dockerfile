@@ -28,6 +28,8 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/yarn.lock ./yarn.lock
 COPY --from=builder /app/public ./public
+# Copy .env file (optional, for production environment variables)
+COPY --from=builder /app/.env* ./
 
 # Expose the default Next.js port
 EXPOSE 3000
