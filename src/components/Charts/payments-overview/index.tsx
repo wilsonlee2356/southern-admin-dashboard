@@ -10,6 +10,7 @@ import { createMonthlyTimeData } from "@/utils/chart-data-analyzer";
 import { invoiceData, invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 type PropsType = {
   timeFrame?: string;
@@ -38,9 +39,12 @@ export function PaymentsOverview({
       due: []
     }
   });
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest).then((invoicesList)=>{
+    if(status === "authenticated" && session?.accessToken){
+      console.log("Trying to fetch invoice sort by date: ", status);
+      CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest).then((invoicesList)=>{
         setInvoiceData(invoicesList);
         console.log("invoices:", invoiceData);
         CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest).then((invoiceChequesList)=>{
@@ -48,12 +52,13 @@ export function PaymentsOverview({
           console.log("invoiceCheques:", invoiceCheques);
           setChartData(createMonthlyTimeData(invoiceData, invoiceCheques));
         });
-    });
+      });
+    }
       // CombinedService.get_invoice_outstanding_summary(makeAuthenticatedRequest).then((data)=>{
       //   setOutstandingList(data);
       //   console.log("Outstanding:", outstandingList);
       // });
-  }, []);
+  }, [session, status]);
   //const invoiceData = await CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest);
   //const invoiceCheques = await CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest);
   //const chartData = createMonthlyTimeData(invoiceData, invoiceCheques);

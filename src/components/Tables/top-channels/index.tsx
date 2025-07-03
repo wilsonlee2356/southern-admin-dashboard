@@ -16,6 +16,7 @@ import { invoiceOutstandingSummary } from "@/types/ObjectTypes/InvoiceType";
 import { useEffect, useState } from "react";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { useSession } from "next-auth/react";
 
 type ChannelType = {
   // outstandingList: (string | number)[][];
@@ -26,14 +27,18 @@ type ChannelType = {
 export function TopChannels({ className }: ChannelType) {
   //const data = await getTopChannels();
   const [outstandingList, setOutstandingList] = useState<(string | number)[][]>([]);
+  const { data: session, status } = useSession();
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
   useEffect(() => {
-    CombinedService.get_invoice_outstanding_summary(makeAuthenticatedRequest).then((data)=>{
-      setOutstandingList(data);
-      console.log("Outstanding:", outstandingList);
-    });
+    if(status === "authenticated" && session?.accessToken){
+      console.log("Trying to fetch outstanding summary: ", status);
+      CombinedService.get_invoice_outstanding_summary(makeAuthenticatedRequest).then((data)=>{
+        setOutstandingList(data);
+        console.log("Outstanding:", outstandingList);
+      });
+    }
     
       // outstandingList.map((outstanding) => {
       //   console.log("Outstanding:", outstanding);
@@ -41,7 +46,7 @@ export function TopChannels({ className }: ChannelType) {
       //   console.log("Number of Invoices:", outstanding[0]);
       //   console.log("Total Outstanding:", outstanding[0]);
       // });
-    }, []);
+    }, [session, status]);
   
 
   return (

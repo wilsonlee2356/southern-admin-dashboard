@@ -42,13 +42,13 @@ function ImageViewPopUp ({ image, open, setOpen}: ImageViewPopUpPropsType){
             open={open} onClose={setOpen}
             maxWidth={"xl"} aria-labelledby="alert-dialog-title" 
             aria-describedby="alert-dialog-description">
-            <DialogTitle> Cheque Preview <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
+            <DialogTitle> Image Preview <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
                 <Image 
                     src={image}
-                    alt="Cheque Image"
-                    // width="auto"
-                    // height="auto"
+                    alt="Image Image"
+                    width="80%"
+                    height="50%"
                     style={{ opacity: 1}}
                     />
             </DialogContent>

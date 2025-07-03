@@ -1,5 +1,5 @@
 "use client";
-import { CheckIcon, TrashIcon } from "@/assets/icons";
+import { CheckIcon, TrashIcon, EmailIcon } from "@/assets/icons";
 import { PreviewIcon, EditIcon } from "@/components/Tables/icons";
 import { Button } from "@/components/ui-elements/button";
 import {
@@ -11,6 +11,7 @@ import {
 import InvoicePopUp from "@/components/Layouts/Dialog/InvoicePopUp";
 import InvoiceEditPopUp from "@/components/Layouts/Dialog/InvoiceEditPopUp";
 import InvoiceViewPopUp from "@/components/Layouts/Dialog/InvoiceViewPopUp";
+import StatementViewPopUp from "@/components/Layouts/Dialog/StatementPopUp";
 import { MuiCheckbox } from "@/components/FormElements/Checkboxes/MuiCheckbox";
 import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 import { cn } from "@/lib/utils";
@@ -73,6 +74,8 @@ function MuiDataGridWithPopUpButton({
   const [deleteingRow, setDeletingRow] = useState<number>(-1);
 
   const [confirmPopUpOpen, setConfirmPopUpOpen] = useState<boolean>(false);
+
+    const [popUpOpenStatement, setPopUpOpenStatement] = useState(false);
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
@@ -480,6 +483,7 @@ function MuiDataGridWithPopUpButton({
           
         />
       </div>
+      <div className="flex flex-row gap-4.5">
       {(status === "authenticated" && 
           session?.accessToken && 
           (session.role === 'admins' || session.role === 'editors')) ?
@@ -495,6 +499,18 @@ function MuiDataGridWithPopUpButton({
             }}
           /> : 
           <></>}
+        <Button
+              label="Statement"
+              variant="blue"
+              shape="full"
+              size="default"
+              icon={<EmailIcon className="fill-white" />}
+              disabled={!canSetPay}
+              onClick={() => {
+                setPopUpOpenStatement(true);
+              }}
+        />
+      </div>
       <InvoicePopUp
         title="Upload cheque or statement"
         open={popUpOpen}
@@ -520,6 +536,12 @@ function MuiDataGridWithPopUpButton({
         invoiceInfo={editingRow}
         setDataArray={setFilteredData}
         
+      />
+
+      <StatementViewPopUp
+        selectedData={selectedRows}
+        open={popUpOpenStatement}
+        setOpen={setPopUpOpenStatement}
       />
 
       <ComfirmPopUp

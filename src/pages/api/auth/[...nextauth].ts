@@ -69,11 +69,16 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async redirect({ url, baseUrl }) {
       console.log("Redirect callback:", { url, baseUrl });
+      // Check if this is a sign-out redirect (url contains /api/auth/signout)
+      if (url.includes("/api/auth/signout")) {
+        return `${baseUrl}/auth/sign-in`; // Direct to sign-in page on sign-out
+      }
+      // For sign-in or other redirects, use callbackUrl or default to /
       const callbackUrl = new URL(url, baseUrl).searchParams.get("callbackUrl");
       if (callbackUrl && callbackUrl.startsWith("/")) {
         return `${baseUrl}${callbackUrl}`;
       }
-      return baseUrl+"/"; // baseUrl is the root of your app (e.g., http://localhost:3000)
+      return `${baseUrl}/`;
     },
     async jwt({ token, user, trigger, session }) {
       // Initial sign-in
