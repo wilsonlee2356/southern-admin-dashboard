@@ -3,12 +3,15 @@ import { withAuth } from "next-auth/middleware";
 
 const publicRoutes = ["/auth/sign-in", "/api/auth"];
 
-export const middleware = withAuth({
+export const middleware = withAuth(
+  function middleware(req) {
+    console.log("Middleware token:",req.nextauth.token)
+  },
+  {
   callbacks: {
     authorized: ({ req, token }) => {
       const pathname = req.nextUrl.pathname;
-
-      // Allow public routes
+      console.log("Authorized check:", { pathname, token: !!token?.accessToken });
       if (publicRoutes.some((route) => pathname.startsWith(route))) {
         return true;
       }
@@ -19,6 +22,7 @@ export const middleware = withAuth({
   },
   pages: {
     signIn: "/auth/sign-in",
+    signOut: undefined,
   },
 });
 

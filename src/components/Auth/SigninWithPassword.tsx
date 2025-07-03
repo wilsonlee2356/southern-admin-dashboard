@@ -26,7 +26,7 @@ export default function SigninWithPassword({ handleSubmit }: any) {
 
     try {
       const result = await signIn("credentials", {
-        redirect: false,
+        redirect: true,
         username,
         password,
       });

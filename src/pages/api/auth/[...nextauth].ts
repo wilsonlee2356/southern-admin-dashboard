@@ -41,8 +41,9 @@ export const authOptions: NextAuthOptions = {
           if (!response.ok) {
             throw new Error(data.message || "Authentication failed");
           }
-
+          console.log("Login back message: ",data);
           if (data?.accessToken && data?.refreshToken) {
+            console.log("Returning user");
             return {
               id: credentials.username,
               name: credentials.username,
@@ -66,6 +67,14 @@ export const authOptions: NextAuthOptions = {
     signOut: undefined,
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      console.log("Redirect callback:", { url, baseUrl });
+      const callbackUrl = new URL(url, baseUrl).searchParams.get("callbackUrl");
+      if (callbackUrl && callbackUrl.startsWith("/")) {
+        return `${baseUrl}${callbackUrl}`;
+      }
+      return baseUrl+"/"; // baseUrl is the root of your app (e.g., http://localhost:3000)
+    },
     async jwt({ token, user, trigger, session }) {
       // Initial sign-in
       if (user) {
@@ -96,8 +105,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  // jwt: {
-  //   secret: process.env.NEXTAUTH_SECRET,
-  // },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
+  },
 };
 export default NextAuth(authOptions);
