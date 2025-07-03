@@ -11,11 +11,13 @@ const PostClientContentContext = createContext<{
   postData: post[];
   clientData: client[];
   updateData: () => void;
+  updateInvoiceData: () => void;
 }>({
   invoiceData: [],
   postData: [],
   clientData: [],
   updateData: () => {},
+  updateInvoiceData: () => {},
 });
 
 export function usePostClientContent() {
@@ -80,7 +82,16 @@ export function PostClientContentProvider({
           });
         });
     }
-    
+  }
+
+  const updateInvoiceData = () =>{
+    if(status === "authenticated"){
+        console.log("Refreshing data");
+        CombinedService.get_all_invoice(makeAuthenticatedRequest).then((res) => {
+          setInvoiceData(res);
+          console.log("Invoice: " + res);
+        });
+    }
   }
 
   const postClientContent = {
@@ -88,6 +99,7 @@ export function PostClientContentProvider({
     postData,
     clientData,
     updateData,
+    updateInvoiceData,
   };
 
   return (

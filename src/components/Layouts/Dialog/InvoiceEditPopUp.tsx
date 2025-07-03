@@ -154,7 +154,9 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                         return item;
                     });
                 });
+                
                 setUpdateDataNeeded(true); // Trigger data update
+                closePopUp();
             }
         });
         

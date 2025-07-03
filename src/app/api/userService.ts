@@ -38,7 +38,7 @@ export const UserService = {
       }
     },
 
-    async add_users(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>, userToBeAdded: userCreateType): Promise<userCreateType> {
+    async add_users(makeAuthenticatedRequest: (url: string, options?: RequestInit) => Promise<{ response: Response | null; newAccessToken?: string }>, userToBeAdded: userCreateType): Promise<{message:string}> {
       try{
         const { response } = await makeAuthenticatedRequest(getApiUrl('/api/ldap/users'), {
           method: 'POST',

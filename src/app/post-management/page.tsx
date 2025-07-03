@@ -42,6 +42,7 @@ function PostManagementPage() {
     role: "observers",
     password: "",
   });
+  const [error, setError] = useState<string>("");
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
@@ -60,17 +61,21 @@ function PostManagementPage() {
   // Handle post creation
   const handleCreatePost = (e: any) => {
     e.preventDefault();
-    console.log("New user: ",newUser);
-    //do sth here
-    //???????????
-
+    //console.log("New user: ",newUser);
+    const existingUser = users.find((user)=>user.uid === newUser.username);
+    if(existingUser){
+      setError("* Existing username");
+      return;
+    }
+    
     UserService.add_users(makeAuthenticatedRequest, newUser).then((data)=> {
-      if(data.username){
+      console.log(data);
+      if(data.message === "User added successfully"){
         const newUserCreated : user = {
-          uid: data.username,
-          sn: data.sn,
-          cn: data.cn,
-          roles: [data.role]
+          uid: newUser.username,
+          sn: newUser.sn,
+          cn: newUser.cn,
+          roles: [newUser.role]
         }
         setUsers([...users, newUserCreated]);
         setNewUser({
@@ -82,7 +87,7 @@ function PostManagementPage() {
         });
         console.log("Users: ", users);
       }
-    })
+    });
     // const post = {
     //   username: "",
     //   sn: "",
@@ -101,7 +106,12 @@ function PostManagementPage() {
     //   return;
     // }
     UserService.remove_users(makeAuthenticatedRequest, username).then((res)=> {
-        console.log("Users: ", users);
+        console.log("Remove user res: ", res);
+        if(res.message==="User removed successfully"){
+          const newUsersArr = users.filter(user=>user.uid!=username);
+          setUsers(newUsersArr);
+          console.log("Users: ", users);
+        }
     })
     //setPosts(posts.filter((post) => post.id !== id));
   };
@@ -132,6 +142,7 @@ function PostManagementPage() {
       {/* Create Post Form */}
       <div className="mb-8 rounded-lg bg-gray-100 p-4">
         <h2 className="mb-4 text-xl font-bold">Create New User</h2>
+        <span className="text-red">{error}</span>
         <form onSubmit={handleCreatePost} className="space-y-4">
           <div className="flex flex-row gap-4">
             <input
