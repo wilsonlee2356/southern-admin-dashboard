@@ -1,4 +1,4 @@
-import { invoiceData, invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, invoiceCheques, chartData, invoiceChartData, invoiceChequeChartData } from "@/types/ObjectTypes/InvoiceType";
 
 type DataPropsType = {
     data:{
@@ -7,14 +7,14 @@ type DataPropsType = {
     };
 };
 
-export function createMonthlyTimeData(invoices : invoiceData[], invoiceCheques : invoiceCheques[]) : DataPropsType {
+export function createMonthlyTimeData(chartData: chartData) : DataPropsType {
   const processedData : DataPropsType = {
         data:{
             received: [],
             due: [],
         }
     };
-    invoiceCheques.forEach((item : invoiceCheques) => {
+    chartData.invoiceChequeChartData.forEach((item : invoiceChequeChartData) => {
         // const shortMonth = item.paymentDate.toLocaleString('default', { month: 'short'});
         const paymentDate = new Date(item.paymentDate);
         const shortMonthAndYear = paymentDate.getMonth() + 1 + '/' + paymentDate.getFullYear();
@@ -31,7 +31,7 @@ export function createMonthlyTimeData(invoices : invoiceData[], invoiceCheques :
         }
     });
 
-    invoices.forEach((item : invoiceData) => {
+    chartData.invoiceChartData.forEach((item : invoiceChartData) => {
         // const shortMonth = item.invoiceDate.toLocaleString('default', { month: 'short'});
         const invoiceDate = new Date(item.invoiceDate);
         const shortMonthAndYear = invoiceDate.getMonth() + 1 + '/' + invoiceDate.getFullYear();

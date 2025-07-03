@@ -105,3 +105,19 @@ export type postClientInvoiceSummary = {
   ended: boolean;
   client_name: string;
 };
+
+export type chartData = {
+  invoiceChartData: invoiceChartData[];
+  invoiceChequeChartData: invoiceChequeChartData[];
+};
+
+export type invoiceChartData = {
+  invoiceDate: string;
+  amount: number;
+  paidAmount: number;
+};
+
+export type invoiceChequeChartData= {
+  amount: number;
+  paymentDate: string;
+};

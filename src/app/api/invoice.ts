@@ -6,6 +6,7 @@ import {
   invoiceCheques,
   invoiceDataOutput,
   postClientInvoiceSummary,
+  chartData,
 } from "@/types/ObjectTypes/InvoiceType";
 
 // Define the type for makeAuthenticatedRequest
@@ -112,6 +113,16 @@ async function makeDeleteApiRequest(
 
 // Service object with methods that accept makeAuthenticatedRequest as a parameter
 export const CombinedService = {
+  async get_chart_data(
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<chartData> {
+    return makeApiRequest<chartData>(
+      "/api/combined/dashboard",
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      "Unable to fetch chart data",
+    );
+  },
   async get_all_invoice(
     makeAuthenticatedRequest: AuthRequestHandler,
   ): Promise<invoiceData[]> {

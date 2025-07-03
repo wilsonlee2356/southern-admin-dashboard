@@ -7,7 +7,7 @@ import { PaymentsOverviewChart } from "./chart";
 import { InvoiceService } from "@/app/api/services/invoiceService";
 import { CombinedService } from "@/app/api/invoice";
 import { createMonthlyTimeData } from "@/utils/chart-data-analyzer";
-import { invoiceData, invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, invoiceCheques, chartData } from "@/types/ObjectTypes/InvoiceType";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -33,6 +33,7 @@ export function PaymentsOverview({
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
   const [invoiceData, setInvoiceData] = useState<invoiceData[]>([]);
   const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
+  const [chartDataSet, setChartDataSet] = useState<chartData>();
   const [chartData, setChartData] = useState<DataPropType>({
     data: {
       received: [],
@@ -43,15 +44,23 @@ export function PaymentsOverview({
 
   useEffect(() => {
     if(status === "authenticated" && session?.accessToken){
-      console.log("Trying to fetch invoice sort by date: ", status);
-      CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest).then((invoicesList)=>{
-        setInvoiceData(invoicesList);
-        console.log("invoices:", invoiceData);
-        CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest).then((invoiceChequesList)=>{
-          setInvoiceCheques(invoiceChequesList);
-          console.log("invoiceCheques:", invoiceCheques);
-          setChartData(createMonthlyTimeData(invoiceData, invoiceCheques));
-        });
+      // console.log("Trying to fetch invoice sort by date: ", status);
+      // CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest).then((invoicesList)=>{
+      //   setInvoiceData(invoicesList);
+      //   console.log("invoices:", invoiceData);
+      //   CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest).then((invoiceChequesList)=>{
+      //     setInvoiceCheques(invoiceChequesList);
+      //     console.log("invoiceCheques:", invoiceCheques);
+      //     setChartData(createMonthlyTimeData(invoiceData, invoiceCheques));
+      //   });
+      // });
+      CombinedService.get_chart_data(makeAuthenticatedRequest).then((newChartData : chartData)=>{
+        const chartDataInput : chartData = {
+          invoiceChartData: newChartData.invoiceChartData,
+          invoiceChequeChartData: newChartData.invoiceChequeChartData,
+        }
+        setChartDataSet(chartDataInput);
+        console.log("Chart Data",chartDataSet);
       });
     }
       // CombinedService.get_invoice_outstanding_summary(makeAuthenticatedRequest).then((data)=>{
@@ -59,6 +68,18 @@ export function PaymentsOverview({
       //   console.log("Outstanding:", outstandingList);
       // });
   }, [session, status]);
+
+  useEffect(() => {
+
+        console.log("Chart Data changes",chartDataSet);
+        if(chartDataSet){
+          setChartData(createMonthlyTimeData(chartDataSet));
+        }
+      // CombinedService.get_invoice_outstanding_summary(makeAuthenticatedRequest).then((data)=>{
+      //   setOutstandingList(data);
+      //   console.log("Outstanding:", outstandingList);
+      // });
+  }, [chartDataSet]);
   //const invoiceData = await CombinedService.get_all_invoice_sorted_by_date(makeAuthenticatedRequest);
   //const invoiceCheques = await CombinedService.get_all_invoiceCheques(makeAuthenticatedRequest);
   //const chartData = createMonthlyTimeData(invoiceData, invoiceCheques);
