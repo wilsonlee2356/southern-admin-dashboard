@@ -14,7 +14,7 @@ type PropsType<TItem> = {
 };
 
 const PARAM_KEY = "selected_time_frame";
-const { uuid } = require('uuidv4');
+const { uuid } = require('uuid-v4');
 
 export function PeriodPicker<TItem extends string>({
   defaultValue,
