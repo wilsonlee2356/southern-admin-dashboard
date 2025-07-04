@@ -21,6 +21,7 @@ import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useSession } from "next-auth/react";
+import { usePostClientContent } from "@/utils/post-client-content";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -75,9 +76,11 @@ function MuiDataGridWithPopUpButton({
 
   const [confirmPopUpOpen, setConfirmPopUpOpen] = useState<boolean>(false);
 
-    const [popUpOpenStatement, setPopUpOpenStatement] = useState(false);
+  const [popUpOpenStatement, setPopUpOpenStatement] = useState(false);
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  const { updateInvoiceData } = usePostClientContent();
 
   const { data: session, status } = useSession();
 
@@ -171,7 +174,7 @@ function MuiDataGridWithPopUpButton({
       );
       setCanSetPay(false);
     } else {
-      //console.log("Selected rows:", checkedRows);
+      console.log("Selected rows:", checkedRows);
 
       const checkedData = dataArray.filter((row: any) =>
         checkedRows.includes(row.invoiceId),
@@ -183,7 +186,7 @@ function MuiDataGridWithPopUpButton({
       );
 
       const unPaidInvoices = checkedData.filter(
-        (row: any) => row.settlementDate === null,
+        (row: any) => !row.isPaid,
       );
       if (
         unPaidInvoices.length === 0 ||
@@ -205,7 +208,8 @@ function MuiDataGridWithPopUpButton({
     CombinedService.update_invoice_details(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated, makeAuthenticatedRequest).then((res) => {
         if(res) {
             console.log("Updated invoice: ", res);
-            setUpdateDataNeeded(true); // Trigger data update
+            // setUpdateDataNeeded(true); // Trigger data update
+            updateInvoiceData();
         }
     });
     
@@ -391,7 +395,7 @@ function MuiDataGridWithPopUpButton({
               const invoice = getInvoiceById(params.id);
               if (!invoice) return;
               updateInvoiceToPaid(invoice.invoiceId, invoice);
-              setUpdateDataNeeded(true); // Trigger data update
+              // setUpdateDataNeeded(true); // Trigger data update
             }}>
             <span className="sr-only">Set Paid Invoice</span>
             <CheckIcon className="fill-dark dark:fill-white" />
@@ -517,7 +521,7 @@ function MuiDataGridWithPopUpButton({
         onClose={setPopUpOpen}
         dataArray={selectedRows}
         setDataArray={setFilteredData}
-        setUpdateDataNeeded={setUpdateDataNeeded}
+        updateInvoice={updateInvoiceData}
       />
 
       <InvoiceEditPopUp
@@ -526,7 +530,7 @@ function MuiDataGridWithPopUpButton({
         onClose={setPopUpOpenEdit}
         invoiceInfo={editingRow}
         setDataArray={setFilteredData}
-        setUpdateDataNeeded={setUpdateDataNeeded}
+        updateInvoiceData={updateInvoiceData}
       />
 
       <InvoiceViewPopUp
@@ -561,6 +565,7 @@ function MuiDataGridWithPopUpButton({
                   );
                   setFilteredData(updatedData);
                   setDeletingRow(-1);
+                  updateInvoiceData();
               }
               ).catch((err) => {
                 console.log("Error deleting invoice: ", err);

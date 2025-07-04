@@ -12,6 +12,8 @@ import {
 import { CombinedService } from "@/app/api/invoice";
 import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 import { useSession } from "next-auth/react";
+import { useAuthenticatedRequest } from "@/lib/auth";
+
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -20,14 +22,14 @@ type MuiDataGridWithPopUpButtonProps = {
   popUpOpenEdit: boolean;
   setPopUpOpenEdit: any;
   setFilteredData: any;
-  setUpdateDataNeeded: any;
+  setUpdateInvoiceData: any;
 };
 
 function MuiDataGridForPostManagement({
   dataArray,
   popUpOpen,
   setPopUpOpen,
-  setUpdateDataNeeded,
+  setUpdateInvoiceData,
 }: MuiDataGridWithPopUpButtonProps) {
   const [processedDataArray, setProcessedDataArray] = useState<
     postClientInvoiceSummary[]
@@ -38,6 +40,8 @@ function MuiDataGridForPostManagement({
   const [canSetFinish, setCanSetFinish] = useState<boolean>(false);
 
   const { data: session, status } = useSession();
+
+  const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
   React.useEffect(() => {
     const processedArray: postClientInvoiceSummary[] = []; //
@@ -252,9 +256,9 @@ function MuiDataGridForPostManagement({
             idArr = [...idArr, row.post_id];
           });
 
-          CombinedService.set_post_to_finish(idArr)
+          CombinedService.set_post_to_finish(idArr, makeAuthenticatedRequest)
             .then(() => {
-              setUpdateDataNeeded(true);
+              setUpdateInvoiceData();
               updateSelectedRow([]);
             })
             .catch((err) => {

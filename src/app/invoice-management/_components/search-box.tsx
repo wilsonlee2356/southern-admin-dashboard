@@ -60,7 +60,7 @@ const SearchBox = ({
 }: SearchBoxProps) => {
   const [popUpOpen, setPopUpOpen] = useState(false);
   const { data: session, status } = useSession();
-  const { updateData } = usePostClientContent();
+  const { updateData, updateInvoiceData } = usePostClientContent();
 
   // const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({
   //   key: item.invoiceId.toString(),
@@ -298,6 +298,7 @@ const SearchBox = ({
         postArray={postcodeArrFiltered}
         postArrayWithDetails={postData}
         clientArrayWithDetails={clientData}
+        updateInvoiceData={updateInvoiceData}
       />
     </ShowcaseSection>
   );

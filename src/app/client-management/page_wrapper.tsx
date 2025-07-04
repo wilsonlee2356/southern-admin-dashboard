@@ -35,6 +35,8 @@ export default function PageWrapper({
   const [showEndedPosts, setShowEndedPosts] = useState(false);
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
 
+  const { updateInvoiceData } = usePostClientContent();
+
   let data = usePostClientContent().invoiceData;
   let clients = usePostClientContent().clientData;
   let posts = usePostClientContent().postData;
@@ -124,7 +126,7 @@ export default function PageWrapper({
         popUpOpenEdit={popUpOpenEdit}
         setPopUpOpenEdit={setPopUpOpenEdit}
         setFilteredData={setDataToShow}
-        setUpdateDataNeeded={setUpdateDataNeeded}
+        setUpdateInvoiceData={updateInvoiceData}
       />
     </>
   );

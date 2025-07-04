@@ -33,13 +33,13 @@ type InvoiceEditPopUpPropsType = {
     onClose: any;
     invoiceInfo: invoiceData;
     setDataArray: any;
-    setUpdateDataNeeded: any; // Optional prop to trigger data update
+    updateInvoiceData: any; // Optional prop to trigger data update
 
 }
 
 
 
-function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, setUpdateDataNeeded }: InvoiceEditPopUpPropsType){
+function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, updateInvoiceData }: InvoiceEditPopUpPropsType){
 
     const [invoiceNum, setInvoiceNum] = React.useState<string>("");
     const [postcode, setPostcode] = React.useState<string>("");
@@ -155,7 +155,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, se
                     });
                 });
                 
-                setUpdateDataNeeded(true); // Trigger data update
+                updateInvoiceData(); // Trigger data update
+
                 closePopUp();
             }
         });

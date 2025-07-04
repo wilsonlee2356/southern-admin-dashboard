@@ -22,13 +22,13 @@ type InvoicePopUpPropsType = {
     onClose: any;
     dataArray: any;
     setDataArray: any;
-    setUpdateDataNeeded: any;
+    updateInvoice: any;
 }
 
 
 
 
-function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdateDataNeeded }: InvoicePopUpPropsType){
+function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateInvoice }: InvoicePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
     const [amount, setAmount] = useState("");
@@ -180,7 +180,8 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, setUpdat
                                 });
                                 CombinedService.create_transaction(invoiceChequesArr, makeAuthenticatedRequest).then((invoiceCheques) => {
                                     console.log("InvoiceCheques created:", invoiceCheques);
-                                    setUpdateDataNeeded(true);
+                                    // setUpdateDataNeeded(true);
+                                    updateInvoice();
                                     closePopUp();
 
                                     // setDataArray((prevData: any) => {

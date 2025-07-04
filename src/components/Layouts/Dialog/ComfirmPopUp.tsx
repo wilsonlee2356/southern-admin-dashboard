@@ -30,31 +30,6 @@ type InvoiceEditPopUpPropsType = {
 
 function ComfirmPopUp ({ title, message, open, onClose, functionToRun, confirmButtonText}: InvoiceEditPopUpPropsType){
 
-    // const [invoiceNum, setInvoiceNum] = React.useState<string>("");
-    // const [postcode, setPostcode] = React.useState<string>("");
-    // const [amount, setAmount] = React.useState<number>(0);
-    // const [clientName, setClientName] = React.useState<string>("");
-    // const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
-
-    // useEffect(() => {
-    //     if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
-    //         return;
-    //     else {
-    //         setInvoiceNum(invoiceInfo?.invoiceNum);
-    //         setPostcode(invoiceInfo?.post.postcode);
-    //         setAmount(invoiceInfo?.amount);
-    //         setClientName(invoiceInfo?.post.client.clientName);
-    //         setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
-    //     }
-        
-    // }, [invoiceInfo]);
-
-    // if(Object.keys(invoiceInfo).length === 0) return(<><div>No invoice selected</div></>);
-
-    //console.log("Invoice Info: ", invoiceInfo);
-
-
-    //console.log("Pop up opened: ", invoiceNum);
     const closePopUp = ()=> {
         onClose(false);
     }
@@ -90,7 +65,7 @@ function ComfirmPopUp ({ title, message, open, onClose, functionToRun, confirmBu
                             onPress={() => {
                                 functionToRun();
                                 closePopUp();
-                            }}>Delete</Button>
+                            }}>{confirmButtonText}</Button>
                 </div>
             </DialogContent>
         </Dialog>

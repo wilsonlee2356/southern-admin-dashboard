@@ -22,6 +22,7 @@ import {
   invoiceDataOutput,
 } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
+import { useAuthenticatedRequest } from "@/lib/auth";
 
 type AutoCompleteArrayType = {
   key: string;
@@ -36,6 +37,7 @@ type InvoiceCreatePopUpPropsType = {
   postArray: AutoCompleteArrayType[];
   postArrayWithDetails: post[]; // Optional prop for post array with details
   clientArrayWithDetails: client[]; // Optional prop for client array with details
+  updateInvoiceData: any;
 };
 
 function InvoiceCreatePopUp({
@@ -46,6 +48,7 @@ function InvoiceCreatePopUp({
   postArray,
   postArrayWithDetails,
   clientArrayWithDetails,
+  updateInvoiceData,
 }: InvoiceCreatePopUpPropsType) {
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
 
@@ -59,6 +62,8 @@ function InvoiceCreatePopUp({
   const [amount, setAmount] = useState("");
   const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(dayjs());
 
+  const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
   useEffect(() => {
     postArrayWithDetails.find((postItem) => {
       if (postItem.postcode === postcode) {
@@ -66,6 +71,8 @@ function InvoiceCreatePopUp({
         setStreetAddress(postItem.streetAddress);
         return true; // Stop searching once we find a match
       }
+      setBuildingAddress("");
+      setStreetAddress("");
       return false; // Continue searching
     });
     clientArrayWithDetails.find((clientItem) => {
@@ -74,6 +81,8 @@ function InvoiceCreatePopUp({
         setAddress(clientItem.address);
         return true; // Stop searching once we find a match
       }
+      setFullName("");
+      setAddress("");
       return false; // Continue searching
     });
   }, [postcode, clientName]);
@@ -113,13 +122,13 @@ function InvoiceCreatePopUp({
       settlementDate: null,
       statementId: null,
     };
-    CombinedService.create_invoice(updateInvoice)
+    CombinedService.create_invoice(updateInvoice, makeAuthenticatedRequest)
       .then((response) => {
         console.log("Invoice created:", response);
         //getNewlyInsertedInvoice(response.invoiceId);
         if (response) {
           //update List
-          setUpdateDataNeeded(true);
+          updateInvoiceData();
         }
       })
       .catch((error) => {
