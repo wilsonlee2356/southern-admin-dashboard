@@ -26,16 +26,17 @@ export default function SigninWithPassword({ handleSubmit }: any) {
 
     try {
       const result = await signIn("credentials", {
-        redirect: true,
+        redirect: false,
         username,
         password,
       });
-
+      console.log("Signin", result);
       if (result?.error) {
         setError(
           "Invalid credentials. Please check your username and password.",
         );
       } else {
+        console.log("Signin successful");
         router.push("/");
       }
     } catch (err) {

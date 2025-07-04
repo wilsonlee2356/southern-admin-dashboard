@@ -96,7 +96,7 @@ export function PaymentsOverview({
           Payments Overview
         </h2>
 
-        <PeriodPicker defaultValue={timeFrame} sectionKey="payments_overview" />
+        {/* <PeriodPicker defaultValue={timeFrame} sectionKey="payments_overview" /> */}
       </div>
 
       <PaymentsOverviewChart data={chartData.data} />

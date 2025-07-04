@@ -45,6 +45,13 @@ export function createMonthlyTimeData(chartData: chartData) : DataPropsType {
         }
     });
 
+    // if(processedData.data.received.length < processedData.data.due.length){
+    //     if(processedData.data.received.at(-1)?.x !== processedData.data.due.at(-1)?.x){
+
+    //     }
+
+    // }
+
     console.log("Processed Data: ", processedData);
 
     return processedData;
