@@ -37,6 +37,7 @@ async function makeApiRequest<T>(
   // const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
   try {
+    console.log("Calling: ", getApiUrl(endpoint));
     const { response } = await makeAuthenticatedRequest(getApiUrl(endpoint), {
       ...options,
       signal: controller.signal,
@@ -83,6 +84,7 @@ async function makeDeleteApiRequest(
   const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
   try {
+    console.log("Calling: ", getApiUrl(endpoint));
     const { response } = await makeAuthenticatedRequest(getApiUrl(endpoint), {
       ...options,
       signal: controller.signal,
