@@ -61,8 +61,8 @@ export default function PageWrapper(
           : true) &&
         ((showNotEndedPosts && !row.post.isEnded) ||
           (showEndedPosts && row.post.isEnded) ||
-          (showUnpaidInvoices && row.amount > row.paidAmount) ||
-          (showPaidInvoices && row.amount <= row.paidAmount)),
+          (showUnpaidInvoices && row.isEnded) ||
+          (showPaidInvoices && row.isEnded)),
       //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
     );
     //console.log("row.amount<=row.paidAmount", dataArray[1].amount<=dataArray[1].paidAmount);

@@ -35,9 +35,19 @@ export default function SigninWithPassword({ handleSubmit }: any) {
         setError(
           "Invalid credentials. Please check your username and password.",
         );
-      } else {
-        console.log("Signin successful");
-        router.push("/");
+      } else if (result?.ok) {
+        const redirectUrl = result.url || "/";
+        console.log("Attempting redirect to:", redirectUrl);
+        // Try router.push for debugging
+        // try {
+        //   await router.push(redirectUrl);
+        //   console.log("router.push executed");
+        // } catch (err) {
+        //   console.error("router.push failed:", err);
+        // }
+        // Use window.location.href as primary redirect
+        console.log("Using window.location.href for redirect");
+        window.location.href = redirectUrl;
       }
     } catch (err) {
       setError("An error occurred during login. Please try again.");
