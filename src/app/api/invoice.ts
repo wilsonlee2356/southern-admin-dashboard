@@ -37,14 +37,14 @@ async function makeApiRequest<T>(
   // const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
   try {
-    console.log("Calling: ", getApiUrl(endpoint));
+    console.log("Making request to:", getApiUrl(endpoint), "with options:", options);
     const { response } = await makeAuthenticatedRequest(getApiUrl(endpoint), {
-      ...options,
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
         ...(options.headers || {}),
       },
+      ...options,
     });
 
     // clearTimeout(timeoutId);

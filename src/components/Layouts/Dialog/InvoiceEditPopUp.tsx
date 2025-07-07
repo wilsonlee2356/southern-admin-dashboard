@@ -112,7 +112,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
 
         // \/ \/ \/ \/ \/ \/ \/ \/ UNCOMMENT
 
-        const updateInvoice : invoiceData = {
+        const invoice : invoiceData = {
             invoiceId: invoiceInfo.invoiceId,
             invoiceNum: invoiceNum,
             post: {
@@ -137,27 +137,29 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
             isPaid: invoiceInfo.isPaid,
             amount: amount,
             paidAmount: invoiceInfo.paidAmount,
-            settlementDate: null,
-            statementId: null,
+            settlementDate: invoiceInfo.settlementDate,
+            statementId: invoiceInfo.statementId,
             createDate: invoiceInfo.createDate,
             updateDate: newDate,
         };
 
-        CombinedService.update_invoice_details(invoiceInfo.invoiceId, updateInvoice, makeAuthenticatedRequest).then((res) => {
+        console.log("Sending updateInvoice:", JSON.stringify(invoice, null, 2));
+
+        CombinedService.update_invoice_details(invoiceInfo.invoiceId, invoice, makeAuthenticatedRequest).then((res) => {
             if(res) {
                 console.log("Updated invoice: ", res);
                 setDataArray((prevData: any) => {
                     return prevData.map((item: any) => {
                         if (item.invoiceId === invoiceInfo.invoiceId) {
-                            return { ...item, ...updateInvoice };
+                            return { ...item, ...invoice };
                         }
                         return item;
                     });
                 });
                 
-                updateInvoiceData(); // Trigger data update
+                //updateInvoiceData(); // Trigger data update
 
-                closePopUp();
+                // closePopUp();
             }
         });
         
@@ -289,7 +291,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                                         
                                     </div>
                             </div>
-                            <div className="w-1.5/2 h-full">
+                            <div className="w-1.5/2 h-full min-w-80">
                                 <ChequeEditMuiDataGrid
                                     dataArray={invoiceInfo.invoiceChequesList}
                                     setImageSrcToView={setImageSrc}
@@ -303,7 +305,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                             variant="green"
                             shape="full"
                             size="default"
-                            type="submit"
+                            type="button"
                             icon={<CheckIcon className="fill-white" />}
                             onClick={() => {
                                 submit();

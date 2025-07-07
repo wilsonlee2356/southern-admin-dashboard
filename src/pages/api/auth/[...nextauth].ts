@@ -83,7 +83,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, trigger, session }) {
       // Initial sign-in
       if (user) {
-        // console.log("jwt callback (sign-in): ", user);
+        console.log("jwt callback (sign-in): ", user);
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.role = user.role;
@@ -91,7 +91,7 @@ export const authOptions: NextAuthOptions = {
       }
       // Session update triggered by client (e.g., via update())
       if (trigger === "update" && session) {
-        // console.log("jwt callback (update): ", session);
+        console.log("jwt callback (update): ", session);
         token.accessToken = session.accessToken || token.accessToken;
         token.refreshToken = session.refreshToken || token.refreshToken;
         token.role = session.role || token.role;
@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // console.log("session callback: ", token, " ,\n ", session);
+      console.log("session callback: ", token, " ,\n ", session);
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
       session.role = token.role;
