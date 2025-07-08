@@ -18,7 +18,9 @@ export default function PageWrapper(
     // postData,
   }: PageWrapperProps,
 ) {
-  let data = usePostClientContent().invoiceData;
+  const { invoiceData } = usePostClientContent();
+
+  let data = invoiceData;
   let clients = usePostClientContent().clientData;
   let posts = usePostClientContent().postData;
 

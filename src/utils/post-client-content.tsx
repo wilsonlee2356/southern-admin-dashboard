@@ -48,16 +48,15 @@ export function PostClientContentProvider({
       session?.accessToken &&
       invoiceData.length === 0
     ) {
-      CombinedService.get_all_invoice(makeAuthenticatedRequest).then((res) => {
-        setInvoiceData(res);
+      CombinedService.get_all_invoice_without_cheque(makeAuthenticatedRequest).then((res) => {
         console.log("Invoice: " + res);
+        setInvoiceData(res);
         CombinedService.get_all_post(makeAuthenticatedRequest).then((res) => {
-          setPostData(res);
           console.log("Post: " + res);
-          CombinedService.get_all_client(makeAuthenticatedRequest).then(
-            (res) => {
-              setClientData(res);
+          setPostData(res);
+          CombinedService.get_all_client(makeAuthenticatedRequest).then((res) => {
               console.log("Client: " + res);
+              setClientData(res);
             },
           );
         });
@@ -68,7 +67,7 @@ export function PostClientContentProvider({
   const updateData = () =>{
     if(status === "authenticated"){
         console.log("Refreshing data");
-        CombinedService.get_all_invoice(makeAuthenticatedRequest).then((res) => {
+        CombinedService.get_all_invoice_without_cheque(makeAuthenticatedRequest).then((res) => {
           setInvoiceData(res);
           console.log("Invoice: " + res);
           CombinedService.get_all_post(makeAuthenticatedRequest).then((res) => {

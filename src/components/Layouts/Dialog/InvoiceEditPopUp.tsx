@@ -69,7 +69,12 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
             setInvoiceDate(dayjs(invoiceInfo.invoiceDate));
             setBuildingAddress(invoiceInfo.post.buildingAddress);
             setStreetAddress(invoiceInfo.post.streetAddress);
-            setInvoiceCheques(invoiceInfo.invoiceChequesList);
+            CombinedService.get_invoice_by_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
+                console.log("Fetched invoice cheques: ", res.invoiceChequesList);
+                setInvoiceCheques(res.invoiceChequesList);
+            }).catch((err) => {
+                console.error("Error fetching invoice by id: ", err);
+            });
         }
         
     }, [invoiceInfo]);
@@ -293,7 +298,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                             </div>
                             <div className="w-1.5/2 h-full min-w-80">
                                 <ChequeEditMuiDataGrid
-                                    dataArray={invoiceInfo.invoiceChequesList}
+                                    dataArray={invoiceCheques}
                                     setImageSrcToView={setImageSrc}
                                     onClose={setImageViewPopUp}
                                     setChequeCopy={setChequeCopy}

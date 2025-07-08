@@ -136,6 +136,17 @@ export const CombinedService = {
     );
   },
 
+  async get_all_invoice_without_cheque(
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData[]> {
+    return makeApiRequest<invoiceData[]>(
+      "/api/invoices/withoutCheque",
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      "Unable to fetch invoices",
+    );
+  },
+
   async get_all_invoice_sorted_by_date(
     makeAuthenticatedRequest: AuthRequestHandler,
   ): Promise<invoiceData[]> {
@@ -181,17 +192,32 @@ export const CombinedService = {
   },
 
   async get_invoice_by_id(
-    id: string,
+    id: number,
     makeAuthenticatedRequest: AuthRequestHandler,
   ): Promise<invoiceData> {
-    if (!id || typeof id !== "string") {
+    if (!id || typeof id !== "number") {
       throw new Error("Invalid invoice ID");
     }
     return makeApiRequest<invoiceData>(
-      `/api/invoices/num=${id}`,
+      `/api/invoices/id=${id}`,
       { method: "GET" },
       makeAuthenticatedRequest,
       `Unable to fetch invoice with ID ${id}`,
+    );
+  },
+
+  async get_invoice_by_invoiceNum(
+    invoiceNum: string,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!invoiceNum || typeof invoiceNum !== "string") {
+      throw new Error("Invalid invoice ID");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/invoices/num=${invoiceNum}`,
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      `Unable to fetch invoice with invoice number ${invoiceNum}`,
     );
   },
 
