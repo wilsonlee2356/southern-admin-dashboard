@@ -5,6 +5,7 @@ import { Button } from "@/components/ui-elements/button";
 import {
   DataGrid,
   GridColDef,
+  GridFilterModel,
   GridRowId,
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
@@ -17,7 +18,7 @@ import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, invoiceSearch } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useSession } from "next-auth/react";
@@ -41,7 +42,7 @@ type MuiDataGridWithPopUpButtonProps = {
   showPaidInvoices: boolean;
   setShowPaidInvoices: (value: boolean) => void;
   setUpdateDataNeeded: any; // Optional prop to trigger data update
-
+  
 };
 
 function MuiDataGridWithPopUpButton({
@@ -83,6 +84,16 @@ function MuiDataGridWithPopUpButton({
   const { updateInvoiceData } = usePostClientContent();
 
   const { data: session, status } = useSession();
+
+  const [filterModel, setFilterModel] = React.useState<GridFilterModel>({
+    items: [
+      {
+        field: 'invoiceNum',
+        operator: '>',
+        value: '2.5',
+      },
+    ],
+  });
 
   useEffect(() => {
     // console.log("Data array updated:", dataArray);
@@ -455,7 +466,10 @@ function MuiDataGridWithPopUpButton({
             </div>
         </div>
       {/* </ShowcaseSection> */}
-      <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
+      <div 
+        style={{ height: "400", width: "100%", paddingBottom: "2rem" }}
+        // className="h-0.1/2 w-full"
+        >
         <DataGrid
           rows={dataArray}
           columns={columns}
@@ -471,6 +485,7 @@ function MuiDataGridWithPopUpButton({
           disableColumnMenu
           disableRowSelectionOnClick
           hideFooter
+          keepNonExistentRowsSelected 
           sx={{
             "& .MuiDataGrid-cell": {
               display: "flex",

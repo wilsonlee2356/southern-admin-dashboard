@@ -67,24 +67,37 @@ function InvoiceCreatePopUp({
   useEffect(() => {
     postArrayWithDetails.find((postItem) => {
       if (postItem.postcode === postcode) {
+        console.log("Postcode Found:", postItem);
         setBuildingAddress(postItem.buildingAddress);
         setStreetAddress(postItem.streetAddress);
+        setClientName(postItem.client.clientName);
+        setFullName(postItem.client.fullName);
+        setAddress(postItem.client.address);
         return true; // Stop searching once we find a match
       }
+      console.log("Postcode Not Found:");
       setBuildingAddress("");
       setStreetAddress("");
-      return false; // Continue searching
-    });
-    clientArrayWithDetails.find((clientItem) => {
-      if (clientItem.clientName === clientName) {
-        setFullName(clientItem.fullName);
-        setAddress(clientItem.address);
-        return true; // Stop searching once we find a match
-      }
+      setClientName("");
       setFullName("");
       setAddress("");
       return false; // Continue searching
     });
+    if(clientName === ""){
+      clientArrayWithDetails.find((clientItem) => {
+        if (clientItem.clientName === clientName) {
+          console.log("Client Found:", clientItem);
+          setFullName(clientItem.fullName);
+          setAddress(clientItem.address);
+          return true; // Stop searching once we find a match
+        }
+        console.log("Client Not Found:");
+        setFullName("");
+        setAddress("");
+        return false; // Continue searching
+      });
+    }
+    
   }, [postcode, clientName]);
 
   const closePopUp = () => {
@@ -204,36 +217,6 @@ function InvoiceCreatePopUp({
               </div>
               <div className="flex w-full flex-col gap-2.5">
                 <label className="text-body-lg text-center font-medium text-dark dark:text-white">
-                  Client
-                </label>
-                <AutoCompleteWithSelectorButton
-                  title="Client Name"
-                  placeholder="Enter Client Name"
-                  dataArr={clientArray}
-                  input={clientName}
-                  stateSetter={setClientName}
-                />
-                <TextInputHeroUI
-                  className="w-full"
-                  label="Full Name"
-                  placeholder="Enter Full Name"
-                  value={fullName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setFullName(e.currentTarget.value);
-                  }}
-                />
-                <TextInputHeroUI
-                  className="w-full"
-                  label="Address"
-                  placeholder="Enter Address"
-                  value={address}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setAddress(e.currentTarget.value);
-                  }}
-                />
-              </div>
-              <div className="flex w-full flex-col gap-2.5">
-                <label className="text-body-lg text-center font-medium text-dark dark:text-white">
                   Post
                 </label>
                 <AutoCompleteWithSelectorButton
@@ -260,6 +243,36 @@ function InvoiceCreatePopUp({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setStreetAddress(e.currentTarget.value)
                   }
+                />
+              </div>
+              <div className="flex w-full flex-col gap-2.5">
+                <label className="text-body-lg text-center font-medium text-dark dark:text-white">
+                  Client
+                </label>
+                <AutoCompleteWithSelectorButton
+                  title="Client Name"
+                  placeholder="Enter Client Name"
+                  dataArr={clientArray}
+                  input={clientName}
+                  stateSetter={setClientName}
+                />
+                <TextInputHeroUI
+                  className="w-full"
+                  label="Full Name"
+                  placeholder="Enter Full Name"
+                  value={fullName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setFullName(e.currentTarget.value);
+                  }}
+                />
+                <TextInputHeroUI
+                  className="w-full"
+                  label="Address"
+                  placeholder="Enter Address"
+                  value={address}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setAddress(e.currentTarget.value);
+                  }}
                 />
               </div>
             </div>

@@ -7,6 +7,14 @@ export type invoice = {
   status: string;
 };
 
+export type invoiceSearch = {
+  invoiceNum: string;
+  clientName: string;
+  postcode: string;
+  startDate: Date | null;
+  endDate: Date | null;
+};
+
 export type invoiceArray = {
   //dataArray: invoice[];
   dataArray: invoiceData[];
