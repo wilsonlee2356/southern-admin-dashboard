@@ -205,7 +205,7 @@ function MuiDataGridWithPopUpButton({
 
     invoiceToBeUpdated.isPaid = true;
     console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
-    CombinedService.update_invoice_details(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated, makeAuthenticatedRequest).then((res) => {
+    CombinedService.update_invoice_by_id(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated, makeAuthenticatedRequest).then((res) => {
         if(res) {
             console.log("Updated invoice: ", res);
             // setUpdateDataNeeded(true); // Trigger data update
