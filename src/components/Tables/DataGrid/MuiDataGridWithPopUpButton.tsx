@@ -80,7 +80,7 @@ function MuiDataGridWithPopUpButton({
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
-  const { updateInvoiceData } = usePostClientContent();
+  const { updateInvoiceData, loading } = usePostClientContent();
 
   const { data: session, status } = useSession();
 
@@ -101,7 +101,7 @@ function MuiDataGridWithPopUpButton({
   //   console.log("Row selected:", editingRow);
   // }, [editingRow]);
 
-  if (!dataArray || dataArray.length === 0) {
+  if (!loading && (!dataArray || dataArray.length === 0)) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
         
@@ -201,7 +201,7 @@ function MuiDataGridWithPopUpButton({
     }
   };
 
-  const updateInvoiceToPaid = (invoiceId: number, invoiceToBeUpdated : invoiceData) => {
+  const updateInvoiceToPaid = (invoiceToBeUpdated : invoiceData) => {
 
     invoiceToBeUpdated.isPaid = true;
     console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
@@ -394,11 +394,11 @@ function MuiDataGridWithPopUpButton({
             onClick={() => {
               const invoice = getInvoiceById(params.id);
               if (!invoice) return;
-              updateInvoiceToPaid(invoice.invoiceId, invoice);
+              updateInvoiceToPaid(invoice);
               // setUpdateDataNeeded(true); // Trigger data update
             }}>
             <span className="sr-only">Set Paid Invoice</span>
-            <CheckIcon className="fill-dark dark:fill-white" />
+            <CheckIcon className="fill-green dark:fill-green" />
           </button></> : <></>}
         </div>
       ),
@@ -413,7 +413,7 @@ function MuiDataGridWithPopUpButton({
       > */}
         <div className="mb-4.5 flex items-center justify-between">
             <label className="mb-3 block text-body-xl font-medium text-dark">
-              {`Total: $${totalAmount.toLocaleString()}`}
+              {loading ? "Loading..." : `Total: $${totalAmount.toLocaleString()}`}
             </label>
             <div className="full-width flex items-right justify-end gap-x-3.5">
             {/* <Button
@@ -475,6 +475,7 @@ function MuiDataGridWithPopUpButton({
           disableRowSelectionOnClick
           hideFooter
           keepNonExistentRowsSelected 
+          loading={loading}
           sx={{
             "& .MuiDataGrid-cell": {
               display: "flex",
@@ -488,7 +489,12 @@ function MuiDataGridWithPopUpButton({
               backgroundColor: "dark: black",
             },
           }}
-          
+          slotProps={{
+            loadingOverlay: {
+              variant: 'skeleton',
+              noRowsVariant: 'skeleton',
+            },
+          }}
         />
       </div>
       <div className="flex flex-row gap-4.5">

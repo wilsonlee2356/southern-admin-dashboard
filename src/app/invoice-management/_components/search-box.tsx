@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
+// import {Button} from "@heroui/react";
 import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import TextInputHeroUI from "@/components/FormElements/InputGroup/text-input-heroui";
 import {
@@ -11,7 +12,7 @@ import {
   post,
   invoiceData,
 } from "@/types/ObjectTypes/InvoiceType";
-import { CloseIcon, UploadIcon, RefreshIcon } from "@/assets/icons";
+import { CloseIcon, UploadIcon, RefreshIcon, SpinningRefreshIcon } from "@/assets/icons";
 import InvoiceCreatePopUp from "@/components/Layouts/Dialog/InvoiceCreatePopUp";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { Dayjs } from "dayjs";
@@ -60,7 +61,7 @@ const SearchBox = ({
 }: SearchBoxProps) => {
   const [popUpOpen, setPopUpOpen] = useState(false);
   const { data: session, status } = useSession();
-  const { updateData, updateInvoiceData } = usePostClientContent();
+  const { updateData, updateInvoiceData, refreshLoading } = usePostClientContent();
 
   // const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({
   //   key: item.invoiceId.toString(),
@@ -258,10 +259,11 @@ const SearchBox = ({
         <div className="flex flex-col gap-4 xl:flex-row xl:justify-center">
           <Button
             label="Refresh Data"
-            variant="outlineBlue"
+            variant={refreshLoading ? "outlineBlueDiabled" : "outlineBlue"}
             shape="full"
             size="small"
-            icon={<RefreshIcon className="fill-blue" />}
+            disabled = {refreshLoading}
+            icon={refreshLoading ? <SpinningRefreshIcon /> : <RefreshIcon className="fill-blue"/>}
             onClick={() => {
               handleRefreshClick();
             }}

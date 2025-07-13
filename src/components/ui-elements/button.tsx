@@ -18,6 +18,8 @@ const buttonVariants = cva(
           "border border-dark hover:bg-dark/10 text-dark dark:hover:bg-white/10 dark:border-white/25 dark:text-white",
         outlineBlue:
           "border border-blue hover:bg-blue/10 text-blue",
+        outlineBlueDiabled:
+          "border border-blue-200 text-blue-200",
       },
       shape: {
         default: "",

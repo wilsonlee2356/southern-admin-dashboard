@@ -10,12 +10,16 @@ const PostClientContentContext = createContext<{
   invoiceData: invoiceData[];
   postData: post[];
   clientData: client[];
+  loading: boolean;
+  refreshLoading: boolean;
   updateData: () => void;
   updateInvoiceData: () => void;
 }>({
   invoiceData: [],
   postData: [],
   clientData: [],
+  loading: false,
+  refreshLoading: false,
   updateData: () => {},
   updateInvoiceData: () => {},
 });
@@ -39,6 +43,10 @@ export function PostClientContentProvider({
   const [invoiceData, setInvoiceData] = useState<invoiceData[]>([]);
   const [postData, setPostData] = useState<post[]>([]);
   const [clientData, setClientData] = useState<client[]>([]);
+  const [loading, isLoading] = useState<boolean>(false);
+  const [refreshLoading, setRefreshLoading] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number>(0);
+  const [refreshCountdown, setRefreshCountdown] = useState<number>(0);
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
   useEffect(() => {
@@ -48,6 +56,8 @@ export function PostClientContentProvider({
       session?.accessToken &&
       invoiceData.length === 0
     ) {
+      isLoading(true);
+      setCountdown(15);
       CombinedService.get_all_invoice_without_cheque(makeAuthenticatedRequest).then((res) => {
         console.log("Invoice: " + res);
         setInvoiceData(res);
@@ -57,6 +67,7 @@ export function PostClientContentProvider({
           CombinedService.get_all_client(makeAuthenticatedRequest).then((res) => {
               console.log("Client: " + res);
               setClientData(res);
+              isLoading(false);
             },
           );
         });
@@ -64,9 +75,44 @@ export function PostClientContentProvider({
     }
   }, [session, status]);
 
+  useEffect(() => {
+    if (countdown <= 0) {
+        return; // Stop the countdown when it reaches zero
+    }
+    if(!loading){
+      setCountdown(0); // Reset countdown when not refreshing
+      return; // No countdown if not refreshing
+    }
+      const timer = setInterval(() => {
+        setCountdown((prevSeconds) => prevSeconds - 1);
+      }, 1000); // Update every 1000 milliseconds (1 second)
+      console.log("Countdown started: " + countdown);
+      // Clean up the interval when the component unmounts or secondsLeft reaches zero
+      return () => clearInterval(timer);
+  }, [countdown]);
+
+  useEffect(() => {
+    
+    if (refreshCountdown <= 0) {
+        return; // Stop the countdown when it reaches zero
+    }
+    if(!refreshLoading){
+      setRefreshCountdown(0); // Reset countdown when not refreshing
+      return; // No countdown if not refreshing
+    }
+      const timer = setInterval(() => {
+        setRefreshCountdown((prevSeconds) => prevSeconds - 1);
+      }, 1000); // Update every 1000 milliseconds (1 second)
+      console.log("Refresh Countdown started: " + refreshCountdown);
+      // Clean up the interval when the component unmounts or secondsLeft reaches zero
+      return () => clearInterval(timer);
+  }, [refreshCountdown]);
+
   const updateData = () =>{
     if(status === "authenticated"){
         console.log("Refreshing data");
+        setRefreshLoading(true);
+        setRefreshCountdown(15); // Set countdown to 5 seconds
         CombinedService.get_all_invoice_without_cheque(makeAuthenticatedRequest).then((res) => {
           setInvoiceData(res);
           console.log("Invoice: " + res);
@@ -76,6 +122,7 @@ export function PostClientContentProvider({
             CombinedService.get_all_client(makeAuthenticatedRequest).then((res) => {
                 setClientData(res);
                 console.log("Client: " + res);
+                setRefreshLoading(false);
               },
             );
           });
@@ -97,6 +144,8 @@ export function PostClientContentProvider({
     invoiceData,
     postData,
     clientData,
+    loading,
+    refreshLoading,
     updateData,
     updateInvoiceData,
   };
