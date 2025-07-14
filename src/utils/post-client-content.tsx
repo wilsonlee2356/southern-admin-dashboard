@@ -14,6 +14,7 @@ const PostClientContentContext = createContext<{
   refreshLoading: boolean;
   updateData: () => void;
   updateInvoiceData: () => void;
+  updatePostData: () => void;
 }>({
   invoiceData: [],
   postData: [],
@@ -22,6 +23,7 @@ const PostClientContentContext = createContext<{
   refreshLoading: false,
   updateData: () => {},
   updateInvoiceData: () => {},
+  updatePostData: () => {},
 });
 
 export function usePostClientContent() {
@@ -140,6 +142,16 @@ export function PostClientContentProvider({
     }
   }
 
+  const updatePostData = () =>{
+    if(status === "authenticated"){
+        console.log("Refreshing data");
+        CombinedService.get_all_post(makeAuthenticatedRequest).then((res) => {
+            setPostData(res);
+            console.log("Post: " + res);
+        });
+    }
+  }
+
   const postClientContent = {
     invoiceData,
     postData,
@@ -148,6 +160,7 @@ export function PostClientContentProvider({
     refreshLoading,
     updateData,
     updateInvoiceData,
+    updatePostData,
   };
 
   return (

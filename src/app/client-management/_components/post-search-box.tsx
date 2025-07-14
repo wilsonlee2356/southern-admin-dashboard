@@ -5,10 +5,12 @@ import React, { useState } from "react";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
 import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
-import { client, post, invoiceData } from "@/types/ObjectTypes/InvoiceType";
-import { CloseIcon, RefreshIcon, SpinningRefreshIcon} from "@/assets/icons";
+import { client, post } from "@/types/ObjectTypes/InvoiceType";
+import { CloseIcon, RefreshIcon, SpinningRefreshIcon, UploadIcon} from "@/assets/icons";
 import { MuiCheckbox } from "@/components/FormElements/Checkboxes/MuiCheckbox";
 import { usePostClientContent } from "@/utils/post-client-content";
+import { useSession } from "next-auth/react";
+import PostCreatePopUp from "@/components/Layouts/Dialog/PostCreatePopUp";
 
 type PostSearchBoxProps = {
   // dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
@@ -44,7 +46,9 @@ const PostSearchBox = ({
   setShowNotEndedPosts,
 }: PostSearchBoxProps) => {
 
-  const { updateData, refreshLoading } = usePostClientContent();
+  const [popUpOpen, setPopUpOpen] = useState(false);
+  const { updateData, refreshLoading, updatePostData } = usePostClientContent();
+  const { data: session, status } = useSession();
 
   const clientNameArr = clientData.map((item) => ({
     key: item.clientId.toString(),
@@ -127,16 +131,27 @@ const PostSearchBox = ({
               handleClear();
             }}
           />
+          {(status === "authenticated" && session?.accessToken && (session.role === 'admins' || session.role === 'editors')) ? <Button
+              label="Create"
+              variant="primary"
+              shape="full"
+              size="default"
+              icon={<UploadIcon />}
+              onClick={() => {
+                //handleSubmit;
+                setPopUpOpen(true);
+              }}/> 
+              : <></>}
         </div>
       </form>
-      {/* <InvoiceCreatePopUp
+      <PostCreatePopUp
         open={popUpOpen}
         onClose={setPopUpOpen}
-        setUpdateDataNeeded={setUpdateDataNeeded}
-        invoiceArray={invoiceNumArr}
         clientArray={clientNameArr}
-        postArray={postcodeArr}
-      /> */}
+        postArray={postcodeArr} 
+        postArrayWithDetails={postData} 
+        clientArrayWithDetails={clientData} 
+        updatePostData={updatePostData}      />
     </ShowcaseSection>
   );
 };

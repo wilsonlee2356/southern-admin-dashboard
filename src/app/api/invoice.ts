@@ -320,6 +320,24 @@ export const CombinedService = {
     );
   },
 
+  async create_post(
+    newPost: post,
+    makeAuthenticatedRequest?: AuthRequestHandler,
+  ): Promise<post> {
+    if (!newPost || typeof newPost !== "object") {
+      throw new Error("Invalid post data");
+    }
+    return makeApiRequest<post>(
+      "/api/posts",
+      {
+        method: "POST",
+        body: JSON.stringify(newPost),
+      },
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
+      "Unable to create invoice",
+    );
+  },
+
   async create_cheque(
     newCheque: cheque,
     makeAuthenticatedRequest: AuthRequestHandler,
