@@ -1,5 +1,5 @@
 "use client";
-import { CheckIcon, TrashIcon, EmailIcon } from "@/assets/icons";
+import { CheckIcon, TrashIcon, EmailIcon, XIcon } from "@/assets/icons";
 import { PreviewIcon, EditIcon } from "@/components/Tables/icons";
 import { Button } from "@/components/ui-elements/button";
 import {
@@ -201,9 +201,9 @@ function MuiDataGridWithPopUpButton({
     }
   };
 
-  const updateInvoiceToPaid = (invoiceToBeUpdated : invoiceData) => {
+  const toogleInvoiceisPaid = (invoiceToBeUpdated : invoiceData) => {
 
-    invoiceToBeUpdated.isPaid = true;
+    invoiceToBeUpdated.isPaid = !invoiceToBeUpdated.isPaid;
     console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
     CombinedService.update_invoice_by_id(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated, makeAuthenticatedRequest).then((res) => {
         if(res) {
@@ -390,16 +390,29 @@ function MuiDataGridWithPopUpButton({
             <span className="sr-only">Edit Invoice</span>
             <EditIcon className="fill-dark dark:fill-white" />
           </button>
+          {!getInvoiceById(params.id)?.isPaid ? 
           <button className="text-dark dark:text-white"
             onClick={() => {
               const invoice = getInvoiceById(params.id);
               if (!invoice) return;
-              updateInvoiceToPaid(invoice);
+              toogleInvoiceisPaid(invoice);
               // setUpdateDataNeeded(true); // Trigger data update
             }}>
             <span className="sr-only">Set Paid Invoice</span>
             <CheckIcon className="fill-green dark:fill-green" />
-          </button></> : <></>}
+          </button>
+          :  
+          <button className="text-dark dark:text-white"
+            onClick={() => {
+              const invoice = getInvoiceById(params.id);
+              if (!invoice) return;
+              toogleInvoiceisPaid(invoice);
+              // setUpdateDataNeeded(true); // Trigger data update
+            }}>
+            <span className="sr-only">Set Paid Invoice</span>
+            <XIcon className="fill-red" />
+          </button>
+          }</> : <></>}
         </div>
       ),
     },

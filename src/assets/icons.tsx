@@ -147,8 +147,8 @@ export function TrendingUpIcon(props: IconProps) {
 export function CheckIcon(props: IconProps) {
   return (
     <svg width="17"
-         height="15" viewBox="0 0 256 256" id="Flat" {...props} xmlns="http://www.w3.org/2000/svg">
-        <path d="M103.99951,196.00012a11.9627,11.9627,0,0,1-8.48535-3.51465l-56-55.99511a12.00044,12.00044,0,0,1,16.9707-16.97168l47.51465,47.51123L207.51416,63.51916a12.0001,12.0001,0,0,1,16.9707,16.97071l-112,111.9956A11.9627,11.9627,0,0,1,103.99951,196.00012Z"/>
+         height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <path d="M18.047,4,22,8.325,9.3,20,2,12.68,6.136,8.533,9.474,11.88Z"/>
     </svg>
   );
 }
@@ -170,8 +170,8 @@ export function DoubleCheckIcon(props: IconProps) {
 export function XIcon(props: IconProps) {
   return (
     <svg
-      width="11"
-      height="11"
+      width="17"
+      height="15"
       viewBox="0 0 11 11"
       fill="currentColor"
       {...props}
