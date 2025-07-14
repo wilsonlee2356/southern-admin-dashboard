@@ -83,6 +83,9 @@ function InvoiceCreatePopUp({
       setAddress("");
       return false; // Continue searching
     });
+  }, [postcode]);
+
+  useEffect(() => {
     if(clientName === ""){
       clientArrayWithDetails.find((clientItem) => {
         if (clientItem.clientName === clientName) {
@@ -97,8 +100,7 @@ function InvoiceCreatePopUp({
         return false; // Continue searching
       });
     }
-    
-  }, [postcode, clientName]);
+  }, [clientName]);
 
   const closePopUp = () => {
     onClose(false);

@@ -55,7 +55,6 @@ export function SpinningRefreshIcon(props: IconProps, className?: string) {
     </svg>
    );
 }
-
 export function ArrowLeftIcon(props: IconProps) {
   return (
     <svg

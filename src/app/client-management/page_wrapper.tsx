@@ -23,7 +23,8 @@ export default function PageWrapper({
   // clientData,
   // postData,
 }: PageWrapperProps) {
-  const [dataToShow, setDataToShow] = useState<invoiceData[]>([]); //0 = NumberOfInvoices, 1 = TotalAmount, 2 = TotalOutstandingAmount, 3 = post_id, 4 = postcode, 5 = is_ended, 6 = clientName
+  const [processedDataArray, setProcessedDataArray] = useState<postClientInvoiceSummary[]>([]);
+  const [dataToShow, setDataToShow] = useState<postClientInvoiceSummary[]>([]); //0 = NumberOfInvoices, 1 = TotalAmount, 2 = TotalOutstandingAmount, 3 = post_id, 4 = postcode, 5 = is_ended, 6 = clientName
   //   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -35,11 +36,11 @@ export default function PageWrapper({
   const [showEndedPosts, setShowEndedPosts] = useState(false);
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
 
-  const { updateInvoiceData } = usePostClientContent();
+  const { updateInvoiceData, invoiceData, clientData, postData } = usePostClientContent();
 
-  let data = usePostClientContent().invoiceData;
-  let clients = usePostClientContent().clientData;
-  let posts = usePostClientContent().postData;
+  // let data = usePostClientContent().invoiceData;
+  // let clients = usePostClientContent().clientData;
+  // let posts = usePostClientContent().postData;
   // useEffect(() => {
   //   console.log( typeof dataArray[0].postcode  );
   //   setDataToShow(dataArray);
@@ -50,26 +51,62 @@ export default function PageWrapper({
   // }, [showEndedPosts, showNotEndedPosts]);
 
   useEffect(() => {
-    const selectedData: any = data?.filter(
-      (row: invoiceData) =>
-        ((!checkEmpty(clientName)
-          ? row.post.client.clientName
+      const processedArray: postClientInvoiceSummary[] = []; //
+      postData?.map((postItem) => {
+        processedArray.push({
+          post_id: postItem.postId,
+          postcode: postItem.postcode,
+          numberOfInvoices: 0,
+          totalAmount: 0,
+          outstanding: 0,
+          ended: postItem.isEnded,
+          client_name: postItem.client.clientName,
+        })});
+      invoiceData?.map((row: invoiceData) => {
+        const existingPost = processedArray.find(
+          (item) => item.post_id === row.post.postId,
+        );
+        if (existingPost) {
+          existingPost.numberOfInvoices += 1;
+          existingPost.totalAmount += row.amount;
+          existingPost.outstanding += row.amount - row.paidAmount;
+        } else {
+          processedArray.push({
+            post_id: row.post.postId,
+            postcode: row.post.postcode,
+            numberOfInvoices: 1,
+            totalAmount: row.amount,
+            outstanding: row.amount - row.paidAmount,
+            ended: row.post.isEnded,
+            client_name: row.post.client.clientName,
+          });
+        }
+      });
+      setProcessedDataArray(processedArray);
+      console.log("Processed data array: ", processedArray);
+    }, [postData, invoiceData]);
+
+  useEffect(() => {
+    const selectedData: any = processedDataArray?.filter(
+      (row: postClientInvoiceSummary) =>
+        (!checkEmpty(clientName)
+          ? row.client_name
               .toLowerCase()
               .includes(clientName.toLowerCase())
           : true) &&
           (!checkEmpty(postcode)
-            ? row.post.postcode.toLowerCase().includes(postcode.toLowerCase())
+            ? row.postcode.toLowerCase().includes(postcode.toLowerCase())
             : true) &&
-          showNotEndedPosts &&
-          !row.post.isEnded) ||
-        (showEndedPosts && row.post.isEnded),
+          (showNotEndedPosts &&
+          !row.ended) ||
+        (showEndedPosts && row.ended),
 
       //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
     );
     setDataToShow(selectedData);
     console.log("Filtered post data: ", selectedData);
     //console.log("Type ", selectedData = dataArray);
-  }, [clientName, postcode, showNotEndedPosts, showEndedPosts, data]);
+  }, [clientName, postcode, showNotEndedPosts, showEndedPosts, processedDataArray]);
 
   // useEffect(() => {
   //   if (updateDataNeeded) {
@@ -104,9 +141,9 @@ export default function PageWrapper({
         setFilteredData={setDataToShow}
       /> */}
       <PostSearchBox
-        dataArray={dataToShow}
-        clientData={clients ?? []}
-        postData={posts ?? []}
+        // dataArray={dataToShow}
+        clientData={clientData ?? []}
+        postData={postData ?? []}
         clientName={clientName}
         postcode={postcode}
         showEndedPosts={showEndedPosts}
@@ -121,12 +158,12 @@ export default function PageWrapper({
 
       <MuiDataGridForPostManagement
         dataArray={dataToShow}
+        postArray={postData ?? []}
         popUpOpen={popUpOpen}
         setPopUpOpen={setPopUpOpen}
         popUpOpenEdit={popUpOpenEdit}
         setPopUpOpenEdit={setPopUpOpenEdit}
         setFilteredData={setDataToShow}
-        setUpdateInvoiceData={updateInvoiceData}
       />
     </>
   );

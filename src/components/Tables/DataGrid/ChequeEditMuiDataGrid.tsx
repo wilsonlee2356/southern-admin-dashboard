@@ -13,18 +13,19 @@ type ChequeEditMuiDataGridProps = {
   setImageSrcToView: any;
   onClose: any;
   setChequeCopy: any;
+  loadingCheques: boolean;
 };
 
 
-function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequeCopy }: ChequeEditMuiDataGridProps) {
+function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequeCopy, loadingCheques }: ChequeEditMuiDataGridProps) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  if (!dataArray || dataArray.length === 0) {
+  if (!loadingCheques && (!dataArray || dataArray.length === 0)) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
         <ShowcaseSection title="No Data Available" className="!p-6.5">
-          <p>No invoices found to display.</p>
+          <p>No cheque found to display.</p>
         </ShowcaseSection>
       </div>
     );
@@ -126,6 +127,7 @@ function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequ
           disableColumnMenu
           disableRowSelectionOnClick
           hideFooter
+          loading={loadingCheques}
           sx={{
             "& .MuiDataGrid-cell": {
               display: "flex",
@@ -139,6 +141,12 @@ function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequ
               backgroundColor: "dark: black"
             },
             
+          }}
+          slotProps={{
+            loadingOverlay: {
+              variant: 'skeleton',
+              noRowsVariant: 'skeleton',
+            },
           }}
 
           

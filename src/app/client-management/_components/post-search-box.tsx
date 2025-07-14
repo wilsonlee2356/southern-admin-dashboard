@@ -6,12 +6,12 @@ import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
 import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import { client, post, invoiceData } from "@/types/ObjectTypes/InvoiceType";
-import { CloseIcon, RefreshIcon } from "@/assets/icons";
+import { CloseIcon, RefreshIcon, SpinningRefreshIcon} from "@/assets/icons";
 import { MuiCheckbox } from "@/components/FormElements/Checkboxes/MuiCheckbox";
 import { usePostClientContent } from "@/utils/post-client-content";
 
 type PostSearchBoxProps = {
-  dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
+  // dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
   clientData: client[];
   postData: post[];
   clientName: string;
@@ -30,7 +30,7 @@ type PostSearchBoxProps = {
 };
 
 const PostSearchBox = ({
-  dataArray,
+  // dataArray,
   clientData,
   postData,
   clientName,
@@ -44,7 +44,7 @@ const PostSearchBox = ({
   setShowNotEndedPosts,
 }: PostSearchBoxProps) => {
 
-  const { updateData } = usePostClientContent();
+  const { updateData, refreshLoading } = usePostClientContent();
 
   const clientNameArr = clientData.map((item) => ({
     key: item.clientId.toString(),
@@ -61,8 +61,8 @@ const PostSearchBox = ({
   }, []);
 
   const handleClear = () => {
-    console.log("Clearing filters...: ", dataArray);
-    setFilteredData(dataArray); // Reset to original data
+    // console.log("Clearing filters...: ", dataArray);
+    // setFilteredData(dataArray); // Reset to original data
     setClientName("");
     setPostcode("");
   };
@@ -108,10 +108,11 @@ const PostSearchBox = ({
         <div className="flex flex-col gap-4 xl:flex-row xl:justify-center">
           <Button
             label="Refresh Data"
-            variant="outlineBlue"
+            variant={refreshLoading ? "outlineBlueDiabled" : "outlineBlue"}
             shape="full"
             size="small"
-            icon={<RefreshIcon className="fill-blue" />}
+            disabled = {refreshLoading}
+            icon={refreshLoading ? <SpinningRefreshIcon /> : <RefreshIcon className="fill-blue"/>}
             onClick={() => {
               handleRefreshClick();
             }}

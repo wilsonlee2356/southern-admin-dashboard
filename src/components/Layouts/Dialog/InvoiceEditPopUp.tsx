@@ -53,6 +53,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
     const [imageSrc, setImageSrc] = React.useState<string>("");
     const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
     const [imageViewPopUp, setImageViewPopUp] = React.useState<boolean>(false);
+    const [loadingCheques, setLoadingCheques] = useState<boolean>(false);
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
@@ -69,8 +70,10 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
             setInvoiceDate(dayjs(invoiceInfo.invoiceDate));
             setBuildingAddress(invoiceInfo.post.buildingAddress);
             setStreetAddress(invoiceInfo.post.streetAddress);
+            setLoadingCheques(true);
             CombinedService.get_invoice_by_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
                 console.log("Fetched invoice cheques: ", res.invoiceChequesList);
+                setLoadingCheques(false);
                 setInvoiceCheques(res.invoiceChequesList);
             }).catch((err) => {
                 console.error("Error fetching invoice by id: ", err);
@@ -302,6 +305,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                                     setImageSrcToView={setImageSrc}
                                     onClose={setImageViewPopUp}
                                     setChequeCopy={setChequeCopy}
+                                    loadingCheques={loadingCheques}
                                 />
                             </div>
                         </div>

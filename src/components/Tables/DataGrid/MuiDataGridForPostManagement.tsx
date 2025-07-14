@@ -7,33 +7,37 @@ import { cn } from "@/lib/utils";
 import React, { useState } from "react";
 import {
   invoiceData,
+  post,
   postClientInvoiceSummary,
 } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 import { useSession } from "next-auth/react";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { usePostClientContent } from "@/utils/post-client-content";
 
 
 type MuiDataGridWithPopUpButtonProps = {
-  dataArray: invoiceData[];
+  dataArray: postClientInvoiceSummary[];
+  postArray: post[];
   popUpOpen: boolean;
   setPopUpOpen: any;
   popUpOpenEdit: boolean;
   setPopUpOpenEdit: any;
   setFilteredData: any;
-  setUpdateInvoiceData: any;
+  // setUpdateInvoiceData: any;
 };
 
 function MuiDataGridForPostManagement({
   dataArray,
+  postArray,
   popUpOpen,
   setPopUpOpen,
-  setUpdateInvoiceData,
+  // setUpdateInvoiceData,
 }: MuiDataGridWithPopUpButtonProps) {
-  const [processedDataArray, setProcessedDataArray] = useState<
-    postClientInvoiceSummary[]
-  >([]);
+  // const [processedDataArray, setProcessedDataArray] = useState<
+  //   postClientInvoiceSummary[]
+  // >([]);
   const [selectedRows, setSelectedRows] = useState<postClientInvoiceSummary[]>(
     [],
   );
@@ -43,31 +47,9 @@ function MuiDataGridForPostManagement({
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
-  React.useEffect(() => {
-    const processedArray: postClientInvoiceSummary[] = []; //
-    dataArray?.map((row: invoiceData) => {
-      const existingPost = processedArray.find(
-        (item) => item.post_id === row.post.postId,
-      );
-      if (existingPost) {
-        existingPost.numberOfInvoices += 1;
-        existingPost.totalAmount += row.amount;
-        existingPost.outstanding += row.amount - row.paidAmount;
-      } else {
-        processedArray.push({
-          post_id: row.post.postId,
-          postcode: row.post.postcode,
-          numberOfInvoices: 1,
-          totalAmount: row.amount,
-          outstanding: row.amount - row.paidAmount,
-          ended: row.post.isEnded,
-          client_name: row.post.client.clientName,
-        });
-      }
-    });
-    setProcessedDataArray(processedArray);
-    console.log("Processed data array: ", processedArray);
-  }, [dataArray]);
+  const { updateInvoiceData, loading } = usePostClientContent();
+
+  
 
   if (!dataArray || dataArray.length === 0) {
     return (
@@ -86,7 +68,7 @@ function MuiDataGridForPostManagement({
     } else {
       //console.log("Selected rows:", checkedRows);
 
-      const checkedData = processedDataArray.filter(
+      const checkedData = dataArray.filter(
         (row: postClientInvoiceSummary) => checkedRows.includes(row.post_id),
       );
       //console.log("Checked data:1 ", checkedData);
@@ -197,7 +179,7 @@ function MuiDataGridForPostManagement({
     <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
       <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
         <DataGrid
-          rows={processedDataArray}
+          rows={dataArray}
           columns={columns}
           getRowId={(row) => row.post_id}
           columnVisibilityModel={{
@@ -211,6 +193,7 @@ function MuiDataGridForPostManagement({
           disableColumnMenu
           disableRowSelectionOnClick
           hideFooter
+          loading={loading}
           sx={{
             "& .MuiDataGrid-cell": {
               display: "flex",
@@ -222,6 +205,12 @@ function MuiDataGridForPostManagement({
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "dark: black",
+            },
+          }}
+          slotProps={{
+            loadingOverlay: {
+              variant: 'skeleton',
+              noRowsVariant: 'skeleton',
             },
           }}
         />
@@ -258,7 +247,7 @@ function MuiDataGridForPostManagement({
 
           CombinedService.set_post_to_finish(idArr, makeAuthenticatedRequest)
             .then(() => {
-              setUpdateInvoiceData();
+              updateInvoiceData();
               updateSelectedRow([]);
             })
             .catch((err) => {
