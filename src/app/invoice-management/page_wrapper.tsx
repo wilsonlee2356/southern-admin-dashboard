@@ -197,7 +197,7 @@ export default function PageWrapper(
         setShowUnpaidInvoices={setShowUnpaidInvoices}
         showPaidInvoices={showPaidInvoices}
         setShowPaidInvoices={setShowPaidInvoices}
-        setUpdateDataNeeded={setUpdateDataNeeded}
+        //setUpdateDataNeeded={setUpdateDataNeeded}
       />
     </>
   );

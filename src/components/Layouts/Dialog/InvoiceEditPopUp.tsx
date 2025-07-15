@@ -17,6 +17,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { usePostClientContent } from "@/utils/post-client-content";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -59,7 +60,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
-    
+    const { updateInvoiceData } = usePostClientContent();
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -156,7 +157,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
                 postcode: postcode,
                 buildingAddress: buildingAddress,
                 streetAddress: streetAddress,
-                isEnded: false,
+                isEnded: invoiceInfo.post.isEnded,
                 client: {
                     clientId: invoiceInfo.post.client.clientId,
                     clientName: clientName,
@@ -193,9 +194,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
                     });
                 });
                 
-                //updateInvoiceData(); // Trigger data update
-
-                // closePopUp();
+                updateInvoiceData(); // Trigger data update
+                closePopUp();
             }
         });
         
@@ -348,23 +348,20 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
                                     loadingCheques={loadingCheques}
                                 />
                             </div>
-                        </div>
-                        <Button
-                            label="Change"
-                            variant="green"
-                            shape="full"
-                            size="default"
-                            type="button"
-                            icon={<CheckIcon className="fill-white" />}
-                            onClick={() => {
-                                submit();
-                            }}
-                        />
+                            </div>
+                            <Button
+                                label="Change"
+                                variant="green"
+                                shape="full"
+                                size="default"
+                                type="button"
+                                icon={<CheckIcon className="fill-white" />}
+                                onClick={() => {
+                                    submit();
+                                }}
+                            />
                         </form>
                 </div>
-            </DialogContent>
-            <DialogContent>
-                
             </DialogContent>
         </Dialog>
         <PdfViewPopUp

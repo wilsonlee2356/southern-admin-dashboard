@@ -41,8 +41,7 @@ type MuiDataGridWithPopUpButtonProps = {
   setShowUnpaidInvoices: (value: boolean) => void;
   showPaidInvoices: boolean;
   setShowPaidInvoices: (value: boolean) => void;
-  setUpdateDataNeeded: any; // Optional prop to trigger data update
-
+  //setUpdateDataNeeded: any; // Optional prop to trigger data update
 };
 
 function MuiDataGridWithPopUpButton({
@@ -63,7 +62,7 @@ function MuiDataGridWithPopUpButton({
   setShowUnpaidInvoices,
   showPaidInvoices,
   setShowPaidInvoices,
-  setUpdateDataNeeded, // Optional prop to trigger data update
+  //setUpdateDataNeeded, // Optional prop to trigger data update
 }: MuiDataGridWithPopUpButtonProps) {
   const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
 
