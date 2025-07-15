@@ -10,12 +10,13 @@ type ChequeMuiDataGridProps = {
   dataArray: invoiceCheques[];
   setImageSrcToView: any;
   onClose: any;
+  loadingCheques: boolean;
 };
 
 
-function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose }: ChequeMuiDataGridProps) {
+function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose, loadingCheques }: ChequeMuiDataGridProps) {
 
-  if (!dataArray || dataArray.length === 0) {
+  if (!loadingCheques && (!dataArray || dataArray.length === 0)) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
         <ShowcaseSection title="No Data Available" className="!p-6.5">
@@ -92,6 +93,7 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose }: ChequeMuiD
           columnVisibilityModel={{
             id: false,
           }}
+          loading={loadingCheques}
           disableColumnMenu
           disableRowSelectionOnClick
           hideFooter
@@ -109,7 +111,12 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose }: ChequeMuiD
             },
             
           }}
-
+          slotProps={{
+            loadingOverlay: {
+              variant: 'skeleton',
+              noRowsVariant: 'skeleton',
+            },
+          }}
           
         />
       </div>

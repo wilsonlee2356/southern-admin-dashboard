@@ -561,8 +561,6 @@ function MuiDataGridWithPopUpButton({
         open={popUpOpenView}
         onClose={setPopUpOpenView}
         invoiceInfo={editingRow}
-        setDataArray={setFilteredData}
-        
       />
 
       <StatementViewPopUp

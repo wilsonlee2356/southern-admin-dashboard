@@ -50,9 +50,9 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
     const [streetAddress, setStreetAddress] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
-    const [imageSrc, setImageSrc] = React.useState<string>("");
+    const [pdfSrc, setPdfSrc] = React.useState<string>("");
     const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
-    const [imageViewPopUp, setImageViewPopUp] = React.useState<boolean>(false);
+    const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
     const [loadingCheques, setLoadingCheques] = useState<boolean>(false);
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
@@ -302,8 +302,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                             <div className="w-1.5/2 h-full min-w-80">
                                 <ChequeEditMuiDataGrid
                                     dataArray={invoiceCheques}
-                                    setImageSrcToView={setImageSrc}
-                                    onClose={setImageViewPopUp}
+                                    setImageSrcToView={setPdfSrc}
+                                    onClose={setPdfViewPopUp}
                                     setChequeCopy={setChequeCopy}
                                     loadingCheques={loadingCheques}
                                 />
@@ -328,9 +328,9 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
             </DialogContent>
         </Dialog>
         <PdfViewPopUp
-            pdf={imageSrc}
-            open={imageViewPopUp}
-            setOpen={setImageViewPopUp}/>
+            pdf={pdfSrc}
+            open={pdfViewPopUp}
+            setOpen={setPdfViewPopUp}/>
     </>
     );
 };

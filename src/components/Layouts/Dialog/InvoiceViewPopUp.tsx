@@ -4,11 +4,13 @@ import { useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DataLabel from "../Datalabel/dataLabel";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
 import { cn } from "@/lib/utils";
 import dayjs, { Dayjs } from "dayjs";
 import ChequeMuiDataGrid from "@/components/Tables/DataGrid/ChequeMuiDataGrid";
 import PdfViewPopUp from "./PdfViewPopUp";
+import { CombinedService } from "@/app/api/invoice";
+import { useAuthenticatedRequest } from "@/lib/auth";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -25,12 +27,11 @@ type InvoiceViewPopUpPropsType = {
     open: boolean;
     onClose: any;
     invoiceInfo: invoiceData;
-    setDataArray: any;
 }
 
 
 
-function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: InvoiceViewPopUpPropsType){
+function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPopUpPropsType){
 
     const [invoiceNum, setInvoiceNum] = React.useState<string>("");
     const [postcode, setPostcode] = React.useState<string>("");
@@ -41,6 +42,10 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
     const [pdfSrc, setPdfSrc] = React.useState<string>("");
     const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
+    const [invoiceCheques, setInvoiceCheques] = React.useState<invoiceCheques[]>([]);
+    const [loadingCheques, setLoadingCheques] = React.useState<boolean>(false);
+
+    const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -53,6 +58,13 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
             setFullName(toEmptyIfNull(invoiceInfo?.post.client.fullName));
             setAddress(toEmptyIfNull(invoiceInfo?.post.buildingAddress));
             setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
+            CombinedService.get_invoice_by_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
+                            console.log("Fetched invoice cheques: ", res.invoiceChequesList);
+                            setLoadingCheques(false);
+                            setInvoiceCheques(res.invoiceChequesList);
+            }).catch((err) => {
+                console.error("Error fetching invoice by id: ", err);
+            });
         }
         console.log("Invoice Info : ", invoiceInfo);
     }, [invoiceInfo]);
@@ -169,9 +181,10 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
                         </div>
                         <div className="w-1/2 h-full">
                             <ChequeMuiDataGrid
-                                dataArray={invoiceInfo.invoiceChequesList}
+                                dataArray={invoiceCheques}
                                 setImageSrcToView={setPdfSrc}
                                 onClose={setPdfViewPopUp}
+                                loadingCheques={loadingCheques}
                             />
                         </div>
                 </div>
