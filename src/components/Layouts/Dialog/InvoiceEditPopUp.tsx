@@ -9,9 +9,10 @@ import PdfViewPopUp from "./PdfViewPopUp";
 import InputGroup from "@/components/FormElements/InputGroup";
 import ChequeEditMuiDataGrid from "@/components/Tables/DataGrid/ChequeEditMuiDataGrid";
 import { TextAreaOne } from "@/components/FormElements/InputGroup/TextAreaOne";
-import { invoiceData, invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, invoiceCheques, post } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
+import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
@@ -33,13 +34,12 @@ type InvoiceEditPopUpPropsType = {
     onClose: any;
     invoiceInfo: invoiceData;
     setDataArray: any;
-    updateInvoiceData: any; // Optional prop to trigger data update
-
+    postArray: post[];
 }
 
 
 
-function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, updateInvoiceData }: InvoiceEditPopUpPropsType){
+function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, postArray }: InvoiceEditPopUpPropsType){
 
     const [invoiceNum, setInvoiceNum] = React.useState<string>("");
     const [postcode, setPostcode] = React.useState<string>("");
@@ -52,10 +52,14 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
     const [pdfSrc, setPdfSrc] = React.useState<string>("");
     const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
+    const [filteredPosts, setFilteredPosts] = useState<post[]>([]);
     const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
     const [loadingCheques, setLoadingCheques] = useState<boolean>(false);
+    const [postSelectArray, setPostSelectArray] = useState<{key: string, name: string}[]>([]);
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+    
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -81,6 +85,30 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
         }
         
     }, [invoiceInfo]);
+
+    useEffect(() => {
+        console.log("Post array: ", postArray);
+        console.log("invoiceInfo: ", invoiceInfo);
+        if(Object.keys(invoiceInfo).length !== 0 && postArray.length > 0){
+            console.log("invoiceInfo : ", postArray);
+            let newFilteredPosts = postArray.filter((post) => post.client.clientId === invoiceInfo.post.client.clientId);
+            setFilteredPosts(newFilteredPosts);
+            const postcodeArr = newFilteredPosts.map((item) => ({
+                key: item.postId.toString(),
+                name: item.postcode,
+            }));
+            setPostSelectArray(postcodeArr);
+        }
+    }, [invoiceInfo, postArray]);
+
+    useEffect(() => {
+        filteredPosts.map((item) => {
+            if(postcode === item.postcode) {
+                setBuildingAddress(item.buildingAddress);
+                setStreetAddress(item.streetAddress);
+            }
+        });
+    }, [postcode]);
 
     if(Object.keys(invoiceInfo).length === 0) return(<><div></div></>);
 
@@ -232,6 +260,49 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                                             />
                                         </LocalizationProvider>
                                     </div>
+                                    <label className="text-body-lg font-medium text-dark">Post Information</label>
+                                    <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
+                                        <AutoCompleteWithSelectorButton
+                                            title="Postcode"
+                                            placeholder="Enter Postcode"
+                                            dataArr={postSelectArray}
+                                            stateSetter={setPostcode}
+                                            input={postcode}
+                                        />
+                                        {/* <InputGroup
+                                            label="Postcode"
+                                            type="text"
+                                            placeholder="Enter postcode"
+                                            value={postcode}
+                                            handleChange={(e) => {
+                                                setPostcode(e.target.value);
+                                            }}
+                                            className="w-full xl:w-5/12" // 20% width on extra-large screens
+                                        /> */}
+                                        <InputGroup
+                                            label="Building Adress"
+                                            type="text"
+                                            placeholder="Enter building adress"
+                                            value={buildingAddress}
+                                            handleChange={(e) => {
+                                                setBuildingAddress(e.target.value);
+                                            }}
+                                            className="w-full" // 20% width on extra-large screens
+                                            disabled={true}
+                                        />
+                                        <InputGroup
+                                            label="Street Address"
+                                            type="text"
+                                            placeholder="Enter street address"
+                                            value={streetAddress}
+                                            handleChange={(e) => {
+                                                setStreetAddress(e.target.value);
+                                            }}
+                                            className="w-full" // 20% width on extra-large screens
+                                            disabled={true}
+                                        />
+                                        
+                                    </div>
                                     <label className="text-body-lg font-medium text-dark">Client Information</label>
                                     <div className="flex flex-col">
                                             <div className="mb-4.5 flex flex-row gap-4.5">
@@ -244,6 +315,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                                                         setClientName(e.target.value);
                                                     }}
                                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
+                                                    disabled={true}
                                                 />
 
                                                 <InputGroup
@@ -255,6 +327,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                                                         setFullName(e.target.value);
                                                     }}
                                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
+                                                    disabled={true}
                                                 />
                                                 
                                             </div>
@@ -262,41 +335,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                                                 label="Address" 
                                                 placeholder="Enter Address" 
                                                 value={address} 
-                                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}/>
-                                    </div>
-                                    <label className="text-body-lg font-medium text-dark">Post Information</label>
-                                    <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
-                                        <InputGroup
-                                            label="Postcode"
-                                            type="text"
-                                            placeholder="Enter postcode"
-                                            value={postcode}
-                                            handleChange={(e) => {
-                                                setPostcode(e.target.value);
-                                            }}
-                                            className="w-full xl:w-5/12" // 20% width on extra-large screens
-                                        />
-                                        <InputGroup
-                                            label="Building Adress"
-                                            type="text"
-                                            placeholder="Enter building adress"
-                                            value={buildingAddress}
-                                            handleChange={(e) => {
-                                                setBuildingAddress(e.target.value);
-                                            }}
-                                            className="w-full xl:w-5/12" // 20% width on extra-large screens
-                                        />
-                                        <InputGroup
-                                            label="Street Address"
-                                            type="text"
-                                            placeholder="Enter street address"
-                                            value={streetAddress}
-                                            handleChange={(e) => {
-                                                setStreetAddress(e.target.value);
-                                            }}
-                                            className="w-full xl:w-5/12" // 20% width on extra-large screens
-                                        />
-                                        
+                                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAddress(e.currentTarget.value)}
+                                                disabled={true}/>
                                     </div>
                             </div>
                             <div className="w-1.5/2 h-full min-w-80">

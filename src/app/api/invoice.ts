@@ -265,6 +265,23 @@ export const CombinedService = {
     );
   },
 
+  async toggle_invoice_is_paid(
+    id: number,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid invoice ID");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/invoices/toggleisPaid/${id}`,
+      {
+        method: "PUT",
+      },
+      makeAuthenticatedRequest,
+      `Unable to toggle invoice's isPaid with ID ${id}`,
+    );
+  },
+
   async set_post_to_finish(
     ids: number[],
     makeAuthenticatedRequest?: AuthRequestHandler,
@@ -278,6 +295,28 @@ export const CombinedService = {
     }
     return makeApiRequest<post[]>(
       "/api/posts/setEnded",
+      {
+        method: "PUT",
+        body: JSON.stringify(ids),
+      },
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
+      "Unable to set posts to finished",
+    );
+  },
+
+  async set_post_to_restart(
+    ids: number[],
+    makeAuthenticatedRequest?: AuthRequestHandler,
+  ): Promise<post[]> {
+    if (
+      !Array.isArray(ids) ||
+      ids.length === 0 ||
+      !ids.every((id) => typeof id === "number")
+    ) {
+      throw new Error("Invalid post IDs");
+    }
+    return makeApiRequest<post[]>(
+      "/api/posts/setNotEnded",
       {
         method: "PUT",
         body: JSON.stringify(ids),

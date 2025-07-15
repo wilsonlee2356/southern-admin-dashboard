@@ -22,8 +22,6 @@ type MuiDataGridWithPopUpButtonProps = {
   postArray: post[];
   popUpOpen: boolean;
   setPopUpOpen: any;
-  popUpOpenEdit: boolean;
-  setPopUpOpenEdit: any;
   setFilteredData: any;
   // setUpdateInvoiceData: any;
 };
@@ -43,11 +41,15 @@ function MuiDataGridForPostManagement({
   );
   const [canSetFinish, setCanSetFinish] = useState<boolean>(false);
 
+  const [canSetRestart, setCanSetRestart] = useState<boolean>(false);
+
+  const [popUpOpenRestart, setPopUpOpenRestart] = useState(false);
+
   const { data: session, status } = useSession();
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
-  const { updateInvoiceData, loading } = usePostClientContent();
+  const { updateInvoiceData, updatePostData, loading } = usePostClientContent();
 
   
 
@@ -64,25 +66,39 @@ function MuiDataGridForPostManagement({
   const updateSelectedRow = (checkedRows: GridRowSelectionModel) => {
     if (checkedRows.length === 0) {
       setSelectedRows([]);
+      setCanSetRestart(false);
+      setCanSetFinish(false);
       //setCanSetPay(false);
     } else {
       //console.log("Selected rows:", checkedRows);
-
       const checkedData = dataArray.filter(
         (row: postClientInvoiceSummary) => checkedRows.includes(row.post_id),
       );
-      //console.log("Checked data:1 ", checkedData);
+      console.log("Checked data: ", checkedData);
       const finishedInvoices = checkedData.filter(
         (row: any) => row.ended === true,
       );
-      if (
-        finishedInvoices.length === 0 ||
-        checkedData.length > finishedInvoices.length
-      ) {
+      const unFinishedInvoices = checkedData.filter(
+        (row: any) => row.ended === false,
+      );
+      if(finishedInvoices.length === 0 && unFinishedInvoices.length > 0 && checkedData.length <= unFinishedInvoices.length) {
+        setCanSetRestart(false);
         setCanSetFinish(true);
+      } else if (finishedInvoices.length > 0 && unFinishedInvoices.length === 0 && checkedData.length <= finishedInvoices.length) {
+        setCanSetRestart(true);
+        setCanSetFinish(false);
       } else {
+        setCanSetRestart(false);
         setCanSetFinish(false);
       }
+      // if (
+      //   finishedInvoices.length === 0 ||
+      //   checkedData.length > finishedInvoices.length
+      // ) {
+      //   setCanSetFinish(true);
+      // } else {
+      //   setCanSetFinish(false);
+      // }
       setSelectedRows(checkedData);
       // setTotalAmount(total);
     }
@@ -218,24 +234,37 @@ function MuiDataGridForPostManagement({
       {status === "authenticated" &&
       session?.accessToken &&
       (session.role === "admins" || session.role === "editors") ? (
-        <Button
-          label="Set finished"
-          variant="green"
-          shape="full"
-          size="default"
-          icon={<CheckIcon className="fill-white" />}
-          disabled={!canSetFinish}
-          onClick={() => {
-            setPopUpOpen(true);
-          }}
-        />
+        <div className="flex items-center justify-start gap-2">
+          <Button
+            label="Set finished"
+            variant="green"
+            shape="full"
+            size="default"
+            icon={<CheckIcon className="fill-white" />}
+            disabled={!canSetFinish}
+            onClick={() => {
+              setPopUpOpen(true);
+            }}
+          />
+          <Button
+            label="Set restarted"
+            variant="blue"
+            shape="full"
+            size="default"
+            icon={<CheckIcon className="fill-white" />}
+            disabled={!canSetRestart}
+            onClick={() => {
+              setPopUpOpenRestart(true);
+            }}
+          />
+        </div>
       ) : (
         <></>
       )}
       <ComfirmPopUp
         title="Confirm"
-        message="Are you sure you want to set the selected invoices as paid?"
-        confirmButtonText="Set as paid"
+        message="Are you sure you want to set the selected post as ended?"
+        confirmButtonText="Sure"
         open={popUpOpen}
         onClose={setPopUpOpen}
         functionToRun={() => {
@@ -248,6 +277,32 @@ function MuiDataGridForPostManagement({
           CombinedService.set_post_to_finish(idArr, makeAuthenticatedRequest)
             .then(() => {
               updateInvoiceData();
+              updatePostData();
+              updateSelectedRow([]);
+            })
+            .catch((err) => {
+              console.error("Error setting post to finished: ", err);
+            });
+        }}
+      />
+
+      <ComfirmPopUp
+        title="Confirm"
+        message="Are you sure you want to reset the ended posts?"
+        confirmButtonText="Sure"
+        open={popUpOpenRestart}
+        onClose={setPopUpOpenRestart}
+        functionToRun={() => {
+          // let idString = "";
+          let idArr: number[] = [];
+          selectedRows.map((row) => {
+            idArr = [...idArr, row.post_id];
+          });
+
+          CombinedService.set_post_to_restart(idArr, makeAuthenticatedRequest)
+            .then(() => {
+              updateInvoiceData();
+              updatePostData();
               updateSelectedRow([]);
             })
             .catch((err) => {

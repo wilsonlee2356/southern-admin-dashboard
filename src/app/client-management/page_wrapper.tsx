@@ -31,7 +31,6 @@ export default function PageWrapper({
   //   const [amount, setAmount] = useState("");
   //   const [period, setPeriod] = useState("");
   const [popUpOpen, setPopUpOpen] = useState(false);
-  const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
   const [showNotEndedPosts, setShowNotEndedPosts] = useState(true);
   const [showEndedPosts, setShowEndedPosts] = useState(false);
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
@@ -161,8 +160,6 @@ export default function PageWrapper({
         postArray={postData ?? []}
         popUpOpen={popUpOpen}
         setPopUpOpen={setPopUpOpen}
-        popUpOpenEdit={popUpOpenEdit}
-        setPopUpOpenEdit={setPopUpOpenEdit}
         setFilteredData={setDataToShow}
       />
     </>

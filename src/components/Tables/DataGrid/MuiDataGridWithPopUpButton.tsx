@@ -17,7 +17,7 @@ import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceData, post } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useSession } from "next-auth/react";
@@ -25,6 +25,7 @@ import { usePostClientContent } from "@/utils/post-client-content";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
+  postArray: post[];
   popUpOpen: boolean;
   setPopUpOpen: any;
   popUpOpenEdit: boolean;
@@ -46,6 +47,7 @@ type MuiDataGridWithPopUpButtonProps = {
 
 function MuiDataGridWithPopUpButton({
   dataArray,
+  postArray,
   popUpOpen,
   setPopUpOpen,
   popUpOpenEdit,
@@ -205,7 +207,7 @@ function MuiDataGridWithPopUpButton({
 
     invoiceToBeUpdated.isPaid = !invoiceToBeUpdated.isPaid;
     console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
-    CombinedService.update_invoice_by_id(invoiceToBeUpdated.invoiceId, invoiceToBeUpdated, makeAuthenticatedRequest).then((res) => {
+    CombinedService.toggle_invoice_is_paid(invoiceToBeUpdated.invoiceId, makeAuthenticatedRequest).then((res) => {
         if(res) {
             console.log("Updated invoice: ", res);
             // setUpdateDataNeeded(true); // Trigger data update
@@ -553,7 +555,7 @@ function MuiDataGridWithPopUpButton({
         onClose={setPopUpOpenEdit}
         invoiceInfo={editingRow}
         setDataArray={setFilteredData}
-        updateInvoiceData={updateInvoiceData}
+        postArray={postArray}
       />
 
       <InvoiceViewPopUp

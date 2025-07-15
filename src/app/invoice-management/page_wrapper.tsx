@@ -18,13 +18,13 @@ export default function PageWrapper(
     // postData,
   }: PageWrapperProps,
 ) {
-  const { invoiceData } = usePostClientContent();
+  const { invoiceData, clientData, postData } = usePostClientContent();
 
-  let data = invoiceData;
-  let clients = usePostClientContent().clientData;
-  let posts = usePostClientContent().postData;
+  // let data = invoiceData;
+  // let clients = usePostClientContent().clientData;
+  // let posts = usePostClientContent().postData;
 
-  const [filteredData, setFilteredData] = useState<any[]>(data ?? []);
+  const [filteredData, setFilteredData] = useState<any[]>(invoiceData ?? []);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -41,7 +41,7 @@ export default function PageWrapper(
   const [showPaidInvoices, setShowPaidInvoices] = useState(false);
 
   useEffect(() => {
-    const selectedData = data?.filter(
+    const selectedData = invoiceData?.filter(
       (row: any) =>
         (!checkEmpty(invoiceNumber)
           ? row.invoiceNum.toLowerCase().includes(invoiceNumber.toLowerCase())
@@ -80,7 +80,7 @@ export default function PageWrapper(
     showEndedPosts,
     showUnpaidInvoices,
     showPaidInvoices,
-    data,
+    invoiceData,
   ]);
 
   // useEffect(() => {
@@ -163,9 +163,9 @@ export default function PageWrapper(
   return (
     <>
       <SearchBox
-        dataArray={data ?? []}
-        clientData={clients ?? []}
-        postData={posts ?? []}
+        dataArray={invoiceData ?? []}
+        clientData={clientData ?? []}
+        postData={postData ?? []}
         invoiceNumber={invoiceNumber}
         clientName={clientName}
         postcode={postcode}
@@ -181,6 +181,7 @@ export default function PageWrapper(
       />
       <MuiDataGridWithPopUpButton
         dataArray={filteredData}
+        postArray={postData ?? []}
         popUpOpen={popUpOpen}
         setPopUpOpen={setPopUpOpen}
         popUpOpenEdit={popUpOpenEdit}
