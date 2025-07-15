@@ -5,7 +5,7 @@ import { Button } from "@/components/ui-elements/button";
 import { CheckIcon } from "@/assets/icons";
 import { Dialog, DialogContent, DialogContentText, DialogProps, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import ImageViewPopUp from "./ImageViewPopUp";
+import PdfViewPopUp from "./PdfViewPopUp";
 import InputGroup from "@/components/FormElements/InputGroup";
 import ChequeEditMuiDataGrid from "@/components/Tables/DataGrid/ChequeEditMuiDataGrid";
 import { TextAreaOne } from "@/components/FormElements/InputGroup/TextAreaOne";
@@ -327,8 +327,8 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, up
                 
             </DialogContent>
         </Dialog>
-        <ImageViewPopUp
-            image={imageSrc}
+        <PdfViewPopUp
+            pdf={imageSrc}
             open={imageViewPopUp}
             setOpen={setImageViewPopUp}/>
     </>

@@ -55,7 +55,7 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose }: ChequeMuiD
           flex: 1,
           align: "center",
           headerAlign: "center",
-          valueGetter: (value, row) => row.cheque.chequeCopy,
+          valueGetter: (value, row) => row.cheque.base64StringChequeCopy,
           renderCell: (params) => (
             <div className="flex items-center justify-center gap-x-3.5">
               <button className="text-dark dark:text-white"

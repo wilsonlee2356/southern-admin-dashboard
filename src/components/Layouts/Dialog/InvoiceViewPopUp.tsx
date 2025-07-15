@@ -8,7 +8,7 @@ import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { cn } from "@/lib/utils";
 import dayjs, { Dayjs } from "dayjs";
 import ChequeMuiDataGrid from "@/components/Tables/DataGrid/ChequeMuiDataGrid";
-import ImageViewPopUp from "./ImageViewPopUp";
+import PdfViewPopUp from "./PdfViewPopUp";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -39,8 +39,8 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
     const [fullName, setFullName] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
-    const [imageSrc, setImageSrc] = React.useState<string>("");
-    const [imageViewPopUp, setImageViewPopUp] = React.useState<boolean>(false);
+    const [pdfSrc, setPdfSrc] = React.useState<string>("");
+    const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -170,18 +170,18 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo, setDataArray }: 
                         <div className="w-1/2 h-full">
                             <ChequeMuiDataGrid
                                 dataArray={invoiceInfo.invoiceChequesList}
-                                setImageSrcToView={setImageSrc}
-                                onClose={setImageViewPopUp}
+                                setImageSrcToView={setPdfSrc}
+                                onClose={setPdfViewPopUp}
                             />
                         </div>
                 </div>
             </DialogContent>
         </Dialog>
 
-        <ImageViewPopUp
-            image={imageSrc}
-            open={imageViewPopUp}
-            setOpen={setImageViewPopUp}/>
+        <PdfViewPopUp
+            pdf={pdfSrc}
+            open={pdfViewPopUp}
+            setOpen={setPdfViewPopUp}/>
     </>
     );
 };

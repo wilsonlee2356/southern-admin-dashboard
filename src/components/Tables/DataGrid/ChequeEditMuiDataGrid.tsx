@@ -65,18 +65,18 @@ function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequ
           renderCell: (params) => (
             <div className="flex items-center justify-center gap-x-3.5">
                 
-              {(params.value.chequeCopy) ? <button className="text-dark dark:text-white"
+              {(params.value.base64StringChequeCopy) ? <button className="text-dark dark:text-white"
                     type="button"
                     onClick={() => {
                         if(params.value){
-                        console.log("View Cheque clicked for cheque copy:", params.value.chequeCopy);
-                        setImageSrcToView(params.value.chequeCopy);
+                        console.log("View Cheque clicked for cheque copy:", params.value.base64StringChequeCopy);
+                        setImageSrcToView(params.value.base64StringChequeCopy);
                         onClose(true);
                         }
                     }}
                 >
                 <span className="sr-only">View Cheque copy</span>
-                { (!params.value.chequeCopy) ? 
+                { (!params.value.base64StringChequeCopy) ? 
                     <DisabledPreviewIcon className="fill-grey dark:fill-grey"/> :
                     <PreviewIcon className="fill-dark dark:fill-white"/>}
               </button> : 

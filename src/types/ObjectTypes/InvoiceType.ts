@@ -47,7 +47,7 @@ export type post = {
 
 export type cheque = {
   chequeId: number;
-  chequeCopy: null | string;
+  base64StringChequeCopy: null | string;
   invoiceChequesList: invoiceCheques[];
 };
 

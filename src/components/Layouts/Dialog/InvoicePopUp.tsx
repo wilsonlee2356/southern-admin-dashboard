@@ -99,7 +99,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                         </DialogContentText>
                         {/* <UploadButton width={200} setFile={setChequeFile}/> */}
                         <Input type="file" 
-                            accept=".pdf, .jpg, .jpeg, .png"
+                            accept=".pdf"
                             onChange={ (e) => {
                                 console.log("Cheque file selected:", e.target.files);
                                 // setChequeFile(e.target.files ? e.target.files[0] : undefined);
@@ -148,7 +148,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
 
                         CombinedService.create_cheque({
                             chequeId: 0, // Assuming chequeId is auto-generated
-                            chequeCopy: chequeFile ? chequeFile : "",
+                            base64StringChequeCopy: chequeFile ? chequeFile : "",
                             invoiceChequesList: []}, makeAuthenticatedRequest
                         ).then((cheque) => {
                                 console.log("Cheque created:", cheque);
@@ -171,7 +171,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                         },
                                         cheque: {
                                             chequeId: cheque.chequeId, // Use the created cheque's ID
-                                            chequeCopy: "",
+                                            base64StringChequeCopy: "",
                                             invoiceChequesList: [],
                                         }, // Use the created cheque's ID
                                         amount: item.amount,
