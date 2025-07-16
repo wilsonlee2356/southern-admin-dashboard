@@ -37,7 +37,7 @@ export default function PageWrapper(
 
   const [showNotEndedPosts, setShowNotEndedPosts] = useState(true);
   const [showEndedPosts, setShowEndedPosts] = useState(false);
-  const [showUnpaidInvoices, setShowUnpaidInvoices] = useState(true);
+  const [showUnpaidInvoices, setShowUnpaidInvoices] = useState(false);
   const [showPaidInvoices, setShowPaidInvoices] = useState(false);
 
   useEffect(() => {
