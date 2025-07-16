@@ -243,6 +243,78 @@ export const CombinedService = {
     );
   },
 
+    async create_invoice(
+    newInvoice: invoiceDataOutput,
+    makeAuthenticatedRequest?: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!newInvoice || typeof newInvoice !== "object") {
+      throw new Error("Invalid invoice data");
+    }
+    return makeApiRequest<invoiceData>(
+      "/api/combined",
+      {
+        method: "POST",
+        body: JSON.stringify(newInvoice),
+      },
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
+      "Unable to create invoice",
+    );
+  },
+
+  async create_post(
+    newPost: post,
+    makeAuthenticatedRequest?: AuthRequestHandler,
+  ): Promise<post> {
+    if (!newPost || typeof newPost !== "object") {
+      throw new Error("Invalid post data");
+    }
+    return makeApiRequest<post>(
+      "/api/posts",
+      {
+        method: "POST",
+        body: JSON.stringify(newPost),
+      },
+      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
+      "Unable to create invoice",
+    );
+  },
+
+  async create_cheque(
+    newCheque: cheque,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<cheque> {
+    if (!newCheque || typeof newCheque !== "object") {
+      throw new Error("Invalid cheque data");
+    }
+    return makeApiRequest<cheque>(
+      "/api/cheques",
+      {
+        method: "POST",
+        body: JSON.stringify(newCheque),
+      },
+      makeAuthenticatedRequest,
+      "Unable to create cheque",
+    );
+  },
+
+  async create_transaction(
+    newInvoiceCheques: invoiceCheques[],
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceCheques[]> {
+    if (!Array.isArray(newInvoiceCheques) || newInvoiceCheques.length === 0) {
+      throw new Error("Invalid invoice cheques data");
+    }
+    return makeApiRequest<invoiceCheques[]>(
+      "/api/combined/invoiceCheque",
+      {
+        method: "POST",
+        body: JSON.stringify(newInvoiceCheques),
+      },
+      makeAuthenticatedRequest,
+      "Unable to create invoice cheque",
+    );
+  },
+
   async update_invoice_by_id(
     id: number,
     updateData: invoiceData,
@@ -262,6 +334,72 @@ export const CombinedService = {
       },
       makeAuthenticatedRequest,
       `Unable to update invoice with ID ${id}`,
+    );
+  },
+
+  async update_invoice_details(
+    id: number,
+    updateData: invoiceData,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid invoice ID");
+    }
+    if (!updateData || typeof updateData !== "object") {
+      throw new Error("Invalid invoice data");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/combined/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(updateData),
+      },
+      makeAuthenticatedRequest,
+      `Unable to update invoice details for ID ${id}`,
+    );
+  },
+
+  async update_post_client_details(
+    id: number,
+    updateData: post,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid post ID");
+    }
+    if (!updateData || typeof updateData !== "object") {
+      throw new Error("Invalid post data");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/posts/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(updateData),
+      },
+      makeAuthenticatedRequest,
+      `Unable to update post and client details for post ID ${id}`,
+    );
+  },
+
+  async setInvoiceToPaid(
+    id: number,
+    updateData: invoiceData,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoiceData> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid invoice ID");
+    }
+    if (!updateData || typeof updateData !== "object") {
+      throw new Error("Invalid invoice data");
+    }
+    return makeApiRequest<invoiceData>(
+      `/api/invoices/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(updateData),
+      },
+      makeAuthenticatedRequest,
+      `Unable to set invoice to paid for ID ${id}`,
     );
   },
 
@@ -341,119 +479,4 @@ export const CombinedService = {
     );
   },
 
-  async create_invoice(
-    newInvoice: invoiceDataOutput,
-    makeAuthenticatedRequest?: AuthRequestHandler,
-  ): Promise<invoiceData> {
-    if (!newInvoice || typeof newInvoice !== "object") {
-      throw new Error("Invalid invoice data");
-    }
-    return makeApiRequest<invoiceData>(
-      "/api/combined",
-      {
-        method: "POST",
-        body: JSON.stringify(newInvoice),
-      },
-      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
-      "Unable to create invoice",
-    );
-  },
-
-  async create_post(
-    newPost: post,
-    makeAuthenticatedRequest?: AuthRequestHandler,
-  ): Promise<post> {
-    if (!newPost || typeof newPost !== "object") {
-      throw new Error("Invalid post data");
-    }
-    return makeApiRequest<post>(
-      "/api/posts",
-      {
-        method: "POST",
-        body: JSON.stringify(newPost),
-      },
-      makeAuthenticatedRequest || (() => Promise.resolve({ response: null })),
-      "Unable to create invoice",
-    );
-  },
-
-  async create_cheque(
-    newCheque: cheque,
-    makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<cheque> {
-    if (!newCheque || typeof newCheque !== "object") {
-      throw new Error("Invalid cheque data");
-    }
-    return makeApiRequest<cheque>(
-      "/api/cheques",
-      {
-        method: "POST",
-        body: JSON.stringify(newCheque),
-      },
-      makeAuthenticatedRequest,
-      "Unable to create cheque",
-    );
-  },
-
-  async create_transaction(
-    newInvoiceCheques: invoiceCheques[],
-    makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceCheques[]> {
-    if (!Array.isArray(newInvoiceCheques) || newInvoiceCheques.length === 0) {
-      throw new Error("Invalid invoice cheques data");
-    }
-    return makeApiRequest<invoiceCheques[]>(
-      "/api/combined/invoiceCheque",
-      {
-        method: "POST",
-        body: JSON.stringify(newInvoiceCheques),
-      },
-      makeAuthenticatedRequest,
-      "Unable to create invoice cheque",
-    );
-  },
-
-  async update_invoice_details(
-    id: number,
-    updateData: invoiceData,
-    makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
-    if (!id || typeof id !== "number") {
-      throw new Error("Invalid invoice ID");
-    }
-    if (!updateData || typeof updateData !== "object") {
-      throw new Error("Invalid invoice data");
-    }
-    return makeApiRequest<invoiceData>(
-      `/api/combined/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(updateData),
-      },
-      makeAuthenticatedRequest,
-      `Unable to update invoice details for ID ${id}`,
-    );
-  },
-
-  async setInvoiceToPaid(
-    id: number,
-    updateData: invoiceData,
-    makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
-    if (!id || typeof id !== "number") {
-      throw new Error("Invalid invoice ID");
-    }
-    if (!updateData || typeof updateData !== "object") {
-      throw new Error("Invalid invoice data");
-    }
-    return makeApiRequest<invoiceData>(
-      `/api/invoices/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(updateData),
-      },
-      makeAuthenticatedRequest,
-      `Unable to set invoice to paid for ID ${id}`,
-    );
-  },
 };

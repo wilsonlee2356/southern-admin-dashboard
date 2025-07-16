@@ -14,7 +14,7 @@ type TextInputHeroUIProps = {
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const TextInputHeroUI = ({
+const TextInputHeroUIDisabled = ({
   className,
   label,
   placeholder,
@@ -42,13 +42,14 @@ const TextInputHeroUI = ({
       <div className="relative">
         <Input 
           classNames={{
-              base: "w-full rounded-[7px] bg-gray",
+              base: "w-full rounded-[7px] bg-gray-50",
               innerWrapper: "h-[50px] focus:border-none",
               input: ["bg-transparent",
                   "border-none",
                   "focus:outline-none",
                   "focus:border-none",
                   "focus:ring-0",
+                  "text-gray-5",
               ],
           }}
           type={type} 
@@ -97,6 +98,6 @@ const TextInputHeroUI = ({
   );
 };
 
-export default TextInputHeroUI;
+export default TextInputHeroUIDisabled;
 
 

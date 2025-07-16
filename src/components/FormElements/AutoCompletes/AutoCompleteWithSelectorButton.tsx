@@ -18,11 +18,13 @@ type PropsType = {
   dataArr: ArrayType[];
   stateSetter: (val: string) => void;
   input?: string;
+  error?: string;
+  disabled?: boolean;
 }
 
 
 
-function AutoCompleteWithSelectorButton ({ title, placeholder, dataArr, stateSetter, input, ...params } : PropsType) {
+function AutoCompleteWithSelectorButton ({ title, placeholder, dataArr, stateSetter, input, error = "", disabled=false, ...params } : PropsType) {
   return (
     <div className="w-full">
       <label aria-label="Text title" className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
@@ -67,7 +69,7 @@ function AutoCompleteWithSelectorButton ({ title, placeholder, dataArr, stateSet
           placeholder={placeholder}
           inputValue={input}
           onInputChange={stateSetter}
-          
+          isDisabled={disabled}
           {...params}
         >
           {(item) => (
@@ -75,6 +77,9 @@ function AutoCompleteWithSelectorButton ({ title, placeholder, dataArr, stateSet
           )}
         </Autocomplete>
       </div>
+      <label className="text-red-500 text-xs mt-1">
+          {error}
+      </label>
     </div>
   );
 };

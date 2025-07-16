@@ -8,6 +8,7 @@ type NumberInputHeroUIProps = {
     placeholder: string;
     required?: boolean;
     value?: number;
+    error?: string;
     onChange?: any;
 };
 
@@ -17,6 +18,7 @@ const NumberInputHeroUI = ({
   placeholder,
   required = false,
   value,
+  error = "",
   onChange,
   ...props
 } : NumberInputHeroUIProps) => {
@@ -53,6 +55,9 @@ const NumberInputHeroUI = ({
           hideStepper
           fullWidth/>
        </div>
+       <label className="text-red-500 text-xs mt-1">
+          {error}
+       </label>
       {/* <div
         className={cn(
           "relative mt-3 [&_svg]:absolute [&_svg]:top-1/2 [&_svg]:-translate-y-1/2",

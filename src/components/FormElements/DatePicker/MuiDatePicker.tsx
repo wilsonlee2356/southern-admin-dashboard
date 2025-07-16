@@ -8,10 +8,11 @@ type DatePickerProps = {
     title : string;
     value: dayjs.Dayjs | null | undefined;
     onChange: (value: SetStateAction<dayjs.Dayjs | null>) => void;
+    error?: string;
     [key: string]: any; // Allow other props to be passed
 };
 
-function MuiDatePicker({title, value, onChange, ...params}: DatePickerProps) {
+function MuiDatePicker({title, value, onChange, error = "", ...params}: DatePickerProps) {
     const currentYear = dayjs(); // Get the current year using dayjs
 
 
@@ -40,6 +41,9 @@ function MuiDatePicker({title, value, onChange, ...params}: DatePickerProps) {
                 
         />
         </div>
+        <label className="text-red-500 text-xs mt-1">
+          {error}
+       </label>
     </div>
     );
 }

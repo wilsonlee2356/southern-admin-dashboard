@@ -16,7 +16,7 @@ import TextInputHeroUI from "@/components/FormElements/InputGroup/text-input-her
 import NumberInputHeroUI from "@/components/FormElements/InputGroup/NumberInputs/number-input-heroui";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import {
   client,
   post,
@@ -28,6 +28,18 @@ import { useAuthenticatedRequest } from "@/lib/auth";
 type AutoCompleteArrayType = {
   key: string;
   name: string;
+};
+
+type ErrorType = {
+  invoiceNumError: string;
+  amountError: string;
+  invoiceDateError: string;
+  clientNameError: string;
+  postcodeError: string;
+  buildingAddressError: string;
+  streetAddressError: string;
+  fullNameError: string;
+  addressError: string;
 };
 
 type InvoiceCreatePopUpPropsType = {
@@ -62,6 +74,17 @@ function InvoiceCreatePopUp({
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
   const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
+  const [error, setError] = useState<ErrorType>({
+    invoiceNumError: "",
+    amountError: "",
+    invoiceDateError: "",
+    clientNameError: "",
+    postcodeError: "",
+    buildingAddressError: "",
+    streetAddressError: "",
+    fullNameError: "",
+    addressError: "",
+  });
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
@@ -108,6 +131,20 @@ function InvoiceCreatePopUp({
     onClose(false);
   };
 
+  const resetError = () => {
+    setError({
+      invoiceNumError: "",
+      amountError: "",
+      invoiceDateError: "",
+      clientNameError: "",
+      postcodeError: "",
+      buildingAddressError: "",
+      streetAddressError: "",
+      fullNameError: "",
+      addressError: "",
+    });
+  }
+
   const handleClear = () => {
     setInvoiceNumber("");
     setClientName("");
@@ -120,7 +157,50 @@ function InvoiceCreatePopUp({
     setInvoiceDate(null);
   };
 
-  const handleAdd = () => {
+  const checkInputError = () : boolean => {
+    resetError();
+    if(invoiceNumber === "") {
+      setError((prev) => ({ ...prev, invoiceNumError: "* Invoice Number is required" }));
+      return true;
+    }
+    if(!amount || amount <= 0) {
+      setError((prev) => ({ ...prev, amountError: "* Amount must be greater than 0" }));
+      return true;
+    }
+    if(!invoiceDate) {
+      setError((prev) => ({ ...prev, invoiceDateError: "* Invoice Date is required" }));
+      return true;
+    }
+    if(postcode === "") {
+      setError((prev) => ({ ...prev, postcodeError: "* Postcode is required" }));
+      return true;
+    }
+    if(buildingAddress === "") {
+      setError((prev) => ({ ...prev, buildingAddressError: "* Building Address is required" }));
+      return true;
+    }
+    if(streetAddress === "") {
+      setError((prev) => ({ ...prev, streetAddressError: "* Street Address is required" }));
+      return true;
+    }
+    if(clientName === "") {
+      setError((prev) => ({ ...prev, clientNameError: "* Client Name is required" }));
+      return true;
+    }
+    if(fullName === "") {
+      setError((prev) => ({ ...prev, fullNameError: "* Full Name is required" }));
+      return true;
+    }
+    if(address === "") {
+      setError((prev) => ({ ...prev, addressError: "* Address is required" }));
+      return true;
+    }
+    return false;
+  }
+  const handleAdd = () :boolean => {
+    if(checkInputError()){
+      return false;
+    }
     const updateInvoice: invoiceDataOutput = {
       invoiceNum: invoiceNumber,
       post: {
@@ -151,6 +231,7 @@ function InvoiceCreatePopUp({
       .catch((error) => {
         console.error("Error creating invoice:", error);
       });
+    return true;
   };
 
   // const invoiceNumArr = dataArray.map((item) => ({
@@ -200,6 +281,7 @@ function InvoiceCreatePopUp({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setInvoiceNumber(e.currentTarget.value)
                   }
+                  error={error.invoiceNumError}
                 />
                 <NumberInputHeroUI
                   className="w-full"
@@ -207,6 +289,7 @@ function InvoiceCreatePopUp({
                   placeholder="Enter Amount"
                   value={amount}
                   onChange={setAmount}
+                  error={error.amountError}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <MuiDatePicker
@@ -214,6 +297,7 @@ function InvoiceCreatePopUp({
                     label="Invoice Date"
                     value={invoiceDate}
                     onChange={(newValue) => setInvoiceDate(newValue)}
+                    error={error.invoiceDateError}
                   />
                 </LocalizationProvider>
               </div>
@@ -227,6 +311,7 @@ function InvoiceCreatePopUp({
                   dataArr={postArray}
                   input={postcode}
                   stateSetter={setPostcode}
+                  error={error.postcodeError}
                 />
                 <TextInputHeroUI
                   className="w-full"
@@ -236,6 +321,7 @@ function InvoiceCreatePopUp({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setBuildingAddress(e.currentTarget.value)
                   }
+                  error={error.buildingAddressError}
                 />
                 <TextInputHeroUI
                   className="w-full"
@@ -245,6 +331,7 @@ function InvoiceCreatePopUp({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setStreetAddress(e.currentTarget.value)
                   }
+                  error={error.streetAddressError}
                 />
               </div>
               <div className="flex w-full flex-col gap-2.5">
@@ -257,6 +344,7 @@ function InvoiceCreatePopUp({
                   dataArr={clientArray}
                   input={clientName}
                   stateSetter={setClientName}
+                  error={error.clientNameError}
                 />
                 <TextInputHeroUI
                   className="w-full"
@@ -266,6 +354,7 @@ function InvoiceCreatePopUp({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setFullName(e.currentTarget.value);
                   }}
+                  error={error.fullNameError}
                 />
                 <TextInputHeroUI
                   className="w-full"
@@ -275,6 +364,7 @@ function InvoiceCreatePopUp({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setAddress(e.currentTarget.value);
                   }}
+                  error={error.addressError}
                 />
               </div>
             </div>
@@ -300,9 +390,13 @@ function InvoiceCreatePopUp({
                 size="default"
                 icon={<CheckIcon className="fill-white" />}
                 onClick={() => {
-                  handleAdd();
-                  handleClear();
-                  onClose(false);
+                  const canAdd = handleAdd();
+                  if(canAdd){
+                    handleClear();
+                    resetError();
+                    onClose(false);
+                  }
+                  
                 }}
               />
             </div>

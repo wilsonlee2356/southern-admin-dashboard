@@ -2,11 +2,11 @@
 import { CheckIcon } from "@/assets/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Button } from "@/components/ui-elements/button";
-import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { PreviewIcon, EditIcon } from "@/components/Tables/icons";
+import { DataGrid, GridColDef, GridRowId, GridRowSelectionModel } from "@mui/x-data-grid";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
 import {
-  invoiceData,
   post,
   postClientInvoiceSummary,
 } from "@/types/ObjectTypes/InvoiceType";
@@ -15,6 +15,7 @@ import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 import { useSession } from "next-auth/react";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { usePostClientContent } from "@/utils/post-client-content";
+import PostEditPopUp from "@/components/Layouts/Dialog/PostEditPopUp";
 
 
 type MuiDataGridWithPopUpButtonProps = {
@@ -44,6 +45,10 @@ function MuiDataGridForPostManagement({
   const [canSetRestart, setCanSetRestart] = useState<boolean>(false);
 
   const [popUpOpenRestart, setPopUpOpenRestart] = useState(false);
+
+  const [popUpOpenEdit, setPopUpOpenEdit] = useState(false);
+
+  const [editingRow, setEditingRow] = useState<post>({} as post);
 
   const { data: session, status } = useSession();
 
@@ -103,6 +108,11 @@ function MuiDataGridForPostManagement({
       // setTotalAmount(total);
     }
   };
+
+  const getPostById = (id: GridRowId) => {
+      const post = postArray.find((item) => item.postId === id);
+      return post;
+    };
 
   const columns: GridColDef[] = [
     {
@@ -189,6 +199,33 @@ function MuiDataGridForPostManagement({
         </div>
       ),
     },
+    {
+          field: "actions",
+          headerName: "Actions",
+          flex: 1,
+          align: "center",
+          headerAlign: "center",
+          renderCell: (params) => (
+            <div className="flex items-center justify-center gap-x-3.5">
+              
+              {(status === "authenticated" && session?.accessToken && (session.role === 'admins' || session.role === 'editors')) ?
+              <>
+              <button
+                className="text-dark dark:text-white"
+                onClick={() => {
+                  const post = getPostById(params.id);
+                  if (!post) return;
+                  setEditingRow(post);
+                  setPopUpOpenEdit(true);
+                }}
+              >
+                <span className="sr-only">Edit Invoice</span>
+                <EditIcon className="fill-dark dark:fill-white" />
+              </button>
+              </> : <></>}
+            </div>
+          ),
+        },
   ];
 
   return (
@@ -236,7 +273,7 @@ function MuiDataGridForPostManagement({
       (session.role === "admins" || session.role === "editors") ? (
         <div className="flex items-center justify-start gap-2">
           <Button
-            label="Set finished"
+            label="Finish"
             variant="green"
             shape="full"
             size="default"
@@ -247,7 +284,7 @@ function MuiDataGridForPostManagement({
             }}
           />
           <Button
-            label="Set restarted"
+            label="Restart"
             variant="blue"
             shape="full"
             size="default"
@@ -285,6 +322,12 @@ function MuiDataGridForPostManagement({
             });
         }}
       />
+
+      <PostEditPopUp
+        postToEdit={editingRow}
+        open={popUpOpenEdit}
+        onClose={setPopUpOpenEdit}
+        updatePostData={updatePostData} />
 
       <ComfirmPopUp
         title="Confirm"

@@ -137,6 +137,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
     }
 
     const submit = () => {
+        // e.preventDefault();
         console.log("Handle submit");
 
         console.log("Invoice Number: ", invoiceNum);
@@ -235,6 +236,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
                                             handleChange={(e) => {
                                                 setInvoiceNum(e.target.value);
                                             }}
+                                            disabled
                                             className="w-full xl:w-5/12" // 40% width on extra-large screens
                                         />
 
@@ -350,6 +352,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
                             </div>
                             </div>
                             <Button
+                                className="mt-4 mb-4"
                                 label="Change"
                                 variant="green"
                                 shape="full"

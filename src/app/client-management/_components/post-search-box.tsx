@@ -152,6 +152,7 @@ const PostSearchBox = ({
         postArrayWithDetails={postData} 
         clientArrayWithDetails={clientData} 
         updatePostData={updatePostData}      />
+        
     </ShowcaseSection>
   );
 };
