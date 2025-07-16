@@ -1,33 +1,31 @@
 import { cn } from "@/lib/utils";
 import { type HTMLInputTypeAttribute, useId } from "react";
-import {Input} from "@heroui/input";
+import { NumberInput } from "@heroui/react";
 
-type TextInputHeroUIProps = {
+type NumberInputHeroUIProps = {
     className: string;
     label: string;
     placeholder: string;
     required?: boolean;
-    value?: string;
-    type?: HTMLInputTypeAttribute;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    value?: number;
+    onChange?: any;
 };
 
-const TextInputHeroUI = ({
+const NumberInputHeroUI = ({
   className,
   label,
   placeholder,
   required = false,
   value,
-  type = "text",
   onChange,
   ...props
-} : TextInputHeroUIProps) => {
+} : NumberInputHeroUIProps) => {
   const id = useId();
 
   return (
     <div className={className}>
       <label
-        aria-label="Text input"
+        aria-label="Number Input Title"
         htmlFor={id}
         className="mb-3 block text-body-sm font-medium text-dark dark:text-white"
       >
@@ -36,23 +34,24 @@ const TextInputHeroUI = ({
       </label>
 
       <div className="relative">
-        <Input 
-        classNames={{
-            base: "w-full rounded-[7px] bg-gray",
-            innerWrapper: "h-[50px] focus:border-none",
-            input: ["bg-transparent",
-                "border-none",
-                "focus:outline-none",
-                "focus:border-none",
-                "focus:ring-0",
-            ],
-        }}
-        type={type} 
-        id={id} 
-        placeholder={placeholder} 
-        value={value} 
-        onChange={onChange}
-        fullWidth/>
+        <NumberInput 
+          aria-label="Number Input"
+          classNames={{
+              base: "w-full rounded-[7px] bg-gray",
+              innerWrapper: "h-[35px] focus:border-none",
+              input: ["bg-transparent",
+                  "border-none",
+                  "focus:outline-none",
+                  "focus:border-none",
+                  "focus:ring-0",
+              ],
+          }}
+          id={id} 
+          placeholder={placeholder} 
+          value={value} 
+          onValueChange={onChange}
+          hideStepper
+          fullWidth/>
        </div>
       {/* <div
         className={cn(
@@ -89,6 +88,6 @@ const TextInputHeroUI = ({
   );
 };
 
-export default TextInputHeroUI;
+export default NumberInputHeroUI;
 
 

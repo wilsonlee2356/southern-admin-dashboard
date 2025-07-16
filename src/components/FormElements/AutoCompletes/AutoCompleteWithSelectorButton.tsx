@@ -25,7 +25,7 @@ type PropsType = {
 function AutoCompleteWithSelectorButton ({ title, placeholder, dataArr, stateSetter, input, ...params } : PropsType) {
   return (
     <div className="w-full">
-      <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
+      <label aria-label="Text title" className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
         {title}
       </label>
       <div className="relative">

@@ -13,6 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AutoCompleteWithSelectorButton from "@/components/FormElements/AutoCompletes/AutoCompleteWithSelectorButton";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import TextInputHeroUI from "@/components/FormElements/InputGroup/text-input-heroui";
+import NumberInputHeroUI from "@/components/FormElements/InputGroup/NumberInputs/number-input-heroui";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
@@ -59,8 +60,8 @@ function InvoiceCreatePopUp({
   const [buildingAddress, setBuildingAddress] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [address, setAddress] = useState("");
-  const [amount, setAmount] = useState("");
-  const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(dayjs());
+  const [amount, setAmount] = useState<number | undefined>();
+  const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
@@ -86,7 +87,7 @@ function InvoiceCreatePopUp({
   }, [postcode]);
 
   useEffect(() => {
-    if(clientName === ""){
+    if(clientName !== ""){
       clientArrayWithDetails.find((clientItem) => {
         if (clientItem.clientName === clientName) {
           console.log("Client Found:", clientItem);
@@ -103,6 +104,7 @@ function InvoiceCreatePopUp({
   }, [clientName]);
 
   const closePopUp = () => {
+    handleClear();
     onClose(false);
   };
 
@@ -113,9 +115,9 @@ function InvoiceCreatePopUp({
     setBuildingAddress("");
     setStreetAddress("");
     setAddress("");
-    setAmount("");
+    setAmount(undefined);
     setFullName("");
-    setInvoiceDate(dayjs());
+    setInvoiceDate(null);
   };
 
   const handleAdd = () => {
@@ -133,7 +135,7 @@ function InvoiceCreatePopUp({
       },
       paidAmount: 0,
       invoiceDate: invoiceDate?.toDate(),
-      amount: parseFloat(amount),
+      amount: (amount) ? amount : 0,
       settlementDate: null,
       statementId: null,
     };
@@ -199,14 +201,12 @@ function InvoiceCreatePopUp({
                     setInvoiceNumber(e.currentTarget.value)
                   }
                 />
-                <TextInputHeroUI
+                <NumberInputHeroUI
                   className="w-full"
                   label="Amount"
                   placeholder="Enter Amount"
                   value={amount}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setAmount(e.currentTarget.value)
-                  }
+                  onChange={setAmount}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <MuiDatePicker
@@ -281,6 +281,7 @@ function InvoiceCreatePopUp({
 
             <div className="mt-10 flex flex-col gap-5 xl:flex-row xl:justify-center">
               <Button
+                aria-label="Clear button"
                 label="Clear"
                 variant="outlinePrimary"
                 shape="full"
@@ -292,6 +293,7 @@ function InvoiceCreatePopUp({
               />
 
               <Button
+                aria-label="Create button"
                 label="Create"
                 variant="green"
                 shape="full"
