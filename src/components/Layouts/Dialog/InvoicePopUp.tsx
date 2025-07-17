@@ -23,6 +23,7 @@ type InvoicePopUpPropsType = {
     dataArray: any;
     setDataArray: any;
     updateInvoice: any;
+    // setInvoice: any;
 }
 
 
@@ -145,7 +146,14 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                     onClick={() => {
                         console.log("Invoice Date: ", invoiceDate);
                         console.log("Paid Amounts: ", paidAmounts);
-
+                        setDataArray((prevInvoices : invoiceData[]) =>
+                            prevInvoices.map((invoice) =>
+                            invoice.invoiceId === paidAmounts[0].invoiceId
+                                ? { ...invoice, isPending: true }
+                                : invoice,
+                            )
+                        );
+                        closePopUp();
                         CombinedService.create_cheque({
                             chequeId: 0, // Assuming chequeId is auto-generated
                             base64StringChequeCopy: chequeFile ? chequeFile : "",
@@ -166,6 +174,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                             statementId: null, // Assuming this is set later
                                             invoiceChequesList: [],
                                             isPaid: false,
+                                            isPending: false,
                                             createDate: new Date(),
                                             updateDate: new Date(),
                                         },
@@ -179,10 +188,17 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                     })
                                 });
                                 CombinedService.create_transaction(invoiceChequesArr, makeAuthenticatedRequest).then((invoiceCheques) => {
+                                    setDataArray((prevInvoices : invoiceData[]) =>
+                                        prevInvoices.map((invoice) =>
+                                        invoice.invoiceId === paidAmounts[0].invoiceId
+                                            ? { ...invoice, isPending: false }
+                                            : invoice,
+                                        )
+                                    );
                                     console.log("InvoiceCheques created:", invoiceCheques);
                                     // setUpdateDataNeeded(true);
                                     updateInvoice();
-                                    closePopUp();
+                                    
 
                                     // setDataArray((prevData: any) => {
                                     //     return prevData.map((item: any) => {
@@ -197,9 +213,23 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                     // });
                                 }).catch((error) => {
                                     console.error("Error creating transactions:", error);
+                                    setDataArray((prevInvoices : invoiceData[]) =>
+                                        prevInvoices.map((invoice) =>
+                                        invoice.invoiceId === paidAmounts[0].invoiceId
+                                            ? { ...invoice, isPending: false }
+                                            : invoice,
+                                        )
+                                    );
                                 });
                             }).catch((error) => {
                                 console.error("Error creating cheque:", error);
+                                setDataArray((prevInvoices : invoiceData[]) =>
+                                        prevInvoices.map((invoice) =>
+                                        invoice.invoiceId === paidAmounts[0].invoiceId
+                                            ? { ...invoice, isPending: false }
+                                            : invoice,
+                                        )
+                                );
                             });
                         
                         // if(invoiceDate !== null) {

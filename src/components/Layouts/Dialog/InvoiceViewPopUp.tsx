@@ -33,12 +33,12 @@ type InvoiceViewPopUpPropsType = {
 
 function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPopUpPropsType){
 
-    const [invoiceNum, setInvoiceNum] = React.useState<string>("");
-    const [postcode, setPostcode] = React.useState<string>("");
-    const [amount, setAmount] = React.useState<number>(0);
-    const [clientName, setClientName] = React.useState<string>("");
+    // const [invoiceNum, setInvoiceNum] = React.useState<string>("");
+    // const [postcode, setPostcode] = React.useState<string>("");
+    // const [amount, setAmount] = React.useState<number>(0);
+    // const [clientName, setClientName] = React.useState<string>("");
     const [fullName, setFullName] = React.useState<string>("");
-    const [address, setAddress] = React.useState<string>("");
+    // const [address, setAddress] = React.useState<string>("");
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
     const [pdfSrc, setPdfSrc] = React.useState<string>("");
     const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
@@ -51,13 +51,14 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
             return;
         else {
-            setInvoiceNum(invoiceInfo?.invoiceNum);
-            setPostcode(invoiceInfo?.post.postcode);
-            setAmount(invoiceInfo?.amount);
-            setClientName(invoiceInfo?.post.client.clientName);
+            // setInvoiceNum(invoiceInfo?.invoiceNum);
+            // setPostcode(invoiceInfo?.post.postcode);
+            // setAmount(invoiceInfo?.amount);
+            // setClientName(invoiceInfo?.post.client.clientName);
             setFullName(toEmptyIfNull(invoiceInfo?.post.client.fullName));
-            setAddress(toEmptyIfNull(invoiceInfo?.post.buildingAddress));
+            // setAddress(toEmptyIfNull(invoiceInfo?.post.buildingAddress));
             setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
+            setLoadingCheques(true);
             CombinedService.get_invoice_by_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
                             console.log("Fetched invoice cheques: ", res.invoiceChequesList);
                             setLoadingCheques(false);

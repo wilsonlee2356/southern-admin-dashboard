@@ -72,7 +72,7 @@ function PdfViewPopUp ({ pdf, open, setOpen}: ImageViewPopUpPropsType){
             open={open} onClose={setOpen} fullWidth 
             maxWidth={"xl"} aria-labelledby="alert-dialog-title" 
             aria-describedby="alert-dialog-description">
-            <DialogTitle> Image Preview <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
+            <DialogTitle> Pdf Preview <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
                 <div className="flex justify-center items-center h-1.9/2 w-1.9/2">
                     <iframe

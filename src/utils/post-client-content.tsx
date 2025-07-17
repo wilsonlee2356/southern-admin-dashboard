@@ -12,6 +12,7 @@ const PostClientContentContext = createContext<{
   clientData: client[];
   loading: boolean;
   refreshLoading: boolean;
+  setInvoiceData: any;
   updateData: () => void;
   updateInvoiceData: () => void;
   updatePostData: () => void;
@@ -21,6 +22,7 @@ const PostClientContentContext = createContext<{
   clientData: [],
   loading: false,
   refreshLoading: false,
+  setInvoiceData: () => {},
   updateData: () => {},
   updateInvoiceData: () => {},
   updatePostData: () => {},
@@ -84,38 +86,38 @@ export function PostClientContentProvider({
     });
   }, [invoiceData]);
 
-  useEffect(() => {
-    if (countdown <= 0) {
-        return; // Stop the countdown when it reaches zero
-    }
-    if(!loading){
-      setCountdown(0); // Reset countdown when not refreshing
-      return; // No countdown if not refreshing
-    }
-      const timer = setInterval(() => {
-        setCountdown((prevSeconds) => prevSeconds - 1);
-      }, 1000); // Update every 1000 milliseconds (1 second)
-      console.log("Countdown started: " + countdown);
-      // Clean up the interval when the component unmounts or secondsLeft reaches zero
-      return () => clearInterval(timer);
-  }, [countdown]);
+  // useEffect(() => {
+  //   if (countdown <= 0) {
+  //       return; // Stop the countdown when it reaches zero
+  //   }
+  //   if(!loading){
+  //     setCountdown(0); // Reset countdown when not refreshing
+  //     return; // No countdown if not refreshing
+  //   }
+  //     const timer = setInterval(() => {
+  //       setCountdown((prevSeconds) => prevSeconds - 1);
+  //     }, 1000); // Update every 1000 milliseconds (1 second)
+  //     console.log("Countdown started: " + countdown);
+  //     // Clean up the interval when the component unmounts or secondsLeft reaches zero
+  //     return () => clearInterval(timer);
+  // }, [countdown]);
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    if (refreshCountdown <= 0) {
-        return; // Stop the countdown when it reaches zero
-    }
-    if(!refreshLoading){
-      setRefreshCountdown(0); // Reset countdown when not refreshing
-      return; // No countdown if not refreshing
-    }
-      const timer = setInterval(() => {
-        setRefreshCountdown((prevSeconds) => prevSeconds - 1);
-      }, 1000); // Update every 1000 milliseconds (1 second)
-      console.log("Refresh Countdown started: " + refreshCountdown);
-      // Clean up the interval when the component unmounts or secondsLeft reaches zero
-      return () => clearInterval(timer);
-  }, [refreshCountdown]);
+  //   if (refreshCountdown <= 0) {
+  //       return; // Stop the countdown when it reaches zero
+  //   }
+  //   if(!refreshLoading){
+  //     setRefreshCountdown(0); // Reset countdown when not refreshing
+  //     return; // No countdown if not refreshing
+  //   }
+  //     const timer = setInterval(() => {
+  //       setRefreshCountdown((prevSeconds) => prevSeconds - 1);
+  //     }, 1000); // Update every 1000 milliseconds (1 second)
+  //     console.log("Refresh Countdown started: " + refreshCountdown);
+  //     // Clean up the interval when the component unmounts or secondsLeft reaches zero
+  //     return () => clearInterval(timer);
+  // }, [refreshCountdown]);
 
   const updateData = () =>{
     if(status === "authenticated"){
@@ -165,6 +167,7 @@ export function PostClientContentProvider({
     clientData,
     loading,
     refreshLoading,
+    setInvoiceData,
     updateData,
     updateInvoiceData,
     updatePostData,

@@ -81,7 +81,7 @@ async function makeDeleteApiRequest(
   errorMessage: string,
 ){
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+  // const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
   try {
     console.log("Calling: ", getApiUrl(endpoint));
@@ -94,7 +94,7 @@ async function makeDeleteApiRequest(
       },
     });
 
-    clearTimeout(timeoutId);
+    // clearTimeout(timeoutId);
 
     if (!response) {
       throw new Error(`${errorMessage}: No response received`);
@@ -109,7 +109,7 @@ async function makeDeleteApiRequest(
     console.error(`${errorMessage}:`, error);
     throw error;
   } finally {
-    clearTimeout(timeoutId);
+    // clearTimeout(timeoutId);
   }
 }
 

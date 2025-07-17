@@ -64,7 +64,7 @@ function MuiDataGridWithPopUpButton({
   setShowPaidInvoices,
   //setUpdateDataNeeded, // Optional prop to trigger data update
 }: MuiDataGridWithPopUpButtonProps) {
-  const [invoices, setInvoices] = useState<invoiceData[]>(dataArray);
+  // const [invoices, setInvoices] = useState<invoiceData[]>(dataArray);
 
   const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
 
@@ -83,7 +83,7 @@ function MuiDataGridWithPopUpButton({
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
-  const { updateInvoiceData, loading } = usePostClientContent();
+  const { updateInvoiceData, loading, setInvoiceData } = usePostClientContent();
 
   const { data: session, status } = useSession();
 
@@ -94,16 +94,21 @@ function MuiDataGridWithPopUpButton({
       0,
     );
     setTotalAmount(total);
-    setInvoices(dataArray);
+    setSelectedRows(dataArray.filter((invoice:invoiceData) => 
+      selectedRows.some((selectedRows:invoiceData) => 
+        selectedRows.invoiceId===invoice.invoiceId
+      )
+    ));
+    console.log("Updated select rows: " + selectedRows);
   }, [dataArray]);
 
   // const handleRefreshClick = () => {
   //   updateData();
   // };
 
-  // useEffect(() => {
-  //   console.log("Row selected:", editingRow);
-  // }, [editingRow]);
+  useEffect(() => {
+    setCanSetPay(!selectedRows.some((selectedRow) => selectedRow.isPaid || selectedRow.isPending));
+  }, [selectedRows]);
 
   if (!loading && (!dataArray || dataArray.length === 0)) {
     return (
@@ -173,10 +178,10 @@ function MuiDataGridWithPopUpButton({
   const updateTotalAmount = (checkedRows: GridRowSelectionModel) => {
     if (checkedRows.length === 0) {
       setSelectedRows([]);
-      setTotalAmount(
-        dataArray.reduce((sum: number, item: any) => sum + item.amount, 0),
-      );
-      setCanSetPay(false);
+      // setTotalAmount(
+      //   dataArray.reduce((sum: number, item: any) => sum + item.amount, 0),
+      // );
+      // setCanSetPay(false);
     } else {
       console.log("Selected rows:", checkedRows);
 
@@ -184,45 +189,48 @@ function MuiDataGridWithPopUpButton({
         checkedRows.includes(row.invoiceId),
       );
 
-      const total = checkedData.reduce(
-        (sum: number, item: any) => sum + item.amount,
-        0,
-      );
+      // const total = checkedData.reduce(
+      //   (sum: number, item: any) => sum + item.amount,
+      //   0,
+      // );
 
-      const unPaidInvoices = checkedData.filter(
-        (row: invoiceData) => !row.isPaid,
-      );
-      if (
-        unPaidInvoices.length === 0 ||
-        checkedData.length > unPaidInvoices.length
-      ) {
-        setCanSetPay(false);
-      } else {
-        setCanSetPay(true);
-      }
+      // const unPaidInvoices = checkedData.filter(
+      //   (row: invoiceData) => !row.isPaid,
+      // );
+      // if (
+      //   unPaidInvoices.length === 0 ||
+      //   checkedData.length > unPaidInvoices.length
+      // ) {
+      //   setCanSetPay(false);
+      // } else {
+      //   setCanSetPay(true);
+      // }
       setSelectedRows(checkedData);
-      setTotalAmount(total);
+      // setTotalAmount(total);
     }
   };
 
   const toogleInvoiceisPaid = (invoiceToBeUpdated : invoiceData) => {
 
     invoiceToBeUpdated.isPaid = !invoiceToBeUpdated.isPaid;
-    console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
-    setInvoices((prevInvoices) =>
+    
+    setInvoiceData((prevInvoices : invoiceData[]) =>
       prevInvoices.map((invoice) =>
         invoice.invoiceId === invoiceToBeUpdated.invoiceId
           ? { ...invoice, isPending: true }
           : invoice,
       ));
+    // console.log("Updated invoice: ", dataArray);
     CombinedService.toggle_invoice_is_paid(invoiceToBeUpdated.invoiceId, makeAuthenticatedRequest).then((res) => {
-      setInvoices((prevInvoices) =>
+      setInvoiceData((prevInvoices : invoiceData[]) =>
         prevInvoices.map((invoice) =>
           invoice.invoiceId === invoiceToBeUpdated.invoiceId
             ? { ...invoice, isPending: false }
             : invoice,
         )
+
       );
+      // console.log("Back Updated invoice: ", dataArray);
       if(res) {
             console.log("Updated invoice: ", res);
             // setUpdateDataNeeded(true); // Trigger data update
@@ -393,7 +401,8 @@ function MuiDataGridWithPopUpButton({
             onClick={() => {
               setDeletingRow(params.value.invoiceId);
               setConfirmPopUpOpen(true);
-            }}>
+            }}
+            disabled={params.value.isPending}>
             <span className="sr-only">Delete Invoice</span>
             <TrashIcon className={(params.value.isPending) ? "fill-gray" : "fill-dark"} />
           </button>
@@ -405,6 +414,7 @@ function MuiDataGridWithPopUpButton({
               setEditingRow(params.value);
               setPopUpOpenEdit(true);
             }}
+            disabled={params.value.isPending}
           >
             <span className="sr-only">Edit Invoice</span>
             <EditIcon className={(params.value.isPending) ? "fill-gray" : "fill-dark"} />
@@ -415,20 +425,24 @@ function MuiDataGridWithPopUpButton({
               // const invoice = getInvoiceById(params.value.invoiceId);
               // if (!invoice) return;
               toogleInvoiceisPaid(params.value);
+              console.log("Toggling invoice is pending: ", params.value.isPending);
               // setUpdateDataNeeded(true); // Trigger data update
-            }}>
+            }}
+            disabled={params.value.isPending}>
             <span className="sr-only">Set Paid Invoice</span>
             <CheckIcon className={(params.value.isPending) ? "fill-green-50" : "fill-green"} />
           </button>
           :  
           <button className="text-dark dark:text-white"
             onClick={() => {
+
               // const invoice = getInvoiceById(params.value.invoiceId);
               // if (!invoice) return;
               toogleInvoiceisPaid(params.value);
               // setUpdateDataNeeded(true); // Trigger data update
-            }}>
-            <span className="sr-only">Set Paid Invoice</span>
+            }}
+            disabled={params.value.isPending}>
+            <span className="sr-only">Set Unpaid Invoice</span>
             <XIcon className={(params.value.isPending) ? "fill-red-50" : "fill-red"} />
           </button>
           }</> : <></>}
@@ -492,7 +506,7 @@ function MuiDataGridWithPopUpButton({
         // className="h-0.1/2 w-full"
         >
         <DataGrid
-          rows={invoices}
+          rows={dataArray}
           columns={columns}
           getRowId={(row) => row.invoiceId}
           columnVisibilityModel={{
@@ -564,6 +578,7 @@ function MuiDataGridWithPopUpButton({
         dataArray={selectedRows}
         setDataArray={setFilteredData}
         updateInvoice={updateInvoiceData}
+        // setInvoice={setInvoices}
       />
 
       <InvoiceEditPopUp
@@ -573,6 +588,7 @@ function MuiDataGridWithPopUpButton({
         invoiceInfo={editingRow}
         setDataArray={setFilteredData}
         postArray={postArray}
+        // setInvoice={setInvoices}
       />
 
       <InvoiceViewPopUp
@@ -598,7 +614,7 @@ function MuiDataGridWithPopUpButton({
           if(deleteingRow !== -1){
             const invoiceToBeDeleted = getInvoiceById(deleteingRow);
               if (!invoiceToBeDeleted) return;
-              setInvoices((prevInvoices) =>
+              setInvoiceData((prevInvoices : invoiceData[]) =>
                 prevInvoices.map((invoice) =>
                   invoice.invoiceId === invoiceToBeDeleted.invoiceId
                     ? { ...invoice, isPending: true }
@@ -606,12 +622,15 @@ function MuiDataGridWithPopUpButton({
                 )
               );
               CombinedService.delete_invoice_by_id(invoiceToBeDeleted.invoiceId, makeAuthenticatedRequest).then((res) => {
-                  setInvoices((prevInvoices) =>
-                    prevInvoices.map((invoice) =>
-                      invoice.invoiceId === invoiceToBeDeleted.invoiceId
-                        ? { ...invoice, isPending: false }
-                        : invoice,
-                    )
+                  // setInvoiceData((prevInvoices : invoiceData[]) =>
+                  //   prevInvoices.map((invoice) =>
+                  //     invoice.invoiceId === invoiceToBeDeleted.invoiceId
+                  //       ? { ...invoice, isPending: false }
+                  //       : invoice,
+                  //   )
+                  // );
+                  setInvoiceData((prevInvoices : invoiceData[]) =>
+                    prevInvoices.filter((invoice) => invoice.invoiceId !== invoiceToBeDeleted.invoiceId)
                   );
                   console.log("Deleted invoice: ", res);
                   const updatedData = dataArray.filter(
@@ -619,7 +638,7 @@ function MuiDataGridWithPopUpButton({
                   );
                   setFilteredData(updatedData);
                   setDeletingRow(-1);
-                  updateInvoiceData();
+                  // updateInvoiceData();
               }
               ).catch((err) => {
                 console.log("Error deleting invoice: ", err);

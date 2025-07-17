@@ -36,6 +36,7 @@ type InvoiceEditPopUpPropsType = {
     invoiceInfo: invoiceData;
     setDataArray: any;
     postArray: post[];
+    
 }
 
 
@@ -173,6 +174,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
             invoiceChequesList: invoiceCheques,
             invoiceDate: invoiceDate?.toDate(),
             isPaid: invoiceInfo.isPaid,
+            isPending: false,
             amount: amount,
             paidAmount: invoiceInfo.paidAmount,
             settlementDate: invoiceInfo.settlementDate,
