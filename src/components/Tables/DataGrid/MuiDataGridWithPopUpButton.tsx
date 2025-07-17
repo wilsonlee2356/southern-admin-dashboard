@@ -22,6 +22,7 @@ import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useSession } from "next-auth/react";
 import { usePostClientContent } from "@/utils/post-client-content";
+import { useAlert } from "@/utils/AlertProvider";
 
 type MuiDataGridWithPopUpButtonProps = {
   dataArray: invoiceData[];
@@ -86,6 +87,8 @@ function MuiDataGridWithPopUpButton({
   const { updateInvoiceData, loading, setInvoiceData } = usePostClientContent();
 
   const { data: session, status } = useSession();
+
+  const { addAlert } = useAlert();
 
   useEffect(() => {
     // console.log("Data array updated:", dataArray);
@@ -221,6 +224,7 @@ function MuiDataGridWithPopUpButton({
           : invoice,
       ));
     // console.log("Updated invoice: ", dataArray);
+    
     CombinedService.toggle_invoice_is_paid(invoiceToBeUpdated.invoiceId, makeAuthenticatedRequest).then((res) => {
       setInvoiceData((prevInvoices : invoiceData[]) =>
         prevInvoices.map((invoice) =>
@@ -236,9 +240,11 @@ function MuiDataGridWithPopUpButton({
             // setUpdateDataNeeded(true); // Trigger data update
             updateInvoiceData();
         }
+    }).catch((err) => {
+      console.error("Error toggling invoice is paid: ", err);
+      addAlert(String(err), 'error', 10000);
     });
     
-      
   }
 
   //   const total = selectedData.reduce(

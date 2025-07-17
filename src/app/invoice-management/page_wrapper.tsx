@@ -6,6 +6,7 @@ import { usePostClientContent } from "@/utils/post-client-content";
 import { Dayjs } from "dayjs";
 import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
 
+
 type PageWrapperProps = {
   // dataArray?: any[]; // Pass data as a prop instead of fetching here
   // clientData?: client[];
@@ -36,9 +37,9 @@ export default function PageWrapper(
   const [popUpOpenView, setPopUpOpenView] = useState(false);
   const [updateDataNeeded, setUpdateDataNeeded] = useState(false);
 
-  const [showNotEndedPosts, setShowNotEndedPosts] = useState(true);
+  const [showNotEndedPosts, setShowNotEndedPosts] = useState(false);
   const [showEndedPosts, setShowEndedPosts] = useState(false);
-  const [showUnpaidInvoices, setShowUnpaidInvoices] = useState(false);
+  const [showUnpaidInvoices, setShowUnpaidInvoices] = useState(true);
   const [showPaidInvoices, setShowPaidInvoices] = useState(false);
 
   useEffect(() => {

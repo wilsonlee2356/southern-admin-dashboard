@@ -34,6 +34,7 @@ async function makeApiRequest<T>(
   errorMessage: string,
 ): Promise<T> {
   const controller = new AbortController();
+
   // const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
   try {
@@ -53,6 +54,10 @@ async function makeApiRequest<T>(
       throw new Error(`${errorMessage}: No response received`);
     }
 
+    if(response.status === 409) {
+      throw new Error(`Attempt to modify non-existent data, please refresh your data`);
+    }
+    
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`${errorMessage}: ${response.status} ${errorText}`);
@@ -98,6 +103,10 @@ async function makeDeleteApiRequest(
 
     if (!response) {
       throw new Error(`${errorMessage}: No response received`);
+    }
+
+    if(response.status === 409) {
+      throw new Error(`Attempt to modify non-existent data`);
     }
 
     if (!response.ok) {

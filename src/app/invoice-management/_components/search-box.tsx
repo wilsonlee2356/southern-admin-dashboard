@@ -21,6 +21,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { usePostClientContent } from "@/utils/post-client-content";
 import { useSession } from "next-auth/react";
 
+
 type SearchBoxProps = {
   dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
   clientData: client[];
@@ -59,9 +60,12 @@ const SearchBox = ({
   setFilteredData,
   setUpdateDataNeeded,
 }: SearchBoxProps) => {
+
   const [popUpOpen, setPopUpOpen] = useState(false);
   const { data: session, status } = useSession();
   const { updateData, updateInvoiceData, refreshLoading } = usePostClientContent();
+
+  
 
   // const invoiceNumArr = dataArray.filter((item) => (item.post.isEnded)).map((item) => ({
   //   key: item.invoiceId.toString(),
@@ -81,16 +85,16 @@ const SearchBox = ({
     .map((item) => ({
       key: item.postId.toString(),
       name: item.postcode,
-    }));
+  }));
 
-  React.useEffect(() => {
-    console.log("client array:", clientNameArr);
-    console.log("post array:", postcodeArr);
-  }, []);
+  // React.useEffect(() => {
+  //   console.log("client array:", clientNameArr);
+  //   console.log("post array:", postcodeArr);
+  // }, []);
 
-  React.useEffect(() => {
-    console.log("Invoice number:", invoiceNumber);
-  }, [invoiceNumber]);
+  // React.useEffect(() => {
+  //   console.log("Invoice number:", invoiceNumber);
+  // }, [invoiceNumber]);
 
   React.useEffect(() => {
     clientNameArr = clientData.map((item) => ({
