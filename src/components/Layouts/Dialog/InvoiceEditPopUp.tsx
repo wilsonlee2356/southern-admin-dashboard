@@ -34,14 +34,12 @@ type InvoiceEditPopUpPropsType = {
     open: boolean;
     onClose: any;
     invoiceInfo: invoiceData;
-    setDataArray: any;
     postArray: post[];
-    
 }
 
 
 
-function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, postArray }: InvoiceEditPopUpPropsType){
+function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: InvoiceEditPopUpPropsType){
 
     const [invoiceNum, setInvoiceNum] = React.useState<string>("");
     const [postcode, setPostcode] = React.useState<string>("");
@@ -56,12 +54,12 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
     const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<post[]>([]);
     const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
-    const [loadingCheques, setLoadingCheques] = useState<boolean>(false);
+    const [loadingInvoiceCheques, setLoadingInvoiceCheques] = useState<boolean>(false);
     const [postSelectArray, setPostSelectArray] = useState<{key: string, name: string}[]>([]);
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
-    const { updateInvoiceData } = usePostClientContent();
+    const { setInvoiceData } = usePostClientContent();
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -76,14 +74,47 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
             setInvoiceDate(dayjs(invoiceInfo.invoiceDate));
             setBuildingAddress(invoiceInfo.post.buildingAddress);
             setStreetAddress(invoiceInfo.post.streetAddress);
-            setLoadingCheques(true);
-            CombinedService.get_invoice_by_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
-                console.log("Fetched invoice cheques: ", res.invoiceChequesList);
-                setLoadingCheques(false);
-                setInvoiceCheques(res.invoiceChequesList);
-            }).catch((err) => {
-                console.error("Error fetching invoice by id: ", err);
-            });
+            setLoadingInvoiceCheques(true);
+            CombinedService.get_invoice_cheque_by_invoice_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
+                            console.log("Fetched invoice cheques: ", res);
+                            if(res[0]) {
+                                setLoadingInvoiceCheques(false);
+                                const invoiceChequesList = res.map((item: any) => ({
+                                    invoice: {
+                                        invoiceId: item[0],
+                                        invoiceNum: undefined,
+                                        post: undefined,
+                                        invoiceDate: undefined,
+                                        amount: undefined,
+                                        paidAmount: undefined,
+                                        isPaid: undefined,
+                                        isPending: undefined,
+                                        settlementDate: undefined,
+                                        statementId: undefined,
+                                        invoiceChequesList: [],
+                                        createDate: undefined,
+                                        updateDate: undefined
+                                    },
+                                    cheque: {
+                                        chequeId: item[5],
+                                        base64StringChequeCopy: undefined,
+                                        invoiceChequesList: []
+                                    },
+                                    amount: item[1],
+                                    paymentDate: item[3]
+                                }));
+                                setInvoiceCheques(invoiceChequesList);
+                                console.log("Invoice Cheques List: ", invoiceChequesList);
+                                // setInvoiceCheques(res.invoiceChequesList);
+                            } else {
+                                console.log("No invoice cheques found for this invoice.");
+                                setLoadingInvoiceCheques(false);
+                            }
+                            
+                        }).catch((err) => {
+                            console.error("Error fetching invoice cheque: ", err);
+                            setLoadingInvoiceCheques(false);
+                        });
         }
         
     }, [invoiceInfo]);
@@ -184,21 +215,21 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
         };
 
         console.log("Sending updateInvoice:", JSON.stringify(invoice, null, 2));
-
+        closePopUp();
         CombinedService.update_invoice_details(invoiceInfo.invoiceId, invoice, makeAuthenticatedRequest).then((res) => {
-            if(res) {
+            if(res.invoiceId) {
                 console.log("Updated invoice: ", res);
-                setDataArray((prevData: any) => {
-                    return prevData.map((item: any) => {
-                        if (item.invoiceId === invoiceInfo.invoiceId) {
-                            return { ...item, ...invoice };
+                setInvoiceData((prevData: invoiceData[]) => {
+                    return prevData.map((item: invoiceData) => {
+                        if (item.invoiceId === res.invoiceId) {
+                            return { ...item, ...res };
                         }
                         return item;
                     });
                 });
                 
-                updateInvoiceData(); // Trigger data update
-                closePopUp();
+                // updateInvoiceData(); // Trigger data update
+                
             }
         });
         
@@ -222,12 +253,12 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
             aria-describedby="alert-dialog-description">
             <DialogTitle>{title} <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
-                <div style={{height:'500px', width:'100%'}} className="flex flex-row gap-50 justify-left items-start content-stretch">
+                <div style={{height:'700px', width:'100%'}} className="flex flex-row gap-50 justify-left items-start content-stretch">
                     {/* <ShowcaseSection title="Contact Form" className="!p-6.5 w-full h-full "> */}
                         <form>
                             <div className="w-xl h-full flex flex-row gap-4.5">
                                 <div className="flex flex-col gap-4.5 justify-start items-start content-stretch">
-                                    <label className="text-body-lg font-medium text-dark">Invoice Information</label>
+                                    <label className="text-body-lg font-bold text-dark">Invoice Information</label>
                                     <div className="mb-4.5 flex flex-row gap-4.5">
                                         
                                         <InputGroup
@@ -264,7 +295,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
                                             />
                                         </LocalizationProvider>
                                     </div>
-                                    <label className="text-body-lg font-medium text-dark">Post Information</label>
+                                    <label className="text-body-lg font-bold text-dark">Post Information</label>
                                     <div className="mb-4.5 flex flex-col gap-4.5 xl:flex-row">
                                         <AutoCompleteWithSelectorButton
                                             title="Postcode"
@@ -307,7 +338,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
                                         />
                                         
                                     </div>
-                                    <label className="text-body-lg font-medium text-dark">Client Information</label>
+                                    <label className="text-body-lg font-bold text-dark">Client Information</label>
                                     <div className="flex flex-col">
                                             <div className="mb-4.5 flex flex-row gap-4.5">
                                                 <InputGroup
@@ -349,7 +380,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, setDataArray, po
                                     setImageSrcToView={setPdfSrc}
                                     onClose={setPdfViewPopUp}
                                     setChequeCopy={setChequeCopy}
-                                    loadingCheques={loadingCheques}
+                                    loadingCheques={loadingInvoiceCheques}
                                 />
                             </div>
                             </div>

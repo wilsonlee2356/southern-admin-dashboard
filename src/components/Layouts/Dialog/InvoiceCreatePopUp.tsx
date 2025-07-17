@@ -24,6 +24,7 @@ import {
 } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { usePostClientContent } from "@/utils/post-client-content";
 
 type AutoCompleteArrayType = {
   key: string;
@@ -87,6 +88,8 @@ function InvoiceCreatePopUp({
   });
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  const { setInvoiceData } = usePostClientContent();
 
   useEffect(() => {
     postArrayWithDetails.find((postItem) => {
@@ -187,14 +190,14 @@ function InvoiceCreatePopUp({
       setError((prev) => ({ ...prev, clientNameError: "* Client Name is required" }));
       return true;
     }
-    if(fullName === "") {
-      setError((prev) => ({ ...prev, fullNameError: "* Full Name is required" }));
-      return true;
-    }
-    if(address === "") {
-      setError((prev) => ({ ...prev, addressError: "* Address is required" }));
-      return true;
-    }
+    // if(fullName === "") {
+    //   setError((prev) => ({ ...prev, fullNameError: "* Full Name is required" }));
+    //   return true;
+    // }
+    // if(address === "") {
+    //   setError((prev) => ({ ...prev, addressError: "* Address is required" }));
+    //   return true;
+    // }
     return false;
   }
   const handleAdd = () :boolean => {
@@ -225,7 +228,11 @@ function InvoiceCreatePopUp({
         //getNewlyInsertedInvoice(response.invoiceId);
         if (response) {
           //update List
-          updateInvoiceData();
+          // updateInvoiceData();
+          setInvoiceData((prevInvoices: invoiceDataOutput[]) => [
+            ...prevInvoices,
+            response,
+          ]);
         }
       })
       .catch((error) => {

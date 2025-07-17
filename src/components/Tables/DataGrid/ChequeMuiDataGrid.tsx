@@ -3,20 +3,60 @@ import { CheckIcon, TrashIcon } from "@/assets/icons";
 import { PreviewIcon, DisabledPreviewIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React from "react";
-import { invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
+import React, { use, useEffect } from "react";
+import { invoiceCheques, cheque } from "@/types/ObjectTypes/InvoiceType";
+import { CombinedService } from "@/app/api/invoice";
+import { useAuthenticatedRequest } from "@/lib/auth";
 
 type ChequeMuiDataGridProps = {
   dataArray: invoiceCheques[];
   setImageSrcToView: any;
   onClose: any;
-  loadingCheques: boolean;
+  loadingInvoiceCheques: boolean;
 };
 
 
-function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose, loadingCheques }: ChequeMuiDataGridProps) {
+function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose, loadingInvoiceCheques }: ChequeMuiDataGridProps) {
 
-  if (!loadingCheques && (!dataArray || dataArray.length === 0)) {
+  const [invoiceCheques, setInvoiceCheques] = React.useState<invoiceCheques[]>(dataArray);
+
+  const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  // useEffect(() => {
+  //   console.log("ChequeMuiDataGrid invoiceCheques: ", invoiceCheques);
+  // }, [invoiceCheques]);
+
+  useEffect(() => {
+    setInvoiceCheques(dataArray);
+    if (dataArray?.length > 0) {
+      dataArray.forEach((item) => {
+        CombinedService.get_cheque_by_id(item.cheque.chequeId, makeAuthenticatedRequest)
+          .then((cheque: cheque) => {
+            console.log("Fetched cheque data: ", cheque);
+            if (cheque && cheque.base64StringChequeCopy) {
+              setInvoiceCheques((prev) =>
+                prev.map((row) =>
+                  row.cheque.chequeId === cheque.chequeId
+                    ? {
+                        ...row,
+                        cheque: {
+                          ...row.cheque,
+                          base64StringChequeCopy: cheque.base64StringChequeCopy,
+                        },
+                      }
+                    : row
+                )
+              );
+            }
+          })
+          .catch((err) => {
+            console.error("Error fetching cheque data for chequeId", item.cheque.chequeId, ":", err);
+          });
+      });
+    }
+  }, [dataArray]);
+  
+  if (!loadingInvoiceCheques && (!dataArray || dataArray.length === 0)) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
         <ShowcaseSection title="No Data Available" className="!p-6.5">
@@ -61,17 +101,14 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose, loadingChequ
             <div className="flex items-center justify-center gap-x-3.5">
               <button className="text-dark dark:text-white"
                   onClick={() => {
-                    // const invoice = getInvoiceById(params.id);
-                    // if (!invoice) return;
-                    // setEditingRow(invoice);
-                    // setPopUpOpenView(true);
+                    // const chequeFound = chequeRows.find((cheque : cheque) => cheque.chequeId === params.value.chequeId)
                     if(params.value){
                       console.log("View Cheque clicked for cheque copy:", params.value);
                       setImageSrcToView(params.value);
                       onClose(true);
                     }
-                    
                   }}
+                  disabled={!params.value}
                 >
                 <span className="sr-only">View Invoice</span>
                 { (!params.value) ? 
@@ -87,13 +124,13 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose, loadingChequ
   return (
       <div style={{ height: "auto", width: "100%" }}>
         <DataGrid
-          rows={dataArray}
+          rows={invoiceCheques}
           columns={columns}
           getRowId={(row) => row.cheque.chequeId}
           columnVisibilityModel={{
             id: false,
           }}
-          loading={loadingCheques}
+          loading={loadingInvoiceCheques}
           disableColumnMenu
           disableRowSelectionOnClick
           hideFooter

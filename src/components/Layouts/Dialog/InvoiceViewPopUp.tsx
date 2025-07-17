@@ -43,7 +43,7 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
     const [pdfSrc, setPdfSrc] = React.useState<string>("");
     const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
     const [invoiceCheques, setInvoiceCheques] = React.useState<invoiceCheques[]>([]);
-    const [loadingCheques, setLoadingCheques] = React.useState<boolean>(false);
+    const [loadingInvoiceCheques, setLoadingInvoiceCheques] = React.useState<boolean>(false);
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
@@ -58,14 +58,54 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
             setFullName(toEmptyIfNull(invoiceInfo?.post.client.fullName));
             // setAddress(toEmptyIfNull(invoiceInfo?.post.buildingAddress));
             setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
-            setLoadingCheques(true);
-            CombinedService.get_invoice_by_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
-                            console.log("Fetched invoice cheques: ", res.invoiceChequesList);
-                            setLoadingCheques(false);
-                            setInvoiceCheques(res.invoiceChequesList);
+            setLoadingInvoiceCheques(true);
+            CombinedService.get_invoice_cheque_by_invoice_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
+                console.log("Fetched invoice cheques: ", res);
+                if(res[0]) {
+                    setLoadingInvoiceCheques(false);
+                    const invoiceChequesList = res.map((item: any) => ({
+                        invoice: {
+                            invoiceId: item[0],
+                            invoiceNum: undefined,
+                            post: undefined,
+                            invoiceDate: undefined,
+                            amount: undefined,
+                            paidAmount: undefined,
+                            isPaid: undefined,
+                            isPending: undefined,
+                            settlementDate: undefined,
+                            statementId: undefined,
+                            invoiceChequesList: [],
+                            createDate: undefined,
+                            updateDate: undefined
+                        },
+                        cheque: {
+                            chequeId: item[5],
+                            base64StringChequeCopy: undefined,
+                            invoiceChequesList: []
+                        },
+                        amount: item[1],
+                        paymentDate: item[3]
+                    }));
+                    setInvoiceCheques(invoiceChequesList);
+                    console.log("Invoice Cheques List: ", invoiceChequesList);
+                    // setInvoiceCheques(res.invoiceChequesList);
+                } else {
+                    console.log("No invoice cheques found for this invoice.");
+                    setLoadingInvoiceCheques(false);
+                }
+                
             }).catch((err) => {
-                console.error("Error fetching invoice by id: ", err);
+                console.error("Error fetching invoice cheque: ", err);
+                setLoadingInvoiceCheques(false);
             });
+            // CombinedService.get_invoice_by_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
+            //                 console.log("Fetched invoice cheques: ", res.invoiceChequesList);
+            //                 setLoadingCheques(false);
+            //                 setInvoiceCheques(res.invoiceChequesList);
+            // }).catch((err) => {
+            //     console.error("Error fetching invoice by id: ", err);
+            // });
         }
         console.log("Invoice Info : ", invoiceInfo);
     }, [invoiceInfo]);
@@ -104,7 +144,7 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
                                 />
                                 <DataLabel
                                     label="Paid Amount"
-                                    content={invoiceInfo.paidAmount+ " / " + invoiceInfo.amount.toString()}
+                                    content={"$" + invoiceInfo.paidAmount+ " / $" + invoiceInfo.amount.toString()}
                                     className="w-full xl:w-5/12" // 40% width on extra-large screens
                                 />
                                 <DataLabel
@@ -185,7 +225,7 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
                                 dataArray={invoiceCheques}
                                 setImageSrcToView={setPdfSrc}
                                 onClose={setPdfViewPopUp}
-                                loadingCheques={loadingCheques}
+                                loadingInvoiceCheques={loadingInvoiceCheques}
                             />
                         </div>
                 </div>

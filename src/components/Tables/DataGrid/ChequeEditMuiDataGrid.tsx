@@ -3,10 +3,12 @@ import { UploadIcon } from "@/assets/icons";
 import { PreviewIcon, DisabledPreviewIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Button } from "@heroui/react";
 import { fileToBase64String } from "@/utils/file-reader";
-import { invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
+import { invoiceCheques, cheque } from "@/types/ObjectTypes/InvoiceType";
+import { CombinedService } from "@/app/api/invoice";
+import { useAuthenticatedRequest } from "@/lib/auth";
 
 type ChequeEditMuiDataGridProps = {
   dataArray: invoiceCheques[];
@@ -18,6 +20,40 @@ type ChequeEditMuiDataGridProps = {
 
 
 function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequeCopy, loadingCheques }: ChequeEditMuiDataGridProps) {
+
+  const [invoiceCheques, setInvoiceCheques] = React.useState<invoiceCheques[]>(dataArray);
+
+  const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  useEffect(() => {
+    setInvoiceCheques(dataArray);
+    if (dataArray?.length > 0) {
+      dataArray.forEach((item) => {
+        CombinedService.get_cheque_by_id(item.cheque.chequeId, makeAuthenticatedRequest)
+          .then((cheque: cheque) => {
+            console.log("Fetched cheque data: ", cheque);
+            if (cheque && cheque.base64StringChequeCopy) {
+              setInvoiceCheques((prev) =>
+                prev.map((row) =>
+                  row.cheque.chequeId === cheque.chequeId
+                    ? {
+                        ...row,
+                        cheque: {
+                          ...row.cheque,
+                          base64StringChequeCopy: cheque.base64StringChequeCopy,
+                        },
+                      }
+                    : row
+                )
+              );
+            }
+          })
+          .catch((err) => {
+            console.error("Error fetching cheque data for chequeId", item.cheque.chequeId, ":", err);
+          });
+      });
+    }
+  }, [dataArray]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -118,7 +154,7 @@ function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequ
   return (
       <div style={{ height: "auto", width: "100%" }}>
         <DataGrid
-          rows={dataArray}
+          rows={invoiceCheques}
           columns={columns}
           getRowId={(row) => row.cheque.chequeId}
           columnVisibilityModel={{

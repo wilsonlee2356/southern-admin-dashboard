@@ -243,6 +243,36 @@ export const CombinedService = {
     );
   },
 
+  async get_invoice_cheque_by_invoice_id(
+    id: number,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<any> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid invoice ID");
+    }
+    return makeApiRequest<any>(
+      `/api/invoiceCheques/WithoutCheque/invoiceId/${id}`,
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      `Unable to fetch invoice cheque with invoice ID ${id}`,
+    );
+  },
+
+  async get_cheque_by_id(
+    id: number,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<cheque> {
+    if (!id || typeof id !== "number") {
+      throw new Error("Invalid cheque ID");
+    }
+    return makeApiRequest<cheque>(
+      `/api/cheques/WithoutInvoiceCheque/${id}`,
+      { method: "GET" },
+      makeAuthenticatedRequest,
+      `Unable to fetch cheque with ID ${id}`,
+    );
+  },
+
     async create_invoice(
     newInvoice: invoiceDataOutput,
     makeAuthenticatedRequest?: AuthRequestHandler,
