@@ -64,6 +64,8 @@ function MuiDataGridWithPopUpButton({
   setShowPaidInvoices,
   //setUpdateDataNeeded, // Optional prop to trigger data update
 }: MuiDataGridWithPopUpButtonProps) {
+  const [invoices, setInvoices] = useState<invoiceData[]>(dataArray);
+
   const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
 
   const [totalAmount, setTotalAmount] = useState<number>(0
@@ -92,6 +94,7 @@ function MuiDataGridWithPopUpButton({
       0,
     );
     setTotalAmount(total);
+    setInvoices(dataArray);
   }, [dataArray]);
 
   // const handleRefreshClick = () => {
@@ -187,7 +190,7 @@ function MuiDataGridWithPopUpButton({
       );
 
       const unPaidInvoices = checkedData.filter(
-        (row: any) => !row.isPaid,
+        (row: invoiceData) => !row.isPaid,
       );
       if (
         unPaidInvoices.length === 0 ||
@@ -206,8 +209,21 @@ function MuiDataGridWithPopUpButton({
 
     invoiceToBeUpdated.isPaid = !invoiceToBeUpdated.isPaid;
     console.log("Updating invoice to paid: ", invoiceToBeUpdated.isPaid);
+    setInvoices((prevInvoices) =>
+      prevInvoices.map((invoice) =>
+        invoice.invoiceId === invoiceToBeUpdated.invoiceId
+          ? { ...invoice, isPending: true }
+          : invoice,
+      ));
     CombinedService.toggle_invoice_is_paid(invoiceToBeUpdated.invoiceId, makeAuthenticatedRequest).then((res) => {
-        if(res) {
+      setInvoices((prevInvoices) =>
+        prevInvoices.map((invoice) =>
+          invoice.invoiceId === invoiceToBeUpdated.invoiceId
+            ? { ...invoice, isPending: false }
+            : invoice,
+        )
+      );
+      if(res) {
             console.log("Updated invoice: ", res);
             // setUpdateDataNeeded(true); // Trigger data update
             updateInvoiceData();
@@ -334,19 +350,19 @@ function MuiDataGridWithPopUpButton({
       flex: 2,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value, row) => row.isPaid,
+      valueGetter: (value, row) => row,
       renderCell: (params) => (
         <div
           className={cn(
             "max-w-fit rounded-full px-3.5 py-1 text-sm font-medium text-dark dark:text-white",
             {
-              "bg-[#219653]/[0.08]": params.value,
-              "bg-[#D34053]/[0.08]": !params.value,
-              //"bg-[#FFA70B]/[0.08]": params.value === "Pending",
+              "bg-[#219653]/[0.08]": params.value.isPaid,
+              "bg-[#D34053]/[0.08]": !params.value.isPaid,
+              "bg-[#FFA70B]/[0.1]": params.value.isPending,
             },
           )}
         >
-          {params.value ? "Paid" : "Unpaid"}
+          {(params.value.isPending) ? "Pending" : (params.value.isPaid ? "Paid" : "Unpaid")}
         </div>
       ),
     },
@@ -356,62 +372,64 @@ function MuiDataGridWithPopUpButton({
       flex: 2.5,
       align: "center",
       headerAlign: "center",
+      valueGetter: (value, row) => row,
       renderCell: (params) => (
         <div className="flex items-center justify-center gap-x-3.5">
           <button className="text-dark dark:text-white"
               onClick={() => {
-                const invoice = getInvoiceById(params.id);
-                if (!invoice) return;
-                setEditingRow(invoice);
+                // const invoice = getInvoiceById(params.value.invoiceId);
+                // if (!invoice) return;
+                setEditingRow(params.value);
                 setPopUpOpenView(true);
               }}
+              disabled={params.value.isPending}
             >
             <span className="sr-only">View Invoice</span>
-            <PreviewIcon className="fill-dark dark:fill-white" />
+            <PreviewIcon className={(params.value.isPending) ? "fill-gray" : "fill-dark"} />
           </button>
           
           {(status === "authenticated" && session?.accessToken && (session.role === 'admins' || session.role === 'editors')) ?
           <><button className="text-dark dark:text-white"
             onClick={() => {
-              setDeletingRow(params.id as number);
+              setDeletingRow(params.value.invoiceId);
               setConfirmPopUpOpen(true);
             }}>
             <span className="sr-only">Delete Invoice</span>
-            <TrashIcon className="fill-dark dark:fill-white" />
+            <TrashIcon className={(params.value.isPending) ? "fill-gray" : "fill-dark"} />
           </button>
           <button
             className="text-dark dark:text-white"
             onClick={() => {
-              const invoice = getInvoiceById(params.id);
-              if (!invoice) return;
-              setEditingRow(invoice);
+              // const invoice = getInvoiceById(params.value.invoiceId);
+              // if (!invoice) return;
+              setEditingRow(params.value);
               setPopUpOpenEdit(true);
             }}
           >
             <span className="sr-only">Edit Invoice</span>
-            <EditIcon className="fill-dark dark:fill-white" />
+            <EditIcon className={(params.value.isPending) ? "fill-gray" : "fill-dark"} />
           </button>
-          {!getInvoiceById(params.id)?.isPaid ? 
+          {!params.value.isPaid ? 
           <button className="text-dark dark:text-white"
             onClick={() => {
-              const invoice = getInvoiceById(params.id);
-              if (!invoice) return;
-              toogleInvoiceisPaid(invoice);
+              // const invoice = getInvoiceById(params.value.invoiceId);
+              // if (!invoice) return;
+              toogleInvoiceisPaid(params.value);
               // setUpdateDataNeeded(true); // Trigger data update
             }}>
             <span className="sr-only">Set Paid Invoice</span>
-            <CheckIcon className="fill-green dark:fill-green" />
+            <CheckIcon className={(params.value.isPending) ? "fill-green-50" : "fill-green"} />
           </button>
           :  
           <button className="text-dark dark:text-white"
             onClick={() => {
-              const invoice = getInvoiceById(params.id);
-              if (!invoice) return;
-              toogleInvoiceisPaid(invoice);
+              // const invoice = getInvoiceById(params.value.invoiceId);
+              // if (!invoice) return;
+              toogleInvoiceisPaid(params.value);
               // setUpdateDataNeeded(true); // Trigger data update
             }}>
             <span className="sr-only">Set Paid Invoice</span>
-            <XIcon className="fill-red" />
+            <XIcon className={(params.value.isPending) ? "fill-red-50" : "fill-red"} />
           </button>
           }</> : <></>}
         </div>
@@ -474,7 +492,7 @@ function MuiDataGridWithPopUpButton({
         // className="h-0.1/2 w-full"
         >
         <DataGrid
-          rows={dataArray}
+          rows={invoices}
           columns={columns}
           getRowId={(row) => row.invoiceId}
           columnVisibilityModel={{
@@ -578,12 +596,26 @@ function MuiDataGridWithPopUpButton({
         onClose={setConfirmPopUpOpen}
         functionToRun={() => {
           if(deleteingRow !== -1){
-            const invoice = getInvoiceById(deleteingRow);
-              if (!invoice) return;
-              CombinedService.delete_invoice_by_id(invoice.invoiceId, makeAuthenticatedRequest).then((res) => {
-                console.log("Deleted invoice: ", res);
+            const invoiceToBeDeleted = getInvoiceById(deleteingRow);
+              if (!invoiceToBeDeleted) return;
+              setInvoices((prevInvoices) =>
+                prevInvoices.map((invoice) =>
+                  invoice.invoiceId === invoiceToBeDeleted.invoiceId
+                    ? { ...invoice, isPending: true }
+                    : invoice,
+                )
+              );
+              CombinedService.delete_invoice_by_id(invoiceToBeDeleted.invoiceId, makeAuthenticatedRequest).then((res) => {
+                  setInvoices((prevInvoices) =>
+                    prevInvoices.map((invoice) =>
+                      invoice.invoiceId === invoiceToBeDeleted.invoiceId
+                        ? { ...invoice, isPending: false }
+                        : invoice,
+                    )
+                  );
+                  console.log("Deleted invoice: ", res);
                   const updatedData = dataArray.filter(
-                    (item) => item.invoiceId !== invoice.invoiceId,
+                    (item) => item.invoiceId !== invoiceToBeDeleted.invoiceId,
                   );
                   setFilteredData(updatedData);
                   setDeletingRow(-1);

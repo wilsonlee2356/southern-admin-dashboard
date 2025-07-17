@@ -78,6 +78,13 @@ export function PostClientContentProvider({
   }, [session, status]);
 
   useEffect(() => {
+    //initialize isPending for each invoice
+    invoiceData.forEach((invoice) => {
+      invoice.isPending = false;
+    });
+  }, [invoiceData]);
+
+  useEffect(() => {
     if (countdown <= 0) {
         return; // Stop the countdown when it reaches zero
     }
