@@ -1,4 +1,4 @@
-import { invoiceData, invoiceCheques, chartData, invoiceChartData, invoiceChequeChartData } from "@/types/ObjectTypes/InvoiceType";
+import { chartData, invoiceChartData, invoiceChequeChartData } from "@/types/ObjectTypes/InvoiceType";
 
 type DataPropsType = {
     data:{

@@ -5,11 +5,11 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
-import { PaidAmountsType, invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { PaidAmountsType, InvoiceData } from "@/types/ObjectTypes/InvoiceType";
 import { NumberInput } from "@heroui/react";
 
 type SimpleMuiDataGridProps = {
-  dataArray: invoiceData[];
+  dataArray: InvoiceData[];
   paidAmounts: PaidAmountsType[];
   setPaidAmounts: any;
 };

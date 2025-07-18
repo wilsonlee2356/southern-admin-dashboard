@@ -4,12 +4,12 @@ import { PreviewIcon, DisabledPreviewIcon } from "@/components/Tables/icons";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { use, useEffect } from "react";
-import { invoiceCheques, cheque } from "@/types/ObjectTypes/InvoiceType";
+import { InvoiceCheques, cheque } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 
 type ChequeMuiDataGridProps = {
-  dataArray: invoiceCheques[];
+  dataArray: InvoiceCheques[];
   setImageSrcToView: any;
   onClose: any;
   loadingInvoiceCheques: boolean;
@@ -18,7 +18,7 @@ type ChequeMuiDataGridProps = {
 
 function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose, loadingInvoiceCheques }: ChequeMuiDataGridProps) {
 
-  const [invoiceCheques, setInvoiceCheques] = React.useState<invoiceCheques[]>(dataArray);
+  const [invoiceCheques, setInvoiceCheques] = React.useState<InvoiceCheques[]>(dataArray);
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 

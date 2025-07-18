@@ -1,13 +1,13 @@
 "use client";
 
 import { CombinedService } from "@/app/api/invoice";
-import { invoiceData, client, post } from "@/types/ObjectTypes/InvoiceType";
+import { InvoiceData, client, post } from "@/types/ObjectTypes/InvoiceType";
 import React, { createContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useAuthenticatedRequest } from "@/lib/auth";
 
 const PostClientContentContext = createContext<{
-  invoiceData: invoiceData[];
+  invoiceData: InvoiceData[];
   postData: post[];
   clientData: client[];
   loading: boolean;
@@ -44,7 +44,7 @@ export function PostClientContentProvider({
   children: React.ReactNode;
 }) {
   const { data: session, status } = useSession();
-  const [invoiceData, setInvoiceData] = useState<invoiceData[]>([]);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData[]>([]);
   const [postData, setPostData] = useState<post[]>([]);
   const [clientData, setClientData] = useState<client[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
