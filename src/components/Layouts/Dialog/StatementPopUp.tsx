@@ -93,9 +93,9 @@ We kindly ask for your attention to settle these at your earliest convenience. P
             <DialogContent>
                 <div style={{height:'500px', width:'100%'}} className="flex flex-col gap-5 mb-10">
                     <ButtonGroup>
-                        <Button className="bg-green text-white" variant="bordered" onPress={()=>setSeriousness(1)}>Normal</Button>
-                        <Button className="bg-yellow-500 text-white" variant="bordered" onPress={()=>setSeriousness(2)}>Serious</Button>
-                        <Button className="bg-red text-white" variant="bordered" onPress={()=>setSeriousness(3)}>Very Serious</Button>
+                        <Button className={(seriousness===1)?"bg-blue text-white":"bg-gray-300 text-white"} variant="bordered" onPress={()=>setSeriousness(1)}>Normal</Button>
+                        <Button className={(seriousness===2)?"bg-blue text-white":"bg-gray-300 text-white"} onPress={()=>setSeriousness(2)}>Serious</Button>
+                        <Button className={(seriousness===3)?"bg-blue text-white":"bg-gray-300 text-white"} variant="bordered" onPress={()=>setSeriousness(3)}>Very Serious</Button>
                     </ButtonGroup>
                     <p className="text-dark w-full" style={{ whiteSpace: 'pre-line', textWrap: 'wrap', marginLeft: 'auto', marginRight: 'auto' }}>{statementUpperParagraph}</p>
                     <table

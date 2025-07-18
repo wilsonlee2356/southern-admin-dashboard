@@ -46,50 +46,52 @@ function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, windowOpen, dataG
     }
     
     if (dataArray?.length > 0 && windowOpen && !dataGridLoaded) {
-      setLoadingCheques(true);
+      // setLoadingCheques(true);
       setLoadedChequesNumber(dataArray.length);
-      setDataGridLoaded(true);
+      // setDataGridLoaded(true);
       const chequesOfTheCurrentInvoice : cheque[] = dataArray.map((invoiceCheque:invoiceCheques)=>{
         return invoiceCheque.cheque;
       });
       setChequeOfThisInvoice(chequesOfTheCurrentInvoice);
 
-      dataArray.forEach((item) => {
-        CombinedService.get_cheque_by_id(item.cheque.chequeId, makeAuthenticatedRequest)
-          .then((chequeLoaded: cheque) => {
-            if(!windowOpen || chequesOfThisInvoice.some((chequeOfThisInvoice)=> chequeOfThisInvoice.chequeId!=chequeLoaded.chequeId))
-            {
-              console.log("Get delay cheque");
-              return;
-            }
+      // dataArray.forEach((item) => {
+      //   CombinedService.get_cheque_by_id(item.cheque.chequeId, makeAuthenticatedRequest)
+      //     .then((chequeLoaded: cheque) => {
+      //       if(!windowOpen || chequesOfThisInvoice.some((chequeOfThisInvoice)=> chequeOfThisInvoice.chequeId!=chequeLoaded.chequeId))
+      //       {
+      //         console.log("Get delay cheque");
+      //         return;
+      //       }
               
-            if(loadedChequesNumber > 0)
-              setLoadedChequesNumber((prev) => prev - 1);
-            console.log("Fetched cheque data: ", chequeLoaded);
-            if (chequeLoaded && chequeLoaded.base64StringChequeCopy) {
-              console.log("set new Cheque");
-              setInvoiceCheques((prev) =>
-                prev.map((row) =>
-                  row.cheque.chequeId === chequeLoaded.chequeId
-                    ? {
-                        ...row,
-                        cheque: {
-                          ...row.cheque,
-                          base64StringChequeCopy: chequeLoaded.base64StringChequeCopy,
-                        },
-                      }
-                    : row
-                )
-              );
-              setChequeCopy(chequeLoaded.chequeId, chequeLoaded.base64StringChequeCopy);
-            }
-          })
-          .catch((err) => {
-            if(loadedChequesNumber > 0)
-              setLoadedChequesNumber((prev) => prev - 1);
-            console.error("Error fetching cheque data for chequeId", item.cheque.chequeId, ":", err);
-          });
-      });
+      //       if(loadedChequesNumber > 0)
+      //         setLoadedChequesNumber((prev) => prev - 1);
+
+      //       console.log("Fetched cheque data: ", chequeLoaded);
+
+      //       if (chequeLoaded && chequeLoaded.base64StringChequeCopy) {
+      //         console.log("set new Cheque");
+      //         setInvoiceCheques((prev) =>
+      //           prev.map((row) =>
+      //             row.cheque.chequeId === chequeLoaded.chequeId
+      //               ? {
+      //                   ...row,
+      //                   cheque: {
+      //                     ...row.cheque,
+      //                     base64StringChequeCopy: chequeLoaded.base64StringChequeCopy,
+      //                   },
+      //                 }
+      //               : row
+      //           )
+      //         );
+      //         setChequeCopy(chequeLoaded.chequeId, chequeLoaded.base64StringChequeCopy);
+      //       }
+      //     })
+      //     .catch((err) => {
+      //       if(loadedChequesNumber > 0)
+      //         setLoadedChequesNumber((prev) => prev - 1);
+      //       console.error("Error fetching cheque data for chequeId", item.cheque.chequeId, ":", err);
+      //     });
+      // });
     }
     
   }, [windowOpen, dataArray]);

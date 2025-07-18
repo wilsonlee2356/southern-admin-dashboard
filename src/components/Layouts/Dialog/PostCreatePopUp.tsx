@@ -29,6 +29,13 @@ type AutoCompleteArrayType = {
   name: string;
 };
 
+type ErrorType = {
+  postcodeError: string;
+  buildingAddressError: string;
+  streetAddressError: string;
+  clientNameError: string;
+};
+
 type PostCreatePopUpPropsType = {
   open: boolean;
   onClose: any;
@@ -56,6 +63,14 @@ function PostCreatePopUp({
   const [buildingAddress, setBuildingAddress] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [address, setAddress] = useState("");
+
+  const [error, setError] = useState<ErrorType>({
+          postcodeError: "",
+          buildingAddressError: "",
+          streetAddressError: "",
+          clientNameError: "",
+});
+  
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
@@ -111,6 +126,36 @@ function PostCreatePopUp({
     setAddress("");
     setFullName("");
   };
+
+  const checkInputError = () : boolean => {
+        resetError();
+        if(postcode === null || postcode === "") {
+          setError((prev) => ({ ...prev, postcodeError: "* Postcode is required" }));
+          return true;
+        }
+        if(buildingAddress === null || buildingAddress === "") {
+          setError((prev) => ({ ...prev, buildingAddressError: "* Building Address is required" }));
+          return true;
+        }
+        if(streetAddress === null || streetAddress === "") {
+          setError((prev) => ({ ...prev, streetAddressError: "* Street Address is required" }));
+          return true;
+        }
+        if(clientName === null || clientName === "") {
+          setError((prev) => ({ ...prev, clientNameError: "* Client name is required" }));
+          return true;
+        }
+        return false;
+    }
+
+    const resetError = () => {
+        setError({
+          postcodeError: "",
+          buildingAddressError: "",
+          streetAddressError: "",
+          clientNameError: "",
+        });
+    }
 
   const handleAdd = () => {
     const postToAdd: post = {
@@ -203,6 +248,7 @@ function PostCreatePopUp({
                   dataArr={[]}
                   input={postcode}
                   stateSetter={setPostcode}
+                  error={error.postcodeError}
                 />
                 <TextInputHeroUI
                   className="w-full"
@@ -212,6 +258,7 @@ function PostCreatePopUp({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setBuildingAddress(e.currentTarget.value)
                   }
+                  error={error.buildingAddressError}
                 />
                 <TextInputHeroUI
                   className="w-full"
@@ -221,6 +268,7 @@ function PostCreatePopUp({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setStreetAddress(e.currentTarget.value)
                   }
+                  error={error.streetAddressError}
                 />
               </div>
               <div className="flex w-full flex-col gap-2.5">
@@ -233,6 +281,7 @@ function PostCreatePopUp({
                   dataArr={clientArray}
                   input={clientName}
                   stateSetter={setClientName}
+                  error={error.clientNameError}
                 />
                 <TextInputHeroUI
                   className="w-full"
@@ -274,6 +323,8 @@ function PostCreatePopUp({
                 size="default"
                 icon={<CheckIcon className="fill-white" />}
                 onClick={() => {
+                  if(checkInputError())
+                    return;
                   handleAdd();
                   handleClear();
                   onClose(false);

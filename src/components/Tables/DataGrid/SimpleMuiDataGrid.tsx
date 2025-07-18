@@ -219,9 +219,18 @@ function SimpleMuiDataGrid({
             paidAmounts.find((item) => item.invoiceId === params.row.invoiceId)
               ?.amount || undefined
           }
-          onChange={(value) => {
-            if (Number(value) < params.row.amount - params.row.paidAmount) {
-              console.log("Value changed:", value);
+          onValueChange={(value) => {
+            console.log("Value changed:", value);
+            if(Number.isNaN(value)){
+              const updatedPaidAmounts = paidAmounts.map((item) =>
+                item.invoiceId === params.row.invoiceId
+                  ? { ...item, amount: null }
+                  : item,
+              );
+              setPaidAmounts(updatedPaidAmounts);
+            }
+            else if (Number(value) < params.row.amount - params.row.paidAmount) {
+              
               const updatedPaidAmounts = paidAmounts.map((item) =>
                 item.invoiceId === params.row.invoiceId
                   ? { ...item, amount: parseFloat(value.toString()) }

@@ -238,11 +238,10 @@ function PostManagementPage() {
                   SN: {user.sn} | CN: {user.cn} | Access: {user.roles[0]}
                 </p>
               </div>
-              {userRole === "admin" && (
+              {userRole === "admin" && session?.username!=user.uid && (
                 <button
                   onClick={() => {
                      handleDeletePost(user.uid)
-
                   }}
                   className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                 >
