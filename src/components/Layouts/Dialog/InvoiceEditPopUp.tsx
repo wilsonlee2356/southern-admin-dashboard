@@ -379,7 +379,7 @@ function InvoiceEditPopUp({
   };
 
   // Conditionally render if invoiceInfo is invalid
-  if (!isValidInvoiceInfo(invoiceInfo)) {
+  if (open && !isValidInvoiceInfo(invoiceInfo)) {
     return <div>Invalid invoice data. Please try again.</div>;
   }
 

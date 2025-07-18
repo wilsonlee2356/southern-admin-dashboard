@@ -172,11 +172,21 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                         if(!checkInputError()){
                             console.log("Invoice Date: ", invoiceDate);
                             console.log("Paid Amounts: ", paidAmounts);
+                            const paidInvoicesWithAmount : PaidAmountsType[] = paidAmounts;
                             setDataArray((prevInvoices : InvoiceData[]) =>
-                                prevInvoices.map((invoice) =>
-                                invoice.invoiceId === paidAmounts[0].invoiceId
-                                    ? { ...invoice, isPending: true }
-                                    : invoice,
+                                prevInvoices.map((invoice) =>{
+                                    const paidInvoice = paidInvoicesWithAmount.find((paidInvoice) => paidInvoice.invoiceId === invoice.invoiceId);
+                                    
+                                    if(paidInvoice !== undefined)
+                                        return { ...invoice, isPending: true, 
+                                            paidAmount: (invoice.paidAmount + paidInvoice.amount), 
+                                            isPaid: ((invoice.paidAmount + paidInvoice.amount) >= invoice.amount) ? true : false }
+                                    else 
+                                        return invoice
+                                    }
+                                // invoice.invoiceId === paidAmounts[0].invoiceId
+                                //     ? { ...invoice, isPending: true }
+                                //     : invoice,
                                 )
                             );
                             closePopUp();
@@ -187,14 +197,14 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                             ).then((cheque) => {
                                     console.log("Cheque created:", cheque);
                                     let invoiceChequesArr: InvoiceCheques[] = [];
-                                    paidAmounts.map((item) => {
+                                    paidInvoicesWithAmount.map((item) => {
                                         invoiceChequesArr.push({
                                             invoice: {
                                                 invoiceId: item.invoiceId,
                                                 invoiceNum: dataArray.find((invoiceInfo: InvoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.invoiceNum || "",
                                                 post: dataArray.find((invoiceInfo: InvoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.post || null,
                                                 invoiceDate: new Date(),
-                                                paidAmount: paidAmounts.find(amount => amount.invoiceId === item.invoiceId)?.amount || 0,
+                                                paidAmount: paidInvoicesWithAmount.find(amount => amount.invoiceId === item.invoiceId)?.amount || 0,
                                                 amount: 0,
                                                 settlementDate: null, // Assuming this is set later
                                                 statementId: null, // Assuming this is set later
@@ -215,11 +225,15 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                     });
                                     CombinedService.create_transaction(invoiceChequesArr, makeAuthenticatedRequest).then((invoiceCheques) => {
                                         setDataArray((prevInvoices : InvoiceData[]) =>
-                                            prevInvoices.map((invoice) =>
-                                            invoice.invoiceId === paidAmounts[0].invoiceId
-                                                ? { ...invoice, isPending: false }
-                                                : invoice,
-                                            )
+                                            {
+                                                prevInvoices.map((invoice) =>{
+                                                const paidInvoice = paidInvoicesWithAmount.find((paidInvoice) => paidInvoice.invoiceId === invoice.invoiceId);
+                                                if(paidInvoice !== undefined)
+                                                    return { ...invoice, isPending: false }
+                                                else 
+                                                    return invoice
+                                                });
+                                            }
                                         );
                                         console.log("InvoiceCheques created:", invoiceCheques);
                                         // setUpdateDataNeeded(true);
@@ -240,22 +254,30 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                     }).catch((error) => {
                                         console.error("Error creating transactions:", error);
                                         setDataArray((prevInvoices : InvoiceData[]) =>
-                                            prevInvoices.map((invoice) =>
-                                            invoice.invoiceId === paidAmounts[0].invoiceId
-                                                ? { ...invoice, isPending: false }
-                                                : invoice,
-                                            )
+                                            {
+                                                prevInvoices.map((invoice) =>{
+                                                const paidInvoice = paidInvoicesWithAmount.find((paidInvoice) => paidInvoice.invoiceId === invoice.invoiceId);
+                                                if(paidInvoice !== undefined)
+                                                    return { ...invoice, isPending: false }
+                                                else 
+                                                    return invoice
+                                                });
+                                            }
                                         );
                                     });
                                 }).catch((error) => {
                                     console.error("Error creating cheque:", error);
                                     setDataArray((prevInvoices : InvoiceData[]) =>
-                                            prevInvoices.map((invoice) =>
-                                            invoice.invoiceId === paidAmounts[0].invoiceId
-                                                ? { ...invoice, isPending: false }
-                                                : invoice,
-                                            )
-                                    );
+                                            {
+                                                prevInvoices.map((invoice) =>{
+                                                const paidInvoice = paidInvoicesWithAmount.find((paidInvoice) => paidInvoice.invoiceId === invoice.invoiceId);
+                                                if(paidInvoice !== undefined)
+                                                    return { ...invoice, isPending: false }
+                                                else 
+                                                    return invoice
+                                                });
+                                            }
+                                        );
                                 });
                         
                         }

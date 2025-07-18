@@ -43,7 +43,8 @@ export default function PageWrapper(
   const [showPaidInvoices, setShowPaidInvoices] = useState(false);
 
   useEffect(() => {
-    const selectedData = invoiceData?.filter(
+    if(invoiceData !== null && invoiceData !== undefined && invoiceData.length > 0 ){
+      const selectedData = invoiceData?.filter(
       (row: InvoiceData) =>
         (!checkEmpty(invoiceNumber)
           ? row.invoiceNum.toLowerCase().includes(invoiceNumber.toLowerCase())
@@ -68,10 +69,11 @@ export default function PageWrapper(
           (showUnpaidInvoices && !row.isPaid) ||
           (showPaidInvoices && row.isPaid)),
       //&& (!checkEmpty(startDate) ? checkDateWithinMonths(row.invoiceDate, parseInt(startDate)) : true)
-    );
-    //console.log("Selected Data: ", selectedData[0].isPending);
-    setFilteredData(selectedData ?? []);
-    console.log("Filtered Data: ", selectedData);
+      );
+      //console.log("Selected Data: ", selectedData[0].isPending);
+      setFilteredData(selectedData);
+      console.log("Filtered Data: ", selectedData);
+    }
   }, [
     invoiceNumber,
     clientName,

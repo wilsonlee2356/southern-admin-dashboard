@@ -92,17 +92,19 @@ function MuiDataGridWithPopUpButton({
 
   useEffect(() => {
     // console.log("Data array updated:", dataArray);
-    const total = dataArray.reduce(
-      (sum: number, item: any) => sum + item.amount,
-      0,
-    );
-    setTotalAmount(total);
-    setSelectedRows(dataArray.filter((invoice:InvoiceData) => 
-      selectedRows.some((selectedRows:InvoiceData) => 
-        selectedRows.invoiceId===invoice.invoiceId
-      )
-    ));
-    console.log("Updated select rows: " + selectedRows);
+    if(dataArray !== undefined && dataArray !== null){
+      const total = dataArray.reduce(
+        (sum: number, item: any) => sum + item.amount,
+        0,
+      );
+      setTotalAmount(total);
+      setSelectedRows(dataArray.filter((invoice:InvoiceData) => 
+        selectedRows.some((selectedRows:InvoiceData) => 
+          selectedRows.invoiceId===invoice.invoiceId
+        )
+      ));
+      console.log("Updated select rows: " + selectedRows);
+    }
   }, [dataArray]);
 
   // const handleRefreshClick = () => {
@@ -110,7 +112,15 @@ function MuiDataGridWithPopUpButton({
   // };
 
   useEffect(() => {
-    setCanSetPay(!selectedRows.some((selectedRow) => selectedRow.isPaid || selectedRow.isPending));
+    console.log("Can set pay : ", canSetPay);
+  }, [canSetPay]);
+
+  useEffect(() => {
+    if(selectedRows.length==0){
+      setCanSetPay(false);
+      return;
+    }
+    setCanSetPay(!selectedRows.some((selectedRow:InvoiceData) => selectedRow.isPaid || selectedRow.isPending));
   }, [selectedRows]);
 
   if (!loading && (!dataArray || dataArray.length === 0)) {

@@ -57,6 +57,11 @@ function MuiDataGridForPostManagement({
   const { updateInvoiceData, updatePostData, loading } = usePostClientContent();
 
   useEffect(() => {
+    if(selectedRows.length==0){
+      setCanSetRestart(false);
+      setCanSetFinish(false);
+      return;
+    }
       setCanSetRestart(!selectedRows.some((selectedRow) => !selectedRow.ended));
       setCanSetFinish(!selectedRows.some((selectedRow) => selectedRow.ended));
     }, [selectedRows]);

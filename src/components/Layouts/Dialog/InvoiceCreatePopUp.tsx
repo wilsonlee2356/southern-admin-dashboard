@@ -89,7 +89,7 @@ function InvoiceCreatePopUp({
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
-  const { setInvoiceData } = usePostClientContent();
+  const { setInvoiceData, updateData } = usePostClientContent();
 
   useEffect(() => {
     postArrayWithDetails.find((postItem) => {
@@ -234,6 +234,8 @@ function InvoiceCreatePopUp({
             ...prevInvoices,
             response,
           ]);
+          updateData();
+
         }
       })
       .catch((error) => {
