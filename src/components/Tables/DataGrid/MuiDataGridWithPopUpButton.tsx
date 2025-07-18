@@ -17,7 +17,7 @@ import ComfirmPopUp from "@/components/Layouts/Dialog/ComfirmPopUp";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { invoiceData, post } from "@/types/ObjectTypes/InvoiceType";
+import { InvoiceData, post } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useSession } from "next-auth/react";
@@ -25,7 +25,7 @@ import { usePostClientContent } from "@/utils/post-client-content";
 import { useAlert } from "@/utils/AlertProvider";
 
 type MuiDataGridWithPopUpButtonProps = {
-  dataArray: invoiceData[];
+  dataArray: InvoiceData[];
   postArray: post[];
   popUpOpen: boolean;
   setPopUpOpen: any;
@@ -67,14 +67,14 @@ function MuiDataGridWithPopUpButton({
 }: MuiDataGridWithPopUpButtonProps) {
   // const [invoices, setInvoices] = useState<invoiceData[]>(dataArray);
 
-  const [selectedRows, setSelectedRows] = useState<invoiceData[]>([]);
+  const [selectedRows, setSelectedRows] = useState<InvoiceData[]>([]);
 
   const [totalAmount, setTotalAmount] = useState<number>(0
     //dataArray.reduce((sum: any, item: any) => sum + item.amount, 0),
   );
   const [canSetPay, setCanSetPay] = useState<boolean>(false);
 
-  const [editingRow, setEditingRow] = useState<invoiceData>({} as invoiceData);
+  const [editingRow, setEditingRow] = useState<InvoiceData>({} as InvoiceData);
 
   const [deleteingRow, setDeletingRow] = useState<number>(-1);
 
@@ -97,8 +97,8 @@ function MuiDataGridWithPopUpButton({
       0,
     );
     setTotalAmount(total);
-    setSelectedRows(dataArray.filter((invoice:invoiceData) => 
-      selectedRows.some((selectedRows:invoiceData) => 
+    setSelectedRows(dataArray.filter((invoice:InvoiceData) => 
+      selectedRows.some((selectedRows:InvoiceData) => 
         selectedRows.invoiceId===invoice.invoiceId
       )
     ));
@@ -213,11 +213,11 @@ function MuiDataGridWithPopUpButton({
     }
   };
 
-  const toogleInvoiceisPaid = (invoiceToBeUpdated : invoiceData) => {
+  const toogleInvoiceisPaid = (invoiceToBeUpdated : InvoiceData) => {
 
     // invoiceToBeUpdated.isPaid = !invoiceToBeUpdated.isPaid;
     
-    setInvoiceData((prevInvoices : invoiceData[]) =>
+    setInvoiceData((prevInvoices : InvoiceData[]) =>
       prevInvoices.map((invoice) =>
         invoice.invoiceId === invoiceToBeUpdated.invoiceId
           ? { ...invoice, isPending: true }
@@ -226,7 +226,7 @@ function MuiDataGridWithPopUpButton({
     // console.log("Updated invoice: ", dataArray);
     
     CombinedService.toggle_invoice_is_paid(invoiceToBeUpdated.invoiceId, makeAuthenticatedRequest).then((res) => {
-      setInvoiceData((prevInvoices : invoiceData[]) =>
+      setInvoiceData((prevInvoices : InvoiceData[]) =>
         prevInvoices.map((invoice) =>
           invoice.invoiceId === invoiceToBeUpdated.invoiceId
             ? { ...invoice, isPending: false }
@@ -238,7 +238,7 @@ function MuiDataGridWithPopUpButton({
             console.log("Updated invoice: ", res);
             // setUpdateDataNeeded(true); // Trigger data update
             // updateInvoiceData();
-            setInvoiceData((prevInvoices : invoiceData[]) =>
+            setInvoiceData((prevInvoices : InvoiceData[]) =>
               prevInvoices.map((invoice) =>
                 invoice.invoiceId === invoiceToBeUpdated.invoiceId
                   ? { ...invoice, isPaid: res.isPaid }
@@ -630,7 +630,7 @@ function MuiDataGridWithPopUpButton({
           if(deleteingRow !== -1){
             const invoiceToBeDeleted = getInvoiceById(deleteingRow);
               if (!invoiceToBeDeleted) return;
-              setInvoiceData((prevInvoices : invoiceData[]) =>
+              setInvoiceData((prevInvoices : InvoiceData[]) =>
                 prevInvoices.map((invoice) =>
                   invoice.invoiceId === invoiceToBeDeleted.invoiceId
                     ? { ...invoice, isPending: true }
@@ -645,7 +645,7 @@ function MuiDataGridWithPopUpButton({
                   //       : invoice,
                   //   )
                   // );
-                  setInvoiceData((prevInvoices : invoiceData[]) =>
+                  setInvoiceData((prevInvoices : InvoiceData[]) =>
                     prevInvoices.filter((invoice) => invoice.invoiceId !== invoiceToBeDeleted.invoiceId)
                   );
                   console.log("Deleted invoice: ", res);

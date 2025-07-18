@@ -1,9 +1,9 @@
 import {
-  invoiceData,
+  InvoiceData,
   client,
   post,
   cheque,
-  invoiceCheques,
+  InvoiceCheques,
   invoiceDataOutput,
   postClientInvoiceSummary,
   chartData,
@@ -136,8 +136,8 @@ export const CombinedService = {
   },
   async get_all_invoice(
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData[]> {
-    return makeApiRequest<invoiceData[]>(
+  ): Promise<InvoiceData[]> {
+    return makeApiRequest<InvoiceData[]>(
       "/api/invoices",
       { method: "GET" },
       makeAuthenticatedRequest,
@@ -147,8 +147,8 @@ export const CombinedService = {
 
   async get_all_invoice_without_cheque(
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData[]> {
-    return makeApiRequest<invoiceData[]>(
+  ): Promise<InvoiceData[]> {
+    return makeApiRequest<InvoiceData[]>(
       "/api/invoices/withoutCheque",
       { method: "GET" },
       makeAuthenticatedRequest,
@@ -158,8 +158,8 @@ export const CombinedService = {
 
   async get_all_invoice_sorted_by_date(
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData[]> {
-    return makeApiRequest<invoiceData[]>(
+  ): Promise<InvoiceData[]> {
+    return makeApiRequest<InvoiceData[]>(
       "/api/invoices/sorted",
       { method: "GET" },
       makeAuthenticatedRequest,
@@ -191,8 +191,8 @@ export const CombinedService = {
 
   async get_all_invoiceCheques(
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceCheques[]> {
-    return makeApiRequest<invoiceCheques[]>(
+  ): Promise<InvoiceCheques[]> {
+    return makeApiRequest<InvoiceCheques[]>(
       "/api/invoiceCheques",
       { method: "GET" },
       makeAuthenticatedRequest,
@@ -203,11 +203,11 @@ export const CombinedService = {
   async get_invoice_by_id(
     id: number,
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
+  ): Promise<InvoiceData> {
     if (!id || typeof id !== "number") {
       throw new Error("Invalid invoice ID");
     }
-    return makeApiRequest<invoiceData>(
+    return makeApiRequest<InvoiceData>(
       `/api/invoices/id=${id}`,
       { method: "GET" },
       makeAuthenticatedRequest,
@@ -218,11 +218,11 @@ export const CombinedService = {
   async get_invoice_by_invoiceNum(
     invoiceNum: string,
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
+  ): Promise<InvoiceData> {
     if (!invoiceNum || typeof invoiceNum !== "string") {
       throw new Error("Invalid invoice ID");
     }
-    return makeApiRequest<invoiceData>(
+    return makeApiRequest<InvoiceData>(
       `/api/invoices/num=${invoiceNum}`,
       { method: "GET" },
       makeAuthenticatedRequest,
@@ -285,11 +285,11 @@ export const CombinedService = {
     async create_invoice(
     newInvoice: invoiceDataOutput,
     makeAuthenticatedRequest?: AuthRequestHandler,
-  ): Promise<invoiceData> {
+  ): Promise<InvoiceData> {
     if (!newInvoice || typeof newInvoice !== "object") {
       throw new Error("Invalid invoice data");
     }
-    return makeApiRequest<invoiceData>(
+    return makeApiRequest<InvoiceData>(
       "/api/combined",
       {
         method: "POST",
@@ -337,13 +337,13 @@ export const CombinedService = {
   },
 
   async create_transaction(
-    newInvoiceCheques: invoiceCheques[],
+    newInvoiceCheques: InvoiceCheques[],
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceCheques[]> {
+  ): Promise<InvoiceCheques[]> {
     if (!Array.isArray(newInvoiceCheques) || newInvoiceCheques.length === 0) {
       throw new Error("Invalid invoice cheques data");
     }
-    return makeApiRequest<invoiceCheques[]>(
+    return makeApiRequest<InvoiceCheques[]>(
       "/api/combined/invoiceCheque",
       {
         method: "POST",
@@ -356,16 +356,16 @@ export const CombinedService = {
 
   async update_invoice_by_id(
     id: number,
-    updateData: invoiceData,
+    updateData: InvoiceData,
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
+  ): Promise<InvoiceData> {
     if (!id || typeof id !== "number") {
       throw new Error("Invalid invoice ID");
     }
     if (!updateData || typeof updateData !== "object") {
       throw new Error("Invalid invoice data");
     }
-    return makeApiRequest<invoiceData>(
+    return makeApiRequest<InvoiceData>(
       `/api/invoices/${id}`,
       {
         method: "PUT",
@@ -378,16 +378,16 @@ export const CombinedService = {
 
   async update_invoice_details(
     id: number,
-    updateData: invoiceData,
+    updateData: InvoiceData,
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
+  ): Promise<InvoiceData> {
     if (!id || typeof id !== "number") {
       throw new Error("Invalid invoice ID");
     }
     if (!updateData || typeof updateData !== "object") {
       throw new Error("Invalid invoice data");
     }
-    return makeApiRequest<invoiceData>(
+    return makeApiRequest<InvoiceData>(
       `/api/combined/${id}`,
       {
         method: "PUT",
@@ -402,14 +402,14 @@ export const CombinedService = {
     id: number,
     updateData: post,
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
+  ): Promise<InvoiceData> {
     if (!id || typeof id !== "number") {
       throw new Error("Invalid post ID");
     }
     if (!updateData || typeof updateData !== "object") {
       throw new Error("Invalid post data");
     }
-    return makeApiRequest<invoiceData>(
+    return makeApiRequest<InvoiceData>(
       `/api/posts/${id}`,
       {
         method: "PUT",
@@ -422,16 +422,16 @@ export const CombinedService = {
 
   async setInvoiceToPaid(
     id: number,
-    updateData: invoiceData,
+    updateData: InvoiceData,
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
+  ): Promise<InvoiceData> {
     if (!id || typeof id !== "number") {
       throw new Error("Invalid invoice ID");
     }
     if (!updateData || typeof updateData !== "object") {
       throw new Error("Invalid invoice data");
     }
-    return makeApiRequest<invoiceData>(
+    return makeApiRequest<InvoiceData>(
       `/api/invoices/${id}`,
       {
         method: "PUT",
@@ -445,11 +445,11 @@ export const CombinedService = {
   async toggle_invoice_is_paid(
     id: number,
     makeAuthenticatedRequest: AuthRequestHandler,
-  ): Promise<invoiceData> {
+  ): Promise<InvoiceData> {
     if (!id || typeof id !== "number") {
       throw new Error("Invalid invoice ID");
     }
-    return makeApiRequest<invoiceData>(
+    return makeApiRequest<InvoiceData>(
       `/api/invoices/toggleisPaid/${id}`,
       {
         method: "PUT",

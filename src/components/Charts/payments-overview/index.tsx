@@ -7,7 +7,7 @@ import { PaymentsOverviewChart } from "./chart";
 import { InvoiceService } from "@/app/api/services/invoiceService";
 import { CombinedService } from "@/app/api/invoice";
 import { createMonthlyTimeData } from "@/utils/chart-data-analyzer";
-import { invoiceData, invoiceCheques, chartData } from "@/types/ObjectTypes/InvoiceType";
+import { InvoiceData, InvoiceCheques, chartData } from "@/types/ObjectTypes/InvoiceType";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -31,8 +31,8 @@ export function PaymentsOverview({
   // const data = await getPaymentsOverviewData(timeFrame);
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
-  const [invoiceData, setInvoiceData] = useState<invoiceData[]>([]);
-  const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData[]>([]);
+  const [invoiceCheques, setInvoiceCheques] = useState<InvoiceCheques[]>([]);
   const [chartDataSet, setChartDataSet] = useState<chartData>();
   const [chartData, setChartData] = useState<DataPropType>({
     data: {
