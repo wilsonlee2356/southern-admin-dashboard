@@ -10,7 +10,7 @@ import TextInputHeroUI from "@/components/FormElements/InputGroup/text-input-her
 import {
   client,
   post,
-  invoiceData,
+  InvoiceData,
 } from "@/types/ObjectTypes/InvoiceType";
 import { CloseIcon, UploadIcon, RefreshIcon, SpinningRefreshIcon } from "@/assets/icons";
 import InvoiceCreatePopUp from "@/components/Layouts/Dialog/InvoiceCreatePopUp";
@@ -23,7 +23,7 @@ import { useSession } from "next-auth/react";
 
 
 type SearchBoxProps = {
-  dataArray: invoiceData[]; // Pass data as a prop instead of fetching here
+  dataArray: InvoiceData[]; // Pass data as a prop instead of fetching here
   clientData: client[];
   postData: post[];
   invoiceNumber: string;

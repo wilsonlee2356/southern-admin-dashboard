@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DataLabel from "../Datalabel/dataLabel";
-import { invoiceData, invoiceCheques } from "@/types/ObjectTypes/InvoiceType";
+import { InvoiceData, InvoiceCheques } from "@/types/ObjectTypes/InvoiceType";
 import { cn } from "@/lib/utils";
 import dayjs, { Dayjs } from "dayjs";
 import ChequeMuiDataGrid from "@/components/Tables/DataGrid/ChequeMuiDataGrid";
@@ -26,7 +26,7 @@ type InvoiceViewPopUpPropsType = {
     title: string;
     open: boolean;
     onClose: any;
-    invoiceInfo: invoiceData;
+    invoiceInfo: InvoiceData;
 }
 
 
@@ -42,7 +42,7 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
     const [pdfSrc, setPdfSrc] = React.useState<string>("");
     const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
-    const [invoiceCheques, setInvoiceCheques] = React.useState<invoiceCheques[]>([]);
+    const [invoiceCheques, setInvoiceCheques] = React.useState<InvoiceCheques[]>([]);
     const [loadingInvoiceCheques, setLoadingInvoiceCheques] = React.useState<boolean>(false);
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();

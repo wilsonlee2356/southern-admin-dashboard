@@ -4,7 +4,7 @@ import SearchBox from "./_components/search-box";
 import MuiDataGridWithPopUpButton from "@/components/Tables/DataGrid/MuiDataGridWithPopUpButton";
 import { usePostClientContent } from "@/utils/post-client-content";
 import { Dayjs } from "dayjs";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { InvoiceData } from "@/types/ObjectTypes/InvoiceType";
 
 
 type PageWrapperProps = {
@@ -26,7 +26,7 @@ export default function PageWrapper(
   // let clients = usePostClientContent().clientData;
   // let posts = usePostClientContent().postData;
 
-  const [filteredData, setFilteredData] = useState<invoiceData[]>(invoiceData ?? []);
+  const [filteredData, setFilteredData] = useState<InvoiceData[]>(invoiceData ?? []);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [clientName, setClientName] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -44,7 +44,7 @@ export default function PageWrapper(
 
   useEffect(() => {
     const selectedData = invoiceData?.filter(
-      (row: invoiceData) =>
+      (row: InvoiceData) =>
         (!checkEmpty(invoiceNumber)
           ? row.invoiceNum.toLowerCase().includes(invoiceNumber.toLowerCase())
           : true) &&

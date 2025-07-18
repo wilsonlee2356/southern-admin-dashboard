@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button, ButtonGroup } from "@heroui/react";
-import { invoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { InvoiceData } from "@/types/ObjectTypes/InvoiceType";
 
 type StatementPopUpPropsType = {
-    selectedData: invoiceData[];
+    selectedData: InvoiceData[];
     open: boolean;
     setOpen: any;
 }
@@ -151,7 +151,7 @@ We kindly ask for your attention to settle these at your earliest convenience. P
                         </tr>
                         </thead>
                         <tbody>
-                        {selectedData.map((invoice: invoiceData) => {
+                        {selectedData.map((invoice: InvoiceData) => {
                             const invoiceDate = new Date(invoice.invoiceDate);
                             const dateString = `${invoiceDate.getDate()}-${invoiceDate.getMonth()}-${invoiceDate.getFullYear()}`;
                             return (

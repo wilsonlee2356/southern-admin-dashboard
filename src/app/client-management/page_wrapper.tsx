@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import {
   client,
   post,
-  invoiceData,
+  InvoiceData,
   postClientInvoiceSummary,
 } from "@/types/ObjectTypes/InvoiceType";
 import PostSearchBox from "./_components/post-search-box";
@@ -61,7 +61,7 @@ export default function PageWrapper({
           ended: postItem.isEnded,
           client_name: postItem.client.clientName,
         })});
-      invoiceData?.map((row: invoiceData) => {
+      invoiceData?.map((row: InvoiceData) => {
         const existingPost = processedArray.find(
           (item) => item.post_id === row.post.postId,
         );

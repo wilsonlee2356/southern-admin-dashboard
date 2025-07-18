@@ -12,7 +12,7 @@ import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
-import { invoiceData, invoiceCheques, PaidAmountsType } from "@/types/ObjectTypes/InvoiceType";
+import { InvoiceData, InvoiceCheques, PaidAmountsType } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 
@@ -172,7 +172,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                         if(!checkInputError()){
                             console.log("Invoice Date: ", invoiceDate);
                             console.log("Paid Amounts: ", paidAmounts);
-                            setDataArray((prevInvoices : invoiceData[]) =>
+                            setDataArray((prevInvoices : InvoiceData[]) =>
                                 prevInvoices.map((invoice) =>
                                 invoice.invoiceId === paidAmounts[0].invoiceId
                                     ? { ...invoice, isPending: true }
@@ -186,13 +186,13 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                 invoiceChequesList: []}, makeAuthenticatedRequest
                             ).then((cheque) => {
                                     console.log("Cheque created:", cheque);
-                                    let invoiceChequesArr: invoiceCheques[] = [];
+                                    let invoiceChequesArr: InvoiceCheques[] = [];
                                     paidAmounts.map((item) => {
                                         invoiceChequesArr.push({
                                             invoice: {
                                                 invoiceId: item.invoiceId,
-                                                invoiceNum: dataArray.find((invoiceInfo: invoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.invoiceNum || "",
-                                                post: dataArray.find((invoiceInfo: invoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.post || null,
+                                                invoiceNum: dataArray.find((invoiceInfo: InvoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.invoiceNum || "",
+                                                post: dataArray.find((invoiceInfo: InvoiceData) => invoiceInfo.invoiceId === item.invoiceId)?.post || null,
                                                 invoiceDate: new Date(),
                                                 paidAmount: paidAmounts.find(amount => amount.invoiceId === item.invoiceId)?.amount || 0,
                                                 amount: 0,
@@ -214,7 +214,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                         })
                                     });
                                     CombinedService.create_transaction(invoiceChequesArr, makeAuthenticatedRequest).then((invoiceCheques) => {
-                                        setDataArray((prevInvoices : invoiceData[]) =>
+                                        setDataArray((prevInvoices : InvoiceData[]) =>
                                             prevInvoices.map((invoice) =>
                                             invoice.invoiceId === paidAmounts[0].invoiceId
                                                 ? { ...invoice, isPending: false }
@@ -239,7 +239,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                         // });
                                     }).catch((error) => {
                                         console.error("Error creating transactions:", error);
-                                        setDataArray((prevInvoices : invoiceData[]) =>
+                                        setDataArray((prevInvoices : InvoiceData[]) =>
                                             prevInvoices.map((invoice) =>
                                             invoice.invoiceId === paidAmounts[0].invoiceId
                                                 ? { ...invoice, isPending: false }
@@ -249,7 +249,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                     });
                                 }).catch((error) => {
                                     console.error("Error creating cheque:", error);
-                                    setDataArray((prevInvoices : invoiceData[]) =>
+                                    setDataArray((prevInvoices : InvoiceData[]) =>
                                             prevInvoices.map((invoice) =>
                                             invoice.invoiceId === paidAmounts[0].invoiceId
                                                 ? { ...invoice, isPending: false }

@@ -149,6 +149,7 @@ function InvoiceCreatePopUp({
   }
 
   const handleClear = () => {
+    console.log("Invoice create clear");
     setInvoiceNumber("");
     setClientName("");
     setPostcode("");
