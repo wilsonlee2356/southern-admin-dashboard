@@ -1,4 +1,4 @@
-export type invoice = {
+export type Invoice = {
   id: string;
   name: string;
   amount: number;
@@ -7,7 +7,7 @@ export type invoice = {
   status: string;
 };
 
-export type invoiceSearch = {
+export type InvoiceSearch = {
   invoiceNum: string;
   clientName: string;
   postcode: string;
@@ -15,9 +15,9 @@ export type invoiceSearch = {
   endDate: Date | null;
 };
 
-export type invoiceArray = {
+export type InvoiceArray = {
   //dataArray: invoice[];
-  dataArray: invoiceData[];
+  dataArray: InvoiceData[];
 };
 
 export type PaidAmountsType = {
@@ -48,29 +48,29 @@ export type post = {
 export type cheque = {
   chequeId: number;
   base64StringChequeCopy: null | string;
-  invoiceChequesList: invoiceCheques[];
+  invoiceChequesList: InvoiceCheques[];
 };
 
-export type invoiceCheques = {
-  invoice: invoiceData;
+export type InvoiceCheques = {
+  invoice: InvoiceData;
   cheque: cheque;
   amount: number;
-  paymentDate: Date;
+  paymentDate: any;
 };
 
-export type invoiceData = {
+export type InvoiceData = {
   invoiceId: number;
   invoiceNum: string;
   post: post;
   //client: client;
-  invoiceDate: Date;
+  invoiceDate: any;
   amount: number;
   paidAmount: number;
   isPaid: boolean;
   isPending: boolean;
   settlementDate: string | null | undefined;
   statementId: number | null | undefined;
-  invoiceChequesList: invoiceCheques[];
+  invoiceChequesList: InvoiceCheques[];
   createDate: Date;
   updateDate: Date;
 };
