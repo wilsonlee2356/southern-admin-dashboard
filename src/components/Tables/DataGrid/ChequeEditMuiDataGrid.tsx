@@ -13,51 +13,97 @@ import { useAuthenticatedRequest } from "@/lib/auth";
 type ChequeEditMuiDataGridProps = {
   dataArray: invoiceCheques[];
   setImageSrcToView: any;
+  windowOpen: boolean;
+  dataGridLoaded: boolean;
   onClose: any;
   setChequeCopy: any;
-  loadingCheques: boolean;
+  loadingInvoiceCheques: boolean;
+  setLoadingCheques: any;
+  setDataGridLoaded: any;
 };
 
 
-function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequeCopy, loadingCheques }: ChequeEditMuiDataGridProps) {
+function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, windowOpen, dataGridLoaded, onClose, setChequeCopy, loadingInvoiceCheques, setLoadingCheques, setDataGridLoaded }: ChequeEditMuiDataGridProps) {
 
   const [invoiceCheques, setInvoiceCheques] = React.useState<invoiceCheques[]>(dataArray);
+  const [loadedChequesNumber, setLoadedChequesNumber] = React.useState<number>(0);
+  const [chequesOfThisInvoice, setChequeOfThisInvoice] = React.useState<cheque[]>([]);
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
+  
   useEffect(() => {
+    console.log("Initial cheque data: ", dataArray);
     setInvoiceCheques(dataArray);
-    if (dataArray?.length > 0) {
+    console.log("Is datagrid loaded", dataGridLoaded);
+
+    if(!windowOpen){
+      setDataGridLoaded(false);
+      setLoadingCheques(false);
+      setLoadedChequesNumber(0);
+      setInvoiceCheques([]);
+      console.log("Is datagrid loaded", dataGridLoaded, windowOpen);
+    }
+    
+    if (dataArray?.length > 0 && windowOpen && !dataGridLoaded) {
+      setLoadingCheques(true);
+      setLoadedChequesNumber(dataArray.length);
+      setDataGridLoaded(true);
+      const chequesOfTheCurrentInvoice : cheque[] = dataArray.map((invoiceCheque:invoiceCheques)=>{
+        return invoiceCheque.cheque;
+      });
+      setChequeOfThisInvoice(chequesOfTheCurrentInvoice);
+
       dataArray.forEach((item) => {
         CombinedService.get_cheque_by_id(item.cheque.chequeId, makeAuthenticatedRequest)
-          .then((cheque: cheque) => {
-            console.log("Fetched cheque data: ", cheque);
-            if (cheque && cheque.base64StringChequeCopy) {
+          .then((chequeLoaded: cheque) => {
+            if(!windowOpen || chequesOfThisInvoice.some((chequeOfThisInvoice)=> chequeOfThisInvoice.chequeId!=chequeLoaded.chequeId))
+            {
+              console.log("Get delay cheque");
+              return;
+            }
+              
+            if(loadedChequesNumber > 0)
+              setLoadedChequesNumber((prev) => prev - 1);
+            console.log("Fetched cheque data: ", chequeLoaded);
+            if (chequeLoaded && chequeLoaded.base64StringChequeCopy) {
+              console.log("set new Cheque");
               setInvoiceCheques((prev) =>
                 prev.map((row) =>
-                  row.cheque.chequeId === cheque.chequeId
+                  row.cheque.chequeId === chequeLoaded.chequeId
                     ? {
                         ...row,
                         cheque: {
                           ...row.cheque,
-                          base64StringChequeCopy: cheque.base64StringChequeCopy,
+                          base64StringChequeCopy: chequeLoaded.base64StringChequeCopy,
                         },
                       }
                     : row
                 )
               );
+              setChequeCopy(chequeLoaded.chequeId, chequeLoaded.base64StringChequeCopy);
             }
           })
           .catch((err) => {
+            if(loadedChequesNumber > 0)
+              setLoadedChequesNumber((prev) => prev - 1);
             console.error("Error fetching cheque data for chequeId", item.cheque.chequeId, ":", err);
           });
       });
     }
-  }, [dataArray]);
+    
+  }, [windowOpen, dataArray]);
+  
+  useEffect(() => {
+    console.log("Cheque data updated: ", invoiceCheques);
+    if(loadedChequesNumber <= 0){
+      setLoadingCheques(false);
+    }
+  }, [loadedChequesNumber]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  if (!loadingCheques && (!dataArray || dataArray.length === 0)) {
+  if (!loadingInvoiceCheques && (!dataArray || dataArray.length === 0)) {
     return (
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
         <ShowcaseSection title="No Data Available" className="!p-6.5">
@@ -152,7 +198,12 @@ function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequ
   ];
 
   return (
-      <div style={{ height: "auto", width: "100%" }}>
+      <div style={{ height: "auto", 
+          maxHeight: "400px", 
+          width: "100%", 
+          paddingBottom: "2rem",
+          display: "flex",
+          flexDirection: "column" }}>
         <DataGrid
           rows={invoiceCheques}
           columns={columns}
@@ -163,7 +214,7 @@ function ChequeEditMuiDataGrid({ dataArray, setImageSrcToView, onClose, setChequ
           disableColumnMenu
           disableRowSelectionOnClick
           hideFooter
-          loading={loadingCheques}
+          loading={loadingInvoiceCheques}
           sx={{
             "& .MuiDataGrid-cell": {
               display: "flex",

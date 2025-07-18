@@ -32,7 +32,6 @@ type InvoicePopUpPropsType = {
 function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateInvoice }: InvoicePopUpPropsType){
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [invoiceDate, setInvoiceDate] = useState<Dayjs | null>(null);
-    const [amount, setAmount] = useState("");
     const [chequeFile, setChequeFile] = React.useState<string>();
     const [paidAmounts, setPaidAmounts] = useState<PaidAmountsType[]>([]);
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
@@ -43,7 +42,6 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
 
     const resetData = () => {
         setInvoiceDate(null);
-        setAmount("");
         setChequeFile("");
         setPaidAmounts([]);
     }
@@ -53,7 +51,9 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
         onClose(false);
     }
 
-
+    const checkFieldEntered = () => {
+        
+    }
 
     const descriptionElementRef = React.useRef<HTMLElement>(null);
     React.useEffect(() => {
@@ -85,13 +85,6 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                 onChange={(newValue) => setInvoiceDate(newValue)}
                             />
                         </LocalizationProvider>
-                        {/* <AutoCompleteWithoutSelectorButton
-                            title="Amount"
-                            placeholder="Amount"
-                            dataArr={[]}
-                            stateSetter={setAmount}
-                            input={amount}
-                        /> */}
                     </div>
                     <div className="mb-1.5 flex flex-col gap-2">
                         

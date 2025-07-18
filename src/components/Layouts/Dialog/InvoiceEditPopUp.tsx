@@ -52,9 +52,13 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
     const [invoiceDate, setInvoiceDate] = React.useState<Dayjs>(dayjs(new Date()));
     const [pdfSrc, setPdfSrc] = React.useState<string>("");
     const [invoiceCheques, setInvoiceCheques] = useState<invoiceCheques[]>([]);
+
     const [filteredPosts, setFilteredPosts] = useState<post[]>([]);
     const [pdfViewPopUp, setPdfViewPopUp] = React.useState<boolean>(false);
     const [loadingInvoiceCheques, setLoadingInvoiceCheques] = useState<boolean>(false);
+    const [loadingCheques, setLoadingCheques] = useState<boolean>(false);
+
+    const [dataGridLoaded, setDataGridLoaded] = React.useState<boolean>(false);
     const [postSelectArray, setPostSelectArray] = useState<{key: string, name: string}[]>([]);
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
@@ -74,6 +78,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
             setInvoiceDate(dayjs(invoiceInfo.invoiceDate));
             setBuildingAddress(invoiceInfo.post.buildingAddress);
             setStreetAddress(invoiceInfo.post.streetAddress);
+            setInvoiceCheques([]);
             setLoadingInvoiceCheques(true);
             CombinedService.get_invoice_cheque_by_invoice_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
                             console.log("Fetched invoice cheques: ", res);
@@ -115,9 +120,19 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
                             console.error("Error fetching invoice cheque: ", err);
                             setLoadingInvoiceCheques(false);
                         });
+            
         }
         
     }, [invoiceInfo]);
+
+    useEffect(() => {
+        console.log("Loading cheque",loadingCheques);
+    }, [loadingCheques]);
+
+    useEffect(() => {
+        console.log("dataGridLoaded updated: ", dataGridLoaded);
+
+      }, [dataGridLoaded]);
 
     useEffect(() => {
         console.log("Post array: ", postArray);
@@ -151,7 +166,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
             ...invoiceCheque,
             cheque: {
               ...invoiceCheque.cheque,
-              chequeCopy: newChequeCopy,
+              base64StringChequeCopy: newChequeCopy,
             }} : invoiceCheque
         );
         //console.log("new invoice cheque: ", newInvoiceCheque);
@@ -162,6 +177,22 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
     const toEmptyIfNull = (value: string | null) => {
         return value === null ? "" : value;
     }
+
+    const clearData = () => {
+        setInvoiceNum("");
+        setPostcode("");
+        setAmount(0);
+        setClientName("");
+        setFullName("");
+        setAddress("");
+        setBuildingAddress("");
+        setStreetAddress("");
+        setInvoiceDate(dayjs(new Date()));
+        setPdfSrc("");
+        setInvoiceCheques([]);
+        setFilteredPosts([]);
+
+    };
 
     //console.log("Pop up opened: ", invoiceNum);
     const closePopUp = ()=> {
@@ -232,6 +263,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
                 
             }
         });
+        // setInvoiceCheques([]);
         
         // ^^^^^^^^^^^^^^Uncomment the following lines to update the invoice in the database
 
@@ -251,7 +283,7 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
             open={open} onClose={onClose} fullWidth={true} 
             maxWidth={"xl"} aria-labelledby="alert-dialog-title" 
             aria-describedby="alert-dialog-description">
-            <DialogTitle>{title} <IconButton onClick={closePopUp} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
+            <DialogTitle>{title} <IconButton onClick={()=>{closePopUp();clearData();}} style={{float:'right'}}><CloseIcon ></CloseIcon></IconButton> </DialogTitle>
             <DialogContent>
                 <div style={{height:'700px', width:'100%'}} className="flex flex-row gap-50 justify-left items-start content-stretch">
                     {/* <ShowcaseSection title="Contact Form" className="!p-6.5 w-full h-full "> */}
@@ -378,9 +410,14 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
                                 <ChequeEditMuiDataGrid
                                     dataArray={invoiceCheques}
                                     setImageSrcToView={setPdfSrc}
+                                    windowOpen={open}
                                     onClose={setPdfViewPopUp}
+                                    dataGridLoaded={dataGridLoaded}
                                     setChequeCopy={setChequeCopy}
-                                    loadingCheques={loadingInvoiceCheques}
+                                    loadingInvoiceCheques={loadingInvoiceCheques}
+                                    setLoadingCheques={setLoadingCheques}
+                                    setDataGridLoaded={setDataGridLoaded}
+                                    // setInvoiceCheque={setInvoiceCheques}
                                 />
                             </div>
                             </div>
@@ -394,7 +431,9 @@ function InvoiceEditPopUp ({ title, open, onClose, invoiceInfo, postArray }: Inv
                                 icon={<CheckIcon className="fill-white" />}
                                 onClick={() => {
                                     submit();
+                                    clearData();
                                 }}
+                                disabled={loadingCheques}
                             />
                         </form>
                 </div>

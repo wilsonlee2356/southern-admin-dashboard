@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { use } from "react";
 import { useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -58,6 +58,7 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
             setFullName(toEmptyIfNull(invoiceInfo?.post.client.fullName));
             // setAddress(toEmptyIfNull(invoiceInfo?.post.buildingAddress));
             setInvoiceDate(dayjs(invoiceInfo?.invoiceDate));
+            setInvoiceCheques([]);
             setLoadingInvoiceCheques(true);
             CombinedService.get_invoice_cheque_by_invoice_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {
                 console.log("Fetched invoice cheques: ", res);
@@ -110,7 +111,13 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
         console.log("Invoice Info : ", invoiceInfo);
     }, [invoiceInfo]);
 
-     if(Object.keys(invoiceInfo).length === 0) return(<><div></div></>);
+    // useEffect(() => {
+    //     if(open){
+    //         setPdfSrc("");
+    //     }
+    // }, [open]);
+
+    if(Object.keys(invoiceInfo).length === 0) return(<><div></div></>);
 
     //console.log("Invoice Info: ", invoiceInfo);
     const toEmptyIfNull = (value: string | null) => {

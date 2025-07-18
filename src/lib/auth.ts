@@ -116,6 +116,7 @@ export function useAuthenticatedRequest() {
       return { response };
     } catch (err) {
       console.error("Request Error:", err);
+      // throw err;
       return { response: null };
     }
   }

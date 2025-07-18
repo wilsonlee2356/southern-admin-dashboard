@@ -215,7 +215,7 @@ function MuiDataGridWithPopUpButton({
 
   const toogleInvoiceisPaid = (invoiceToBeUpdated : invoiceData) => {
 
-    invoiceToBeUpdated.isPaid = !invoiceToBeUpdated.isPaid;
+    // invoiceToBeUpdated.isPaid = !invoiceToBeUpdated.isPaid;
     
     setInvoiceData((prevInvoices : invoiceData[]) =>
       prevInvoices.map((invoice) =>
@@ -232,13 +232,19 @@ function MuiDataGridWithPopUpButton({
             ? { ...invoice, isPending: false }
             : invoice,
         )
-
       );
       // console.log("Back Updated invoice: ", dataArray);
-      if(res) {
+        if(res) {
             console.log("Updated invoice: ", res);
             // setUpdateDataNeeded(true); // Trigger data update
-            updateInvoiceData();
+            // updateInvoiceData();
+            setInvoiceData((prevInvoices : invoiceData[]) =>
+              prevInvoices.map((invoice) =>
+                invoice.invoiceId === invoiceToBeUpdated.invoiceId
+                  ? { ...invoice, isPaid: res.isPaid }
+                  : invoice,
+              )
+            );
         }
     }).catch((err) => {
       console.error("Error toggling invoice is paid: ", err);
@@ -508,7 +514,12 @@ function MuiDataGridWithPopUpButton({
         </div>
       {/* </ShowcaseSection> */}
       <div 
-        style={{ height: "400", width: "100%", paddingBottom: "2rem" }}
+        style={{ height: "auto", 
+          maxHeight: "400px", 
+          width: "100%", 
+          paddingBottom: "2rem",
+          display: "flex",
+          flexDirection: "column" }}
         // className="h-0.1/2 w-full"
         >
         <DataGrid

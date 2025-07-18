@@ -5,7 +5,7 @@ import { Button } from "@/components/ui-elements/button";
 import { PreviewIcon, EditIcon } from "@/components/Tables/icons";
 import { DataGrid, GridColDef, GridRowId, GridRowSelectionModel } from "@mui/x-data-grid";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   post,
   postClientInvoiceSummary,
@@ -56,7 +56,10 @@ function MuiDataGridForPostManagement({
 
   const { updateInvoiceData, updatePostData, loading } = usePostClientContent();
 
-  
+  useEffect(() => {
+      setCanSetRestart(!selectedRows.some((selectedRow) => !selectedRow.ended));
+      setCanSetFinish(!selectedRows.some((selectedRow) => selectedRow.ended));
+    }, [selectedRows]);
 
   if (!dataArray || dataArray.length === 0) {
     return (
@@ -80,28 +83,20 @@ function MuiDataGridForPostManagement({
         (row: postClientInvoiceSummary) => checkedRows.includes(row.post_id),
       );
       console.log("Checked data: ", checkedData);
-      const finishedInvoices = checkedData.filter(
-        (row: any) => row.ended === true,
-      );
-      const unFinishedInvoices = checkedData.filter(
-        (row: any) => row.ended === false,
-      );
-      if(finishedInvoices.length === 0 && unFinishedInvoices.length > 0 && checkedData.length <= unFinishedInvoices.length) {
-        setCanSetRestart(false);
-        setCanSetFinish(true);
-      } else if (finishedInvoices.length > 0 && unFinishedInvoices.length === 0 && checkedData.length <= finishedInvoices.length) {
-        setCanSetRestart(true);
-        setCanSetFinish(false);
-      } else {
-        setCanSetRestart(false);
-        setCanSetFinish(false);
-      }
-      // if (
-      //   finishedInvoices.length === 0 ||
-      //   checkedData.length > finishedInvoices.length
-      // ) {
+      // const finishedInvoices = checkedData.filter(
+      //   (row: any) => row.ended === true,
+      // );
+      // const unFinishedInvoices = checkedData.filter(
+      //   (row: any) => row.ended === false,
+      // );
+      // if(finishedInvoices.length === 0 && unFinishedInvoices.length > 0 && checkedData.length <= unFinishedInvoices.length) {
+      //   setCanSetRestart(false);
       //   setCanSetFinish(true);
+      // } else if (finishedInvoices.length > 0 && unFinishedInvoices.length === 0 && checkedData.length <= finishedInvoices.length) {
+      //   setCanSetRestart(true);
+      //   setCanSetFinish(false);
       // } else {
+      //   setCanSetRestart(false);
       //   setCanSetFinish(false);
       // }
       setSelectedRows(checkedData);
@@ -230,7 +225,12 @@ function MuiDataGridForPostManagement({
 
   return (
     <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
-      <div style={{ height: "auto", width: "100%", paddingBottom: "2rem" }}>
+      <div style={{ height: "auto", 
+          maxHeight: "400px", 
+          width: "100%", 
+          paddingBottom: "2rem",
+          display: "flex",
+          flexDirection: "column"  }}>
         <DataGrid
           rows={dataArray}
           columns={columns}
