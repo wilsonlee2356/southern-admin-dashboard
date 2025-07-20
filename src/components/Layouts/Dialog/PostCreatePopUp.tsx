@@ -23,6 +23,7 @@ import {
 } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { useAlert } from "@/utils/AlertProvider";
 
 type AutoCompleteArrayType = {
   key: string;
@@ -43,7 +44,7 @@ type PostCreatePopUpPropsType = {
   postArray: AutoCompleteArrayType[];
   postArrayWithDetails: post[]; // Optional prop for post array with details
   clientArrayWithDetails: client[]; // Optional prop for client array with details
-  updatePostData: any;
+  updateData: any;
 };
 
 function PostCreatePopUp({
@@ -53,7 +54,7 @@ function PostCreatePopUp({
   postArray,
   postArrayWithDetails,
   clientArrayWithDetails,
-  updatePostData,
+  updateData,
 }: PostCreatePopUpPropsType) {
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
 
@@ -73,6 +74,7 @@ function PostCreatePopUp({
   
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+  const { addAlert } = useAlert();
 
   // useEffect(() => {
   //   postArrayWithDetails.find((postItem) => {
@@ -129,7 +131,7 @@ function PostCreatePopUp({
 
   const checkInputError = () : boolean => {
         resetError();
-        if(postcode === null || postcode === "") {
+        if(postcode === null || postcode === "" || postcode.trim().length === 0) {
           setError((prev) => ({ ...prev, postcodeError: "* Postcode is required" }));
           return true;
         }
@@ -141,7 +143,7 @@ function PostCreatePopUp({
           setError((prev) => ({ ...prev, streetAddressError: "* Street Address is required" }));
           return true;
         }
-        if(clientName === null || clientName === "") {
+        if(clientName === null || clientName === "" || clientName.trim().length === 0) {
           setError((prev) => ({ ...prev, clientNameError: "* Client name is required" }));
           return true;
         }
@@ -182,11 +184,12 @@ function PostCreatePopUp({
         //getNewlyInsertedPost(response.postId);
         if (response) {
           //update List
-          updatePostData();
+          updateData();
         }
       })
       .catch((error) => {
         console.error("Error creating post:", error);
+        addAlert(String(error), 'error', 10000);
       }
     );
     // CombinedService.create_invoice(updateInvoice, makeAuthenticatedRequest)

@@ -11,6 +11,7 @@ import ChequeMuiDataGrid from "@/components/Tables/DataGrid/ChequeMuiDataGrid";
 import PdfViewPopUp from "./PdfViewPopUp";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { useAlert } from "@/utils/AlertProvider";
 
 // type InvoiceInfoType = {
 //     invoiceNum: string;
@@ -46,6 +47,7 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
     const [loadingInvoiceCheques, setLoadingInvoiceCheques] = React.useState<boolean>(false);
 
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+    const { addAlert } = useAlert();
 
     useEffect(() => {
         if(invoiceInfo == null || invoiceInfo == undefined || Object.keys(invoiceInfo).length === 0) 
@@ -98,6 +100,7 @@ function InvoiceViewPopUp ({ title, open, onClose, invoiceInfo }: InvoiceViewPop
                 
             }).catch((err) => {
                 console.error("Error fetching invoice cheque: ", err);
+                addAlert(String(err), 'error', 10000);
                 setLoadingInvoiceCheques(false);
             });
             // CombinedService.get_invoice_by_id(invoiceInfo.invoiceId, makeAuthenticatedRequest).then((res) => {

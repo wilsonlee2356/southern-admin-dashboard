@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { useSession } from "next-auth/react";
+import { useAlert } from "@/utils/AlertProvider";
 
 type ChannelType = {
   // outstandingList: (string | number)[][];
@@ -30,6 +31,7 @@ export function TopChannels({ className }: ChannelType) {
   const { data: session, status } = useSession();
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+  const { addAlert } = useAlert();
 
   useEffect(() => {
     if(status === "authenticated" && session?.accessToken){
@@ -37,6 +39,9 @@ export function TopChannels({ className }: ChannelType) {
       CombinedService.get_invoice_outstanding_summary(makeAuthenticatedRequest).then((data)=>{
         setOutstandingList(data);
         console.log("Outstanding:", outstandingList);
+      }).catch((err) => {
+        console.error("Error fetching invoice outstanding summary: ", err);
+        addAlert(String(err), 'error', 10000);
       });
     }
     

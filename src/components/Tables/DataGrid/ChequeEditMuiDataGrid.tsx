@@ -9,6 +9,7 @@ import { fileToBase64String } from "@/utils/file-reader";
 import { InvoiceCheques, cheque } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { useAlert } from "@/utils/AlertProvider";
 
 type ChequeEditMuiDataGridProps = {
   dataArray: any;
@@ -42,6 +43,8 @@ function ChequeEditMuiDataGrid({
   >([]);
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  const { addAlert } = useAlert();
 
   useEffect(() => {
     console.log("Initial cheque data: ", dataArray);
@@ -118,6 +121,7 @@ function ChequeEditMuiDataGrid({
               ":",
               err,
             );
+            addAlert(String(err), 'error', 10000);
           });
       });
     }
@@ -194,6 +198,7 @@ function ChequeEditMuiDataGrid({
                   onClose(true);
                 }
               }}
+
             >
               <span className="sr-only">View Cheque copy</span>
               {!params.value.base64StringChequeCopy ? (

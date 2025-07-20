@@ -667,7 +667,8 @@ function MuiDataGridWithPopUpButton({
                   // updateInvoiceData();
               }
               ).catch((err) => {
-                console.log("Error deleting invoice: ", err);
+                console.error("Error deleting invoice: ", err);
+                addAlert(String(err), 'error', 10000);
               });
           }
           

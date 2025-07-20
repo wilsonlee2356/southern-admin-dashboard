@@ -17,6 +17,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { usePostClientContent } from "@/utils/post-client-content";
+import { useAlert } from "@/utils/AlertProvider";
 
 // TypeScript Interfaces
 interface Post {
@@ -90,6 +91,7 @@ function InvoiceEditPopUp({
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
   const { setInvoiceData } = usePostClientContent();
+  const { addAlert } = useAlert();
 
   // Validate invoiceInfo
   const isValidInvoiceInfo = (info: InvoiceData): boolean => {
@@ -99,9 +101,21 @@ function InvoiceEditPopUp({
       info.post.client &&
       info.invoiceNum &&
       info.post.postcode &&
+      // info.post.postcode.trim() !== "" &&
       info.amount !== undefined &&
       info.invoiceDate &&
       info.post.client.clientId
+    );
+  };
+
+  const isValidFormData = (data:FormData) : boolean => {
+    return !!(
+      data &&
+      data.invoiceNum &&
+      data.amount &&
+      data.invoiceDate &&
+      data.postcode &&
+      data.postcode.trim() !== ""
     );
   };
 
@@ -187,6 +201,7 @@ function InvoiceEditPopUp({
       })
       .catch((err) => {
         console.error("Error fetching invoice cheques:", err);
+        addAlert(String(err), 'error', 10000);
         setInvoiceCheques([]);
       })
       .finally(() => {
@@ -313,7 +328,7 @@ function InvoiceEditPopUp({
   // Submit form data
   const submit = async () => {
     setIsSubmitting(true);
-    if (!isValidInvoiceInfo(invoiceInfo)) {
+    if (!isValidFormData(formData)) {
       console.error("Invalid invoice data for submission");
       setIsSubmitting(false);
       return;
@@ -322,7 +337,7 @@ function InvoiceEditPopUp({
     const newDate = new Date();
     const invoice: InvoiceData = {
       invoiceId: invoiceInfo.invoiceId,
-      invoiceNum: formData.invoiceNum,
+      invoiceNum: invoiceInfo.invoiceNum,
       post: {
         postId: invoiceInfo.post.postId,
         postcode: formData.postcode,
@@ -331,7 +346,7 @@ function InvoiceEditPopUp({
         isEnded: invoiceInfo.post.isEnded,
         client: {
           clientId: invoiceInfo.post.client.clientId,
-          clientName: formData.clientName,
+          clientName: invoiceInfo.post.client.clientName,
           fullName: formData.fullName,
           address: formData.address,
           createDate: invoiceInfo.post.client.createDate,
@@ -373,6 +388,7 @@ function InvoiceEditPopUp({
     } catch (err) {
       console.error("Error updating invoice:", err);
       // Optionally, show error notification to user
+      addAlert(String(err), 'error', 10000);
     } finally {
       setIsSubmitting(false);
     }
@@ -380,7 +396,9 @@ function InvoiceEditPopUp({
 
   // Conditionally render if invoiceInfo is invalid
   if (open && !isValidInvoiceInfo(invoiceInfo)) {
+    // addAlert(String("Invalid invoice data. Please refresh your data"), 'error', 10000);
     return <div>Invalid invoice data. Please try again.</div>;
+    // return <div></div>;
   }
 
   const isEditable = invoiceInfo.isPending || !invoiceInfo.isPaid;
@@ -522,7 +540,7 @@ function InvoiceEditPopUp({
                           }))
                         }
                         className="w-full xl:w-5/12"
-                        disabled={!isEditable}
+                        disabled={true}
                       />
                       <InputGroup
                         label="Full Name"
@@ -536,7 +554,7 @@ function InvoiceEditPopUp({
                           }))
                         }
                         className="w-full xl:w-5/12"
-                        disabled={!isEditable}
+                        disabled={true}
                       />
                     </div>
                     <TextAreaOne
@@ -549,7 +567,7 @@ function InvoiceEditPopUp({
                           address: e.currentTarget.value,
                         }))
                       }
-                      disabled={!isEditable}
+                      disabled={true}
                     />
                   </div>
                 </div>

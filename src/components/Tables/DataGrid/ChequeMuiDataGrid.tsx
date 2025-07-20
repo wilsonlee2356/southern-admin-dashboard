@@ -7,6 +7,7 @@ import React, { use, useEffect } from "react";
 import { InvoiceCheques, cheque } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { useAlert } from "@/utils/AlertProvider";
 
 type ChequeMuiDataGridProps = {
   dataArray: InvoiceCheques[];
@@ -21,6 +22,8 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose, loadingInvoi
   const [invoiceCheques, setInvoiceCheques] = React.useState<InvoiceCheques[]>(dataArray);
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+
+  const { addAlert } = useAlert();
 
   // useEffect(() => {
   //   console.log("ChequeMuiDataGrid invoiceCheques: ", invoiceCheques);
@@ -51,6 +54,7 @@ function ChequeMuiDataGrid({ dataArray, setImageSrcToView, onClose, loadingInvoi
           })
           .catch((err) => {
             console.error("Error fetching cheque data for chequeId", item.cheque.chequeId, ":", err);
+            addAlert(String(err), 'error', 10000);
           });
       });
     }

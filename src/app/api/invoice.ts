@@ -106,7 +106,7 @@ async function makeDeleteApiRequest(
     }
 
     if(response.status === 409) {
-      throw new Error(`Attempt to modify non-existent data`);
+      throw new Error(`Attempt to modify non-existent data, please refresh your data`);
     }
 
     if (!response.ok) {

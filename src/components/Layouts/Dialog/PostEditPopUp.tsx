@@ -24,6 +24,7 @@ import {
 } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { useAlert } from "@/utils/AlertProvider";
 
 type PostEditPopUpPropsType = {
   open: boolean;
@@ -48,6 +49,7 @@ function PostEditPopUp({
   const [address, setAddress] = useState("");
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+  const { addAlert } = useAlert();
 
   const closePopUp = () => {
     onClose(false);
@@ -94,6 +96,7 @@ function PostEditPopUp({
       })
       .catch((error) => {
         console.error("Error updating post:", error);
+        addAlert(String(error), 'error', 10000);
       }
     );
   };

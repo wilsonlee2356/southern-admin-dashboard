@@ -25,6 +25,7 @@ import {
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { usePostClientContent } from "@/utils/post-client-content";
+import { useAlert } from "@/utils/AlertProvider";
 
 type AutoCompleteArrayType = {
   key: string;
@@ -91,6 +92,8 @@ function InvoiceCreatePopUp({
 
   const { setInvoiceData, updateData } = usePostClientContent();
 
+  const { addAlert } = useAlert();
+
   useEffect(() => {
     postArrayWithDetails.find((postItem) => {
       if (postItem.postcode === postcode) {
@@ -131,6 +134,7 @@ function InvoiceCreatePopUp({
 
   const closePopUp = () => {
     handleClear();
+    resetError();
     onClose(false);
   };
 
@@ -163,7 +167,7 @@ function InvoiceCreatePopUp({
 
   const checkInputError = () : boolean => {
     resetError();
-    if(invoiceNumber === "") {
+    if(invoiceNumber === "" || invoiceNumber.trim().length === 0) {
       setError((prev) => ({ ...prev, invoiceNumError: "* Invoice Number is required" }));
       return true;
     }
@@ -175,7 +179,7 @@ function InvoiceCreatePopUp({
       setError((prev) => ({ ...prev, invoiceDateError: "* Invoice Date is required" }));
       return true;
     }
-    if(postcode === "") {
+    if(postcode === "" || postcode.trim().length === 0) {
       setError((prev) => ({ ...prev, postcodeError: "* Postcode is required" }));
       return true;
     }
@@ -187,7 +191,7 @@ function InvoiceCreatePopUp({
       setError((prev) => ({ ...prev, streetAddressError: "* Street Address is required" }));
       return true;
     }
-    if(clientName === "") {
+    if(clientName === "" || clientName.trim().length === 0) {
       setError((prev) => ({ ...prev, clientNameError: "* Client Name is required" }));
       return true;
     }
@@ -239,7 +243,9 @@ function InvoiceCreatePopUp({
         }
       })
       .catch((error) => {
+        
         console.error("Error creating invoice:", error);
+        addAlert(String(error), 'error', 10000);
       });
     return true;
   };

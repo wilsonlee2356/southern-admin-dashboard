@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react";
 import { useAuthenticatedRequest } from "@/lib/auth";
 import { usePostClientContent } from "@/utils/post-client-content";
 import PostEditPopUp from "@/components/Layouts/Dialog/PostEditPopUp";
+import { useAlert } from "@/utils/AlertProvider";
 
 
 type MuiDataGridWithPopUpButtonProps = {
@@ -55,6 +56,8 @@ function MuiDataGridForPostManagement({
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
 
   const { updateInvoiceData, updatePostData, loading } = usePostClientContent();
+
+  const { addAlert } = useAlert();
 
   useEffect(() => {
     if(selectedRows.length==0){
@@ -195,7 +198,7 @@ function MuiDataGridForPostManagement({
             },
           )}
         >
-          {params.value !== false ? "Paid" : "Unpaid"}
+          {params.value !== false ? "Finished" : "Unfinished"}
         </div>
       ),
     },
@@ -323,7 +326,9 @@ function MuiDataGridForPostManagement({
               updateSelectedRow([]);
             })
             .catch((err) => {
+              
               console.error("Error setting post to finished: ", err);
+              addAlert(String(err), 'error', 10000);
             });
         }}
       />
@@ -354,7 +359,9 @@ function MuiDataGridForPostManagement({
               updateSelectedRow([]);
             })
             .catch((err) => {
+              
               console.error("Error setting post to finished: ", err);
+              addAlert(String(err), 'error', 10000);
             });
         }}
       />

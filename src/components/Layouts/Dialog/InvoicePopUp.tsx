@@ -15,6 +15,7 @@ import { Dayjs } from "dayjs";
 import { InvoiceData, InvoiceCheques, PaidAmountsType } from "@/types/ObjectTypes/InvoiceType";
 import { CombinedService } from "@/app/api/invoice";
 import { useAuthenticatedRequest } from "@/lib/auth";
+import { useAlert } from "@/utils/AlertProvider";
 
 type InvoicePopUpPropsType = {
     title: string;
@@ -38,6 +39,7 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
     const [chequeFile, setChequeFile] = React.useState<string>();
     const [paidAmounts, setPaidAmounts] = useState<PaidAmountsType[]>([]);
     const { makeAuthenticatedRequest } = useAuthenticatedRequest();
+    const { addAlert } = useAlert();
 
     const [error, setError] = useState<ErrorType>({
         invoiceDateError: "",
@@ -252,7 +254,9 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                         //     });
                                         // });
                                     }).catch((error) => {
+                                        
                                         console.error("Error creating transactions:", error);
+                                        addAlert(String(error), 'error', 10000);
                                         setDataArray((prevInvoices : InvoiceData[]) =>
                                             {
                                                 prevInvoices.map((invoice) =>{
@@ -266,7 +270,9 @@ function InvoicePopUp ({ title, open, onClose, dataArray, setDataArray, updateIn
                                         );
                                     });
                                 }).catch((error) => {
+                                    
                                     console.error("Error creating cheque:", error);
+                                    addAlert(String(error), 'error', 10000);
                                     setDataArray((prevInvoices : InvoiceData[]) =>
                                             {
                                                 prevInvoices.map((invoice) =>{
