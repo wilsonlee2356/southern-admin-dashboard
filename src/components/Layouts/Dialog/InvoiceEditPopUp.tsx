@@ -88,6 +88,7 @@ function InvoiceEditPopUp({
   const [postSelectArray, setPostSelectArray] = useState<
     { key: string; name: string }[]
   >([]);
+  const [error, setError] = useState<string>("");
 
   const { makeAuthenticatedRequest } = useAuthenticatedRequest();
   const { setInvoiceData } = usePostClientContent();
@@ -115,7 +116,8 @@ function InvoiceEditPopUp({
       data.amount &&
       data.invoiceDate &&
       data.postcode &&
-      data.postcode.trim() !== ""
+      data.postcode.trim() !== "" &&
+      postArray.some((post) => post.postcode === data.postcode)
     );
   };
 
@@ -308,6 +310,7 @@ function InvoiceEditPopUp({
       invoiceDate: dayjs(new Date()),
     });
     setPdfSrc("");
+    setError("");
     setInvoiceCheques([]);
     setFilteredPosts([]);
     setPostSelectArray([]);
@@ -330,6 +333,7 @@ function InvoiceEditPopUp({
     setIsSubmitting(true);
     if (!isValidFormData(formData)) {
       console.error("Invalid invoice data for submission");
+      setError("Invalid data entered");
       setIsSubmitting(false);
       return;
     }
@@ -433,6 +437,9 @@ function InvoiceEditPopUp({
             <form>
               <div className="w-xl flex h-full flex-row gap-4.5">
                 <div className="flex flex-col content-stretch items-start justify-start gap-4.5">
+                  <label className="text-body-sm text-red">
+                    {error}
+                  </label>
                   <label className="text-body-lg font-bold text-dark">
                     Invoice Information
                   </label>
