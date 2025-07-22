@@ -123,3 +123,75 @@ export function useAuthenticatedRequest() {
 
   return { makeAuthenticatedRequest };
 }
+
+export function useAuthenticatedRequestFileUpload() {
+  const { update } = useSession();
+
+  async function makeAuthenticatedRequest(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<{
+    response: Response | null;
+    newAccessToken?: string;
+  }> {
+    const session = await getSession();
+    if (!session?.accessToken) {
+      console.error("No access token available");
+      return { response: null };
+    }
+
+    try {
+      console.log("Calling api: ", url);
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        credentials: "include",
+      });
+      console.log(response);
+      if (response.status === 401 && session.refreshToken) {
+        console.log("Access token expired, attempting refresh");
+        const newAccessToken = await refreshAccessToken(session.refreshToken);
+        if (newAccessToken.accessToken) {
+          console.log("New access token obtained:", newAccessToken);
+          // await update({
+          //   accessToken: newAccessToken.accessToken,
+          //   role: newAccessToken.role,
+          //   username: newAccessToken.username,
+          // });
+          await update({
+            accessToken: newAccessToken.accessToken,
+            role: newAccessToken.role,
+            username: newAccessToken.username,
+            refreshToken: session.refreshToken, // Preserve the refreshToken
+          });
+          console.log("Session updated with new access token");
+          // Retry the original request
+          const updatedResponse = await fetch(url, {
+            ...options,
+            headers: {
+              ...options.headers,
+              Authorization: `Bearer ${newAccessToken.accessToken}`,
+            },
+            credentials: "include",
+          });
+          return { response: updatedResponse, newAccessToken: newAccessToken.accessToken };
+        } else {
+          console.error("Failed to refresh token, signing out");
+          await signOut({ callbackUrl: "/auth/signin" });
+          return { response: null };
+        }
+      }
+
+      return { response };
+    } catch (err) {
+      console.error("Request Error:", err);
+      // throw err;
+      return { response: null };
+    }
+  }
+
+  return { makeAuthenticatedRequest };
+}

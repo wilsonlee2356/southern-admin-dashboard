@@ -7,6 +7,7 @@ import {
   invoiceDataOutput,
   postClientInvoiceSummary,
   chartData,
+  invoicePostList,
 } from "@/types/ObjectTypes/InvoiceType";
 
 // Define the type for makeAuthenticatedRequest
@@ -113,6 +114,57 @@ async function makeDeleteApiRequest(
       const errorText = await response.text();
       throw new Error(`${errorMessage}: ${response.status} ${errorText}`);
     }
+    
+  } catch (error) {
+    console.error(`${errorMessage}:`, error);
+    throw error;
+  } finally {
+    // clearTimeout(timeoutId);
+  }
+}
+
+
+async function makeFileUploadApiRequest<T>(
+  endpoint: string,
+  options: RequestInit,
+  makeAuthenticatedRequest: AuthRequestHandler,
+  errorMessage: string,
+): Promise<T> {
+  const controller = new AbortController();
+
+  // const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+  try {
+    console.log("Making request to:", getApiUrl(endpoint), "with options:", options);
+    const { response } = await makeAuthenticatedRequest(getApiUrl(endpoint), {
+      signal: controller.signal,
+      headers: {
+        ...(options.headers || {}),
+      },
+      ...options,
+    });
+
+    // clearTimeout(timeoutId);
+
+    if (!response) {
+      throw new Error(`${errorMessage}: No response received`);
+    }
+
+    if(response.status === 409) {
+      throw new Error(`Attempt to modify non-existent data, please refresh your data`);
+    }
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`${errorMessage}: ${response.status} ${errorText}`);
+    }
+    
+    const data = await response.json();
+    if (data === null || data === undefined) {
+      throw new Error(`${errorMessage}: Empty response received`);
+    }
+
+    return data as T;
     
   } catch (error) {
     console.error(`${errorMessage}:`, error);
@@ -518,4 +570,24 @@ export const CombinedService = {
     );
   },
 
+  async upload_excel(
+    excelUpload: File,
+    makeAuthenticatedRequest: AuthRequestHandler,
+  ): Promise<invoicePostList> {
+    // if (typeof excelUpload === 'undefined' || excelUpload instanceof File) {
+    //   throw new Error("Invalid not a file");
+    // }
+    const formData = new FormData();
+    formData.append('file', excelUpload);
+
+    return makeFileUploadApiRequest<invoicePostList>(
+      "/api/excel/upload",
+      {
+        method: "POST",
+        body: formData,
+      },
+      makeAuthenticatedRequest,
+      "Unable to upload excel",
+    );
+  },
 };

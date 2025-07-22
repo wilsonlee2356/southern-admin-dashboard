@@ -33,6 +33,12 @@ export const NAV_DATA = [
         icon: Icons.User,
         items: [],
       },
+      {
+        title: "Excel Upload",
+        url: "/excel-upload",
+        icon: Icons.PieChart,
+        items: [],
+      },
 
       // {
       //   title: "Calendar",

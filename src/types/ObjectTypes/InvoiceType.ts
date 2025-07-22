@@ -130,3 +130,8 @@ export type invoiceChequeChartData= {
   amount: number;
   paymentDate: string;
 };
+
+export type invoicePostList = {
+  invoiceList: InvoiceData[];
+  postList: post[];
+}
