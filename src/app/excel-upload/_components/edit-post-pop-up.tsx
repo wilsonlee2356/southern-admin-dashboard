@@ -11,7 +11,7 @@ import dayjs, { Dayjs } from "dayjs";
 // TypeScript Interfaces
 
 
-interface EditInvoicePopUpPropsType {
+interface EditPostPopUpPropsType {
   title: string;
   open: boolean;
   onClose: (open: boolean) => void;
@@ -28,12 +28,12 @@ interface FormData {
   settlementDate: any;
 }
 
-function EditInvoicePopUp({
+function EditPostPopUp({
     title,
     open,
     onClose,
     invoiceEditing,
-}: EditInvoicePopUpPropsType) {
+}: EditPostPopUpPropsType) {
     const [formData, setFormData] = useState<FormData>({
         invoiceNum: "",
         postcode: "",
@@ -85,53 +85,6 @@ function EditInvoicePopUp({
                   {/* <label className="text-body-sm text-red">
                     {error}
                   </label> */}
-                  <label className="text-body-lg font-bold text-dark">
-                    Invoice Information
-                  </label>
-                  <div className="mb-4.5 flex flex-row gap-4.5">
-                    
-                    <InputGroup
-                      label="Invoice No."
-                      type="text"
-                      placeholder="Enter invoice number"
-                      value={formData.invoiceNum}
-                      handleChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          invoiceNum: e.target.value,
-                        }))
-                      }
-                      className="w-full xl:w-5/12"
-                    />
-                    <InputGroup
-                      label="Amount"
-                      type="number"
-                      placeholder="Enter amount"
-                      value={formData.amount.toString()}
-                      handleChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          amount: +e.target.value,
-                        }))
-                      }
-                      className="w-full xl:w-5/12"
-                      // disabled={!isEditable}
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <MuiDatePicker
-                        title="Settlement Date"
-                        label="Settlement Date"
-                        value={formData.settlementDate}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            invoiceDate: e as Dayjs,
-                          }))
-                        }
-                        // disabled={!isEditable}
-                      />
-                    </LocalizationProvider>
-                  </div>
                   <label className="text-body-lg font-bold text-dark">
                     Post Information
                   </label>
@@ -228,4 +181,4 @@ function EditInvoicePopUp({
   );
 }
 
-export default EditInvoicePopUp;
+export default EditPostPopUp;

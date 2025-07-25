@@ -39,10 +39,9 @@ const UploadBox = ({}: UploadBoxProps) => {
     
     const { makeAuthenticatedRequest } = useAuthenticatedRequestFileUpload();
 
-  // React.useEffect(() => {
-  //   console.log("client array:", clientNameArr);
-  //   console.log("post array:", postcodeArr);
-  // }, []);
+  React.useEffect(() => {
+    console.log("Editing Invoice:", editingInvoice);
+  }, [editingInvoice]);
 
   const handleUpload = async () => {
     if (!fileUpload) {
@@ -54,8 +53,7 @@ const UploadBox = ({}: UploadBoxProps) => {
       CombinedService.upload_excel(fileUpload, makeAuthenticatedRequest).then((invoicePostDataRead : invoicePostList)=>{
         // setExcelData(response);'
         console.log("Excel data: ", invoicePostDataRead);
-        setInvoiceRead(invoicePostDataRead.invoiceList);
-        setPostRead(invoicePostDataRead.postList);
+        bindPostToInvoicePost(invoicePostDataRead);
         setError("");
       });
     } catch (err) {
@@ -65,12 +63,18 @@ const UploadBox = ({}: UploadBoxProps) => {
   };
 
   const findInvoiceById = (invoiceId : number) : InvoiceData | null => {
-    invoiceRead.map((invoice)=>{
-        if(invoice.invoiceId === invoiceId)
-            return invoice;
+    let invoiceFound : InvoiceData | null = null;
+    invoiceRead.forEach((invoice)=>{
+        if(invoice.invoiceId === invoiceId){
+            console.log("Invoice found: ", invoice);
+            invoiceFound = invoice;
+            return;
+        }
+            
     });
-    return null;
-  }
+    // console.log("Invoice not found");
+    return invoiceFound;
+  };
 
   const findPostById = (postId : number) : post | null => {
     postRead.map((post)=>{
@@ -78,7 +82,22 @@ const UploadBox = ({}: UploadBoxProps) => {
             return post;
     });
     return null;
-  }
+  };
+
+  const bindPostToInvoicePost = (invoicePostData : invoicePostList) => {
+    let invoiceList : InvoiceData[] = invoicePostData.invoiceList;
+    const postList : post[] = invoicePostData.postList;
+    invoiceList.map((invoice)=>{
+        const relatedPost : post | undefined = postList.find((post) => 
+                    post.postcode === invoice.post.postcode && 
+                    post.buildingAddress === invoice.post.buildingAddress);
+        if(relatedPost !== undefined){
+            invoice.post = relatedPost;
+        }
+    });
+    setInvoiceRead(invoiceList);
+    setPostRead(postList);
+  };
 
   const invoiceColumns: GridColDef[] = [
       {
@@ -148,6 +167,7 @@ const UploadBox = ({}: UploadBoxProps) => {
         flex: 1,
         align: "center",
         headerAlign: "center",
+        valueGetter: (value, row) => row,
         renderCell: (params) => (
             <div className="flex items-center justify-center gap-x-3.5">
             
@@ -156,8 +176,9 @@ const UploadBox = ({}: UploadBoxProps) => {
             <button
                 className="text-dark dark:text-white"
                 onClick={() => {
+                    console.log("Trying to edit invoice: ", params.value.invoiceId);
                     setInvoicePopUpOpen(true);
-                    const invoiceOfThisRow = findInvoiceById(Number(params.id));
+                    const invoiceOfThisRow = findInvoiceById(Number(params.value.invoiceId));
                     if(invoiceOfThisRow !== null){
                         setEditingInvoice(invoiceOfThisRow);
                     }
