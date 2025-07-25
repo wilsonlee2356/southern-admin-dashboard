@@ -16,6 +16,7 @@ import MuiDataGrid from "@/components/Tables/DataGrid/MuiDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { EditIcon } from "@/components/Tables/icons";
 import EditInvoicePopUp from "./edit-invoice-pop-up";
+import * as XLSX from 'xlsx';
 
 
 // interface SheetData {
@@ -30,6 +31,7 @@ const UploadBox = ({}: UploadBoxProps) => {
 
     const [fileUpload, setFileUpload] = useState<File | null>();
     // const [excelData, setExcelData] = useState<SheetData | null>(null);
+    const [sheetNames, setSheetNames] = useState<string[]>([]);
     const [invoiceRead, setInvoiceRead] = useState<InvoiceData[]>([]);
     const [postRead, setPostRead] = useState<post[]>([]);
     const { data: session, status } = useSession();
@@ -39,15 +41,39 @@ const UploadBox = ({}: UploadBoxProps) => {
     
     const { makeAuthenticatedRequest } = useAuthenticatedRequestFileUpload();
 
-  React.useEffect(() => {
-    console.log("Editing Invoice:", editingInvoice);
-  }, [editingInvoice]);
 
-  const handleUpload = async () => {
-    if (!fileUpload) {
-      setError('Please select a file');
-      return;
+    const readSheetNames = (file: File) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target?.result as ArrayBuffer);
+            const workbook = XLSX.read(data, { type: 'array' });
+            // Get all sheet names
+            const names = workbook.SheetNames;
+            setSheetNames(names);
+            console.log("Sheet names: ", names);
+        };
+        reader.readAsArrayBuffer(file);
     }
+
+    React.useEffect(() => {
+        if(fileUpload){
+            console.log("Reading excel sheet names");
+            readSheetNames(fileUpload);
+        }
+    }, [fileUpload]);
+
+
+    React.useEffect(() => {
+        console.log("Editing Invoice:", editingInvoice);
+    }, [editingInvoice]);
+
+    const handleUpload = async () => {
+        if (!fileUpload) {
+        setError('Please select a file');
+        return;
+    }
+
+    
 
     try {
       CombinedService.upload_excel(fileUpload, makeAuthenticatedRequest).then((invoicePostDataRead : invoicePostList)=>{
@@ -280,11 +306,13 @@ const UploadBox = ({}: UploadBoxProps) => {
                 accept=".xlsx,.xls"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     if (event.target.files && event.target.files.length > 0) {
-                        setFileUpload(event.target.files[0]);
-                        console.log(fileUpload);
+                        const file = event.target.files[0];
+                        setFileUpload(file);
+                        console.log("File: ",file);
                     }
                 }}
             />
+
             <Button
                 label="Upload"
                 variant="primary"

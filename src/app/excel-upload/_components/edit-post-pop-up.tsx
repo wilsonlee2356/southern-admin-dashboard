@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import InputGroup from "@/components/FormElements/InputGroup";
 import MuiDatePicker from "@/components/FormElements/DatePicker/MuiDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { InvoiceData } from "@/types/ObjectTypes/InvoiceType";
+import { post } from "@/types/ObjectTypes/InvoiceType";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -15,55 +15,46 @@ interface EditPostPopUpPropsType {
   title: string;
   open: boolean;
   onClose: (open: boolean) => void;
-  invoiceEditing: InvoiceData | null;
+  postEditing: post | null;
 }
 
 interface FormData {
-  invoiceNum: string;
   postcode: string;
-  amount: number;
   clientName: string;
   fullName: string;
   buildingAddress: string;
-  settlementDate: any;
 }
 
 function EditPostPopUp({
     title,
     open,
     onClose,
-    invoiceEditing,
+    postEditing,
 }: EditPostPopUpPropsType) {
     const [formData, setFormData] = useState<FormData>({
-        invoiceNum: "",
         postcode: "",
-        amount: 0,
         clientName: "",
         fullName: "",
         buildingAddress: "",
-        settlementDate: dayjs(new Date()),
     });
 
     React.useEffect(() => {
-        if(invoiceEditing !== null){
+        if(postEditing !== null){
           setFormData({
-            invoiceNum: invoiceEditing.invoiceNum,
-            postcode: invoiceEditing.post.postcode,
-            amount: invoiceEditing.amount,
-            clientName: invoiceEditing.post.client.clientName,
-            fullName: (invoiceEditing.post.client.fullName) ? invoiceEditing.post.client.fullName : "",
-            buildingAddress: invoiceEditing.post.buildingAddress,
-            settlementDate: (invoiceEditing.settlementDate)?dayjs(invoiceEditing.settlementDate):null,
+            postcode: postEditing.postcode,
+            clientName: postEditing.client.clientName,
+            fullName: (postEditing.client.fullName) ? postEditing.client.fullName : "",
+            buildingAddress: postEditing.buildingAddress,
           });
         }
-    }, [invoiceEditing]);
+    }, [postEditing]);
 
   // Close dialog
   const closePopUp = () => {
     onClose(false);
   };
 
-  if(invoiceEditing === null){
+  if(postEditing === null){
     return <CustomPopUp
             title={title}
             open={open}

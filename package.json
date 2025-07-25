@@ -39,13 +39,15 @@
     "react-select": "^5.10.0",
     "react-table": "^7.8.0",
     "styled-components": "^6.1.15",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^22",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@types/react-table": "^7.7.20",
+    "@types/xlsx": "^0.0.36",
     "autoprefixer": "^10.4.20",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
